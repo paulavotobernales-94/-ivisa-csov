@@ -1,0 +1,4173 @@
+{
+  "csov_score": 53.02,
+  "previous_csov_score": null,
+  "components": {
+    "serp": {
+      "score": 54.02,
+      "weight": 0.35,
+      "weighted_contribution": 18.91,
+      "label": "SERP Score"
+    },
+    "ai_overview": {
+      "score": 51.98,
+      "weight": 0.25,
+      "weighted_contribution": 12.99,
+      "label": "AI Overview Score"
+    },
+    "llm": {
+      "score": 48.5,
+      "weight": 0.25,
+      "weighted_contribution": 12.12,
+      "label": "LLM Score"
+    },
+    "earned_media": {
+      "score": 60.0,
+      "weight": 0.15,
+      "weighted_contribution": 9.0,
+      "label": "Earned Media Score"
+    }
+  },
+  "country_data": {
+    "us": {
+      "name": "United States",
+      "flag": "🇺🇸",
+      "weight": 0.35,
+      "csov_score": 53.77,
+      "components": {
+        "serp": 55.55,
+        "ai_overview": 52.8,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "gb": {
+      "name": "United Kingdom",
+      "flag": "🇬🇧",
+      "weight": 0.14,
+      "csov_score": 52.53,
+      "components": {
+        "serp": 53.73,
+        "ai_overview": 50.4,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "au": {
+      "name": "Australia",
+      "flag": "🇦🇺",
+      "weight": 0.1,
+      "csov_score": 53.05,
+      "components": {
+        "serp": 54.36,
+        "ai_overview": 51.6,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "de": {
+      "name": "Germany",
+      "flag": "🇩🇪",
+      "weight": 0.08,
+      "csov_score": 52.8,
+      "components": {
+        "serp": 52.36,
+        "ai_overview": 53.4,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "ca": {
+      "name": "Canada",
+      "flag": "🇨🇦",
+      "weight": 0.07,
+      "csov_score": 52.83,
+      "components": {
+        "serp": 54.09,
+        "ai_overview": 51.1,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "fr": {
+      "name": "France",
+      "flag": "🇫🇷",
+      "weight": 0.07,
+      "csov_score": 51.67,
+      "components": {
+        "serp": 51.55,
+        "ai_overview": 50.0,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "jp": {
+      "name": "Japan",
+      "flag": "🇯🇵",
+      "weight": 0.04,
+      "csov_score": 52.49,
+      "components": {
+        "serp": 52.18,
+        "ai_overview": 52.4,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "nl": {
+      "name": "Netherlands",
+      "flag": "🇳🇱",
+      "weight": 0.04,
+      "csov_score": 53.25,
+      "components": {
+        "serp": 54.36,
+        "ai_overview": 52.4,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "it": {
+      "name": "Italy",
+      "flag": "🇮🇹",
+      "weight": 0.03,
+      "csov_score": 51.8,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 52.7,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    },
+    "ch": {
+      "name": "Switzerland",
+      "flag": "🇨🇭",
+      "weight": 0.03,
+      "csov_score": 52.5,
+      "components": {
+        "serp": 52.36,
+        "ai_overview": 52.2,
+        "llm": 48.5,
+        "earned_media": 60.0
+      }
+    }
+  },
+  "serp_data": {
+    "results": {
+      "us": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.linkedin.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "ivisaonline.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "common.usembassy.gov",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "finance.yahoo.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.bbb.org",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "negative",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "lakelandcurrents.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.tripadvisor.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "1883magazine.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          }
+        ],
+        "is ivisa legit": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.bbb.org",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "negative",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "lakelandcurrents.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.europeanbusinessreview.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.tripadvisor.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "1883magazine.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "ivisa reviews": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "ie.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.glassdoor.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.tripadvisor.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          }
+        ],
+        "ivisa fake or real": [],
+        "is ivisa safe": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.adventuresnsunsets.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.bbb.org",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "negative",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.tripadvisor.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "lakelandcurrents.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.europeanbusinessreview.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "gb": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.gov.uk",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "uk.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.linkedin.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "ivisaonline.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "find-and-update.company-information.service.gov.uk",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "uk.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.tripadvisor.co.uk",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.europeanbusinessreview.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "1883magazine.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "ivisa reviews": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "uk.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.tripadvisor.co.uk",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.girlabouttheglobe.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.tripadvisor.co.uk",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "au": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "au.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.linkedin.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "ivisaonline.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.ivisaconsulting.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "au.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.europeanbusinessreview.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.tripadvisor.com.au",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.smh.com.au",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "boards.cruisecritic.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "lakelandcurrents.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          }
+        ],
+        "ivisa reviews": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "au.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.smh.com.au",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.tripadvisor.com.au",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          }
+        ],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "de": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "de.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.visum-botschaft.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "help.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "at.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "ca": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.linkedin.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "ca.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "ivisaonline.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "ca.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.europeanbusinessreview.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.tripadvisor.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "1883magazine.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "lakelandcurrents.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "ivisa reviews": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "ca.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.bbb.org",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "negative",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.tripadvisor.ca",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          }
+        ],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "fr": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "fr.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "ivisa.ru",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "ivisatg.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "ivisaonline.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "jp": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "jp.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "jp.linkedin.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.nomadkazoku.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "nl": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "nl.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "nl.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "travelsloth.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.ingridzenmoments.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "it": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.facebook.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "ch": {
+        "iVisa": [
+          {
+            "position": 1,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 2,
+            "url": "",
+            "domain": "ch.trustpilot.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 3,
+            "url": "",
+            "domain": "apps.apple.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 4,
+            "url": "",
+            "domain": "www.ivisa.com",
+            "title": "",
+            "is_ivisa": true,
+            "sentiment": "positive",
+            "source": "semrush"
+          },
+          {
+            "position": 5,
+            "url": "",
+            "domain": "www.heise.de",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 6,
+            "url": "",
+            "domain": "play.google.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 7,
+            "url": "",
+            "domain": "www.reddit.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 8,
+            "url": "",
+            "domain": "www.instagram.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 9,
+            "url": "",
+            "domain": "www.ivisa.ru",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          },
+          {
+            "position": 10,
+            "url": "",
+            "domain": "www.youtube.com",
+            "title": "",
+            "is_ivisa": false,
+            "sentiment": "neutral",
+            "source": "semrush"
+          }
+        ],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      }
+    },
+    "country_scores": {
+      "us": 55.55,
+      "gb": 53.73,
+      "au": 54.36,
+      "de": 52.36,
+      "ca": 54.09,
+      "fr": 51.55,
+      "jp": 52.18,
+      "nl": 54.36,
+      "it": 50.0,
+      "ch": 52.36
+    },
+    "global_score": 54.02
+  },
+  "ai_overview_data": {
+    "results": {
+      "us": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://www.linkedin.com/company/ivisa",
+            "https://apps.apple.com/bs/app/ivisa-eta-evisa-esta-visa/id1053424792",
+            "https://www.reddit.com/r/travel/comments/1rlhd3j/is_ivisa_legit_trying_to_get_my_visa_approved_so/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_US"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://lakelandcurrents.com/is-ivisa-a-scam-inside-the-refund-policy-thats-restoring-traveler-trust/"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party agency that processes official travel documents and visas for over 140 destinations. While the visas they provide are completely real, they operate as a middleman, meaning they charge significant service fees on top of standard government costs. Reddit·r/travel +2 The Pros: Why people use them The Cons: Why some complain The Verdict The platform is not a scam and successfully delivers visas, boasting a strong reputation on Trustpilot Reviews. However, if you are comfortable filling out government forms and want to save money, it is highly recommended to apply directly through the official government website of your destination country. Reddit·r/AusVisa +3",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.trustpilot.com/review/ivisa.com"
+          ],
+          "score": 62.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "No, iVisa is not a scam, but it is a third-party, for-profit travel document agency. While they will legitimately process and obtain your travel documents, they are highly controversial among travelers because they charge steep convenience fees for services you can often complete directly through official government websites for a fraction of the cost. Reddit·r/travel +2 How iVisa Works iVisa acts as a middleman between you and the destination country’s immigration authorities. You provide your information and documents on their platform, and their agents format, review, and submit it through the proper official channels. The Pros The Cons The Bottom Line If you are confident in filling out government forms, you should apply directly through the official embassy or government portal to save money. However, if you are willing to pay a premium for ease of use, guided support, and a stress-free interface, iVisa operates as a legitimate service. If you plan to use them, always double-check the true cost of your visa on the official government website before checking out so you are aware of exactly how much of a markup you are paying. Reddit·r/AusVisa",
+          "sentiment_score": 45.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://lakelandcurrents.com/is-ivisa-a-scam-inside-the-refund-policy-thats-restoring-traveler-trust/"
+          ],
+          "score": 45.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service that successfully obtains official travel visas and documents. However, they operate as a middleman, meaning you will pay significantly higher processing fees than if you applied directly through official government websites. Reddit·r/travel +4 Consider these key factors before using their service: Summary Recommendation:\nIf you are willing to pay a premium for a more user-friendly interface, error-checks, and step-by-step guidance, they are a safe, trusted option. If you are comfortable following government instructions or have a tight budget, it is almost always cheaper and better to apply directly to the destination country's official immigration authority. Reddit·r/travel +3 For more details on processing times and real user experiences, you can check out verified reviews on Trustpilot.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 62.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service that successfully obtains official travel visas and documents. However, they operate as a middleman, meaning you will pay significantly higher processing fees than if you applied directly through official government websites. Reddit·r/travel +4 Consider these key factors before using their service: Summary Recommendation:\nIf you are willing to pay a premium for a more user-friendly interface, error-checks, and step-by-step guidance, they are a safe, trusted option. If you are comfortable following government instructions or have a tight budget, it is almost always cheaper and better to apply directly to the destination country's official immigration authority. Reddit·r/travel +3 For more details on processing times and real user experiences, you can check out verified reviews on Trustpilot.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 62.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate, safe middleman that uses encrypted payment methods and successfully processes travel visas. However, they are a private third-party service, meaning they charge high markup fees for applications you can often complete on official government websites for a fraction of the cost. Reddit·r/AusVisa +2 The Good: Convenience & Support The Risks: Cost & Potential Errors Recommendation: If you are comfortable navigating government websites and double-checking your own work, you should apply directly to the destination country’s official immigration or e-Visa portal to save money. If you are willing to pay a premium to have a third party handle the formatting and stress, iVisa is a safe and workable option. Reddit·r/AusVisa +2",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 62.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_US",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://www.ivisa.com/blog/ivisa-vs-government-sites-a-look-behind-the-fee",
+            "https://www.ivisa.com/",
+            "https://travel.state.gov/content/travel/en/us-visas.html"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa’s total cost varies by destination, consisting of the exact government visa fee plus an added iVisa service fee, which typically ranges from $\\$20$ to $\\$60$. Additional rush processing fees can add $\\$20$ to $\\$50$. You can view the exact breakdown on the iVisa website. While iVisa is a legitimate third-party service that simplifies applications, their processing fees make the total significantly more expensive than applying directly through official government portals. Reddit·r/AusVisa +3 Cost Breakdown Example Comparisons Considerations Before Booking",
+          "sentiment_score": 35.0,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/fees/fees-visa-services.html",
+            "https://www.ivisa.com/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.youtube.com/watch?v=bTCPHlV2NyA"
+          ],
+          "score": 35.0
+        }
+      },
+      "gb": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://apps.apple.com/gb/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
+            "https://www.linkedin.com/company/ivisa",
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_GB"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.co.uk/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.sandspice.com/ivisa/?srsltid=AfmBOopPRihkgbaolrvedsrlgHDjYez-lJ1A1uf6dnfEvDZ-ZVg8J8xx"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a legitimate private company that provides valid travel visas and electronic travel authorizations. However, it is not affiliated with any government and charges high service fees for processing documents that travelers can typically apply for directly through official government websites at a fraction of the cost. Reddit·r/travel +5 The Pros The Cons Recommendations Before using iVisa, check the official government website for your destination to see if you can apply yourself. Because official sites usually charge only the base government fee, you can often save money by bypassing third-party agencies entirely. If you still wish to use a third-party service, you can read iVisa Trustpilot to see how other travelers have rated their specific destination's processing time.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.tripadvisor.co.uk/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 62.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is not a scam, but rather a legitimate third-party service that charges high processing fees to handle visa applications. While they deliver official travel documents, they are a private agency, not a government site, and you can usually apply for your visa directly through official government portals for a fraction of the price. Reddit·r/travel +4 Before you use their service, keep these important details in mind: The Bottom Line:\nIf you need assistance, have complex travel documents, or want the convenience of having your application reviewed before submission, iVisa is a reliable tool to use. However, if you are comfortable navigating government websites and want to save money, it is highly recommended to search for and use the official government portal of your destination country. YouTube·Nat - The Travelling Fox +2 You can read experiences and make your own comparison by checking out the iVisa Trustpilot Profile against the official visa requirements for your specific destination. Trustpilot",
+          "sentiment_score": 58.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.co.uk/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 58.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party agency that processes travel documents and visas. They are not a scam, but they are generally not recommended by seasoned travelers because they act as a paid middleman. Reddit·r/travel +3 Key things to know before using them: 1. You Will Overpay iVisa charges a hefty service fee (usually $\\$20$ to $\\$60$+) on top of standard government visa fees. For example, a government-issued ETA (Electronic Travel Authorization) for countries like Australia, New Zealand, or Canada costs just a few dollars, but iVisa often charges upwards of $\\$100$. Reddit·r/AusVisa +2 2. They Do Not \"Speed Up\" the Government While they offer \"super rush\" tiers, this only means their staff processes your application faster. They cannot bypass government wait times, and they do not guarantee you will be approved. Trustpilot +3 3. Risk of Errors Many users complain that you have to rely on their staff to input your details correctly on government portals. If iVisa makes a mistake on your application, it is you who faces issues at border control. What You Should Do Instead To avoid paying massive markups, always check the government website for your destination country first. Look for official government portals (which usually end in .gov or your destination's specific domain) to apply directly for your travel authorization. If you still want to use iVisa for their simplified forms or 24/7 customer support, check official visa requirements and average processing times first on the iVisa Official Website to compare them with direct government channels.",
+          "sentiment_score": 28.0,
+          "sources": [
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.tripadvisor.co.uk/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 28.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a legitimate third-party service that simplifies travel visa applications. While users praise its user-friendly interface, 24/7 support, and convenience, many criticize the heavily inflated fees, as they charge a premium to process visas you can often obtain directly from government websites for a fraction of the cost. Trustpilot +4 Pros Cons The Bottom Line If you have a complex travel itinerary, are short on time, or simply want to avoid the headache of government websites, iVisa is a reliable way to get your documentation. However, if you are looking for the most affordable route, it is highly recommended to apply directly through your destination's official government immigration or e-Visa website. Reddit·r/travel +3 You can check out traveler ratings or submit your own experiences on the Trustpilot iVisa Profile.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.co.uk/ShowTopic-g293860-i511-k12051097-o20-Ivisa_com-India.html",
+            "https://www.ivisa.com/testimonials"
+          ],
+          "score": 62.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party agency that processes travel documents and visas. They are not a scam, but they are generally not recommended by seasoned travelers because they act as a paid middleman. Reddit·r/travel +3 Key things to know before using them: 1. You Will Overpay iVisa charges a hefty service fee (usually $\\$20$ to $\\$60$+) on top of standard government visa fees. For example, a government-issued ETA (Electronic Travel Authorization) for countries like Australia, New Zealand, or Canada costs just a few dollars, but iVisa often charges upwards of $\\$100$. Reddit·r/AusVisa +2 2. They Do Not \"Speed Up\" the Government While they offer \"super rush\" tiers, this only means their staff processes your application faster. They cannot bypass government wait times, and they do not guarantee you will be approved. Trustpilot +3 3. Risk of Errors Many users complain that you have to rely on their staff to input your details correctly on government portals. If iVisa makes a mistake on your application, it is you who faces issues at border control. What You Should Do Instead To avoid paying massive markups, always check the government website for your destination country first. Look for official government portals (which usually end in .gov or your destination's specific domain) to apply directly for your travel authorization. If you still want to use iVisa for their simplified forms or 24/7 customer support, check official visa requirements and average processing times first on the iVisa Official Website to compare them with direct government channels.",
+          "sentiment_score": 32.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.co.uk/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 32.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate company and is safe regarding data security, featuring secure payment protocols. However, it is a third-party agency, not an official government website. You are paying a premium for convenience, as they often charge significantly higher fees than official government portals for visas you could process yourself. Trustpilot +5 The Pros The Cons & Risks Recommendations Always check your destination country's official government immigration website first to see if you can apply directly and avoid extra fees. If you choose to use iVisa, check reviews specifically on platforms like Trustpilot to gauge the current reliability for the exact country you are visiting. Trustpilot",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://uk.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 62.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_GB",
+            "https://www.gov.uk/browse/visas-immigration",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://find-and-update.company-information.service.gov.uk/company/14185062",
+            "https://www.gov.uk/evisa"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_GB",
+            "https://www.ivisa.com/",
+            "https://www.gov.uk/visa-fees"
+          ],
+          "score": 50.0
+        }
+      },
+      "au": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://apps.apple.com/au/app/ivisa-eta-evisa-esta-visa/id1053424792",
+            "https://www.reddit.com/r/AusVisa/comments/1frb1aw/has_anyone_used_ivisa/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_AU",
+            "https://www.facebook.com/iVisaTravel/"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.tripadvisor.com.au/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://au.trustpilot.com/review/ivisa.com",
+            "https://www.smh.com.au/traveller/reviews-and-advice/applying-for-visas-online-watch-out-for-these-common-scams-20230818-p5dxny.html",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a legitimate third-party visa processing service, not a scam, and they generally deliver the valid travel documents they promise. However, they operate as a middleman and are not affiliated with any government. Reddit·r/travel +3 While millions of travelers have used their service for convenience, past customers have frequently reported issues: YouTube·iVisa +2 Recommendation:\nAlways verify if you actually need a third-party service before submitting payment. For most travel destinations, you can easily apply for e-Visas directly through official government portals. If you do choose to use them for their simplified forms or document checks, do so knowing you are paying a large premium for convenience. You can check customer ratings and feedback for yourself on the Trustpilot iVisa Profile.",
+          "sentiment_score": 58.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://au.trustpilot.com/review/ivisa.com",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
+            "https://www.smh.com.au/traveller/reviews-and-advice/applying-for-visas-online-watch-out-for-these-common-scams-20230818-p5dxny.html"
+          ],
+          "score": 58.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "No, iVisa is not a scam in the sense of stealing your credit card or failing to deliver your document. It is a legitimate third-party visa processing service. However, many travelers find their practices \"scammy\" because they charge massive markups for services that are often free or much cheaper when done directly through official government websites. Reddit·r/AusVisa +1 Here is what you need to know before using them: Why People Call it a \"Scam\" The Pros & Cons How to Apply the Right Way Always double-check the search results when looking for your destination's entry requirements. Avoid links marked as \"Sponsored\" or \"Ad\". Always verify whether your specific destination requires an official government application or if you can simply use the Smartraveller resource to find legitimate, official entry requirements and portals before paying third-party fees. Reddit·r/travel",
+          "sentiment_score": 42.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.tripadvisor.com.au/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://au.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 42.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service, not a scam. They successfully process visas and travel documents and provide customer support. Trustpilot +1 However, they are a private agency, meaning they charge high service fees for government documents that you can often get yourself for free or a fraction of the cost. Reddit·r/travel +1 The Pros & Cons Before using iVisa Before paying their fees, check if you can apply directly through the official government portal. Reddit·r/travel If you want to use them for peace of mind, they are a functioning business. But if you prefer to save money, check the destination's official immigration website first. Reddit·r/travel +2",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://au.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.com.au/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 62.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a legitimate third-party visa processing service that simplifies travel applications, but it is frequently criticized for its high fees and aggressive marketing. While they successfully deliver visas, users often pay significant markups for services they could otherwise complete for free or at cost on official government websites. Reddit·r/AusVisa +2 Pros & Cons Trustpilot & Community Feedback The Verdict: Is it worth it? It is worth it if you are a busy traveler, feel overwhelmed by clunky government websites, and are perfectly willing to pay a premium for hand-holding, document validation, and 24/7 support. YouTube·Nat - The Travelling Fox +1 It is not worth it if you are on a budget or looking for direct value, as you can bypass the intermediary fees entirely by checking your destination country's official immigration or e-Visa portal. Reddit·r/AusVisa +1",
+          "sentiment_score": 42.0,
+          "sources": [
+            "https://au.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/AusVisa/comments/1frb1aw/has_anyone_used_ivisa/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://apps.apple.com/au/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
+            "https://www.smh.com.au/traveller/reviews-and-advice/applying-for-visas-online-watch-out-for-these-common-scams-20230818-p5dxny.html"
+          ],
+          "score": 42.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.tripadvisor.com.au/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://au.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service and safe to use for processing travel documents. While your data and payments are securely encrypted, many travelers note that their services are significantly more expensive than applying directly through official government websites. SMH.com.au +1 The Pros: Why People Use It The Cons: What to Watch Out For Recommendation If you need guidance and are willing to pay a premium for peace of mind, iVisa is secure. However, to save money, it is highly recommended to search for and use the official government immigration portal for your destination (e.g., the official US ESTA or Australian ETA websites). YouTube·Part Time Travelling Family - Eleise and Lawrence +3",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://au.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/"
+          ],
+          "score": 62.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_AU",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://apps.apple.com/au/app/ivisa-eta-evisa-esta-visa/id1053424792",
+            "https://www.facebook.com/groups/744836372332200/posts/2861773610638455/",
+            "https://www.homeaffairs.gov.au/"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://apps.apple.com/au/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
+            "https://www.youtube.com/watch?v=bTCPHlV2NyA",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_AU"
+          ],
+          "score": 50.0
+        }
+      },
+      "de": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.instagram.com/ivisa_travel/",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.heise.de/en/news/iVisa-com-Consumer-advice-center-warns-of-UK-travel-permit-scam-10465471.html",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service that successfully processes and delivers valid travel visas and documents. It is not a scam and has been operating for over a decade, with generally strong ratings on platforms like Trustpilot. However, before using them, it is important to understand what you are paying for and the associated trade-offs: What iVisa Actually Is iVisa is a private visa-processing agency, not a government entity. They act as a middleman between you and government immigration websites. Cycloscope +2 The Pros: Why People Use Them The Cons: Why Some Travelers Regret It The Bottom Line iVisa is an excellent, legitimate tool if you are willing to pay a premium for convenience and hand-holding. However, if you are comfortable navigating government forms on your own, you can save a significant amount of money by looking up the official government website for your destination country. Reddit·r/AusVisa +1 You can use the official iVisa Visa Checker to see what documents you need, but always check the official government portal of the country you are visiting before paying their checkout fees. Reddit·r/AusVisa +1",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 62.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.ivisa.com/",
+            "https://www.tripadvisor.com/ShowTopic-g293860-i511-k12051097-o20-Ivisa_com-India.html"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service that successfully processes and delivers valid travel visas and documents. It is not a scam and has been operating for over a decade, with generally strong ratings on platforms like Trustpilot. However, before using them, it is important to understand what you are paying for and the associated trade-offs: What iVisa Actually Is iVisa is a private visa-processing agency, not a government entity. They act as a middleman between you and government immigration websites. Cycloscope +2 The Pros: Why People Use Them The Cons: Why Some Travelers Regret It The Bottom Line iVisa is an excellent, legitimate tool if you are willing to pay a premium for convenience and hand-holding. However, if you are comfortable navigating government forms on your own, you can save a significant amount of money by looking up the official government website for your destination country. Reddit·r/AusVisa +1 You can use the official iVisa Visa Checker to see what documents you need, but always check the official government portal of the country you are visiting before paying their checkout fees. Reddit·r/AusVisa +1",
+          "sentiment_score": 72.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.heise.de/en/news/iVisa-com-Consumer-advice-center-warns-of-UK-travel-permit-scam-10465471.html"
+          ],
+          "score": 72.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/"
+          ],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://cycloscope.net/i-visa-review/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://ivisa-online-travel-visa-id.soft112.com/"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.ivisa.com/",
+            "https://clairesitchyfeet.com/ivisa-review-when-it-might-help-and-when-it-wont/"
+          ],
+          "score": 50.0
+        }
+      },
+      "ca": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://apps.apple.com/ca/app/ivisa-eta-evisa-evoa-visa/id1053424792",
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_CA",
+            "https://www.reddit.com/r/travel/comments/1rlhd3j/is_ivisa_legit_trying_to_get_my_visa_approved_so/"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.tripadvisor.ca/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a legitimate third-party service that will successfully process your travel documents, but they are highly controversial because they operate as a middleman and charge significant markups compared to official government websites. Reddit·r/travel +1 The critical details to consider include: Before you use iVisa, check the official government website for your destination to see if you can apply directly for a fraction of the cost. If you still want to use their services to save time on paperwork, you can check reviews on the Trustpilot iVisa Profile.",
+          "sentiment_score": 45.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 45.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a legitimate third-party processing service rather than a scam, but it is frequently criticized by travelers for being heavily overpriced. They act as a middleman, charging a significant service fee to handle your visa or travel authorization applications. Reddit·r/travel +2 The critical details you need to know: Recommendation:\nAlways research the actual government portal for your destination country before using their service. If you are comfortable filling out forms and navigating government websites, applying directly will save you substantial service fees. However, if you are willing to pay for convenience and human assistance, you can manage and track your documents on the iVisa Platform.",
+          "sentiment_score": 42.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.tripadvisor.ca/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 42.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party travel document service. It is not a scam and will secure valid visas or travel authorizations. However, it is an agency that adds heavy markups, making it much more expensive than applying directly through official government websites. Reddit·r/travel +3 Key Things to Know Before Using iVisa The Bottom Line If you are confused by clunky government websites and are willing to pay a premium for peace of mind, iVisa is a reliable, secure service. If you have simple travel needs and want to save money, check official government portals first to apply directly. You can read user ratings or check official credentials on Trustpilot.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/"
+          ],
+          "score": 62.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party travel document service. It is not a scam and will secure valid visas or travel authorizations. However, it is an agency that adds heavy markups, making it much more expensive than applying directly through official government websites. Reddit·r/travel +3 Key Things to Know Before Using iVisa The Bottom Line If you are confused by clunky government websites and are willing to pay a premium for peace of mind, iVisa is a reliable, secure service. If you have simple travel needs and want to save money, check official government portals first to apply directly. You can read user ratings or check official credentials on Trustpilot.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.ivisa.com/blog/how-to-tell-if-a-visa-website-is-a-scam-or-a-fake"
+          ],
+          "score": 62.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://ca.trustpilot.com/review/ivisa.com",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/"
+          ],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_CA",
+            "https://cycloscope.net/i-visa-review/",
+            "https://www.ivisa.com/",
+            "https://ca.trustpilot.com/review/ivisa.com"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://www.ivisa.com/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://apps.apple.com/au/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
+            "https://clairesitchyfeet.com/ivisa-review-when-it-might-help-and-when-it-wont/"
+          ],
+          "score": 50.0
+        }
+      },
+      "fr": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://fr.linkedin.com/company/ivisa",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.instagram.com/ivisa_travel/"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.ivisa.com/blog/how-to-tell-if-a-visa-website-is-a-scam-or-a-fake"
+          ],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.quora.com/Is-the-iVisa-website-legitimate-or-a-scam-to-avoid"
+          ],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.merriam-webster.com/dictionary/is",
+            "https://en.wikipedia.org/wiki/IS",
+            "https://dictionary.cambridge.org/dictionary/english/is",
+            "https://en.wiktionary.org/wiki/is",
+            "https://www.wordreference.com/enfr/is?s=Here%20is%20some%20last%20minute%20news"
+          ],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.ivisa.com/testimonials"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.ivisa.com/blog/how-to-tell-if-a-visa-website-is-a-scam-or-a-fake"
+          ],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.ivisa.com/",
+            "https://www.quora.com/Is-the-iVisa-website-legitimate-or-a-scam-to-avoid"
+          ],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.ivisa.com/",
+            "https://www.trustpilot.com/review/ivisa.com"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.ivisa.com/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://clairesitchyfeet.com/ivisa-review-when-it-might-help-and-when-it-wont/"
+          ],
+          "score": 50.0
+        }
+      },
+      "jp": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://apps.apple.com/us/app/ivisa-eta-evisa-nzeta-visa/id1053424792",
+            "https://jp.linkedin.com/company/ivisa",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.facebook.com/iVisaTravel/"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a real, legitimate third-party agency that processes travel documents. However, it is not a government agency. While they will successfully help you get your visa, they charge massive service markups for applications you can usually do yourself for free or at a much lower cost on official government websites. Reddit·r/travel +3 Here is a quick breakdown to help you decide: Before you pay for any service, always search for the official embassy or government website for your destination country to see if you can apply directly. If you choose to use a third party, you can check past customer experiences on the Trustpilot iVisa Profile or BBB iVisa Profile.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/"
+          ],
+          "score": 62.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.com/ShowTopic-g293860-i511-k12051097-o20-Ivisa_com-India.html",
+            "https://www.ivisa.com/"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "iVisa is a real, legitimate third-party agency that processes travel documents. However, it is not a government agency. While they will successfully help you get your visa, they charge massive service markups for applications you can usually do yourself for free or at a much lower cost on official government websites. Reddit·r/travel +3 Here is a quick breakdown to help you decide: Before you pay for any service, always search for the official embassy or government website for your destination country to see if you can apply directly. If you choose to use a third party, you can check past customer experiences on the Trustpilot iVisa Profile or BBB iVisa Profile.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.ivisa.com/blog/how-to-tell-if-a-visa-website-is-a-scam-or-a-fake"
+          ],
+          "score": 62.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://ivisa.en.aptoide.com/app",
+            "https://www.facebook.com/iVisaTravel/posts/why-should-you-apply-for-a-visa-eta-or-travel-document-with-ivisa-instead-of-thr/530944492615606/",
+            "https://www.youtube.com/watch?v=ZTMgElCE-Qk"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/fees/fees-visa-services.html",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.youtube.com/watch?v=bTCPHlV2NyA"
+          ],
+          "score": 50.0
+        }
+      },
+      "nl": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://apps.apple.com/nl/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
+            "https://www.instagram.com/ivisa_travel/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service that helps travelers obtain visas, e-Visas, and travel authorizations. However, it is not an official government agency and operates as a paid middleman. Reddit·r/travel +3 While iVisa is a safe and functioning business, it has a polarizing reputation among travelers due to its pricing and marketing model. Reddit·r/travel +1 The Pros: Why People Use It The Cons: Why Complaints Happen The Bottom Line If you want peace of mind, step-by-step guidance, and are willing to pay a premium for convenience, iVisa is a safe and trusted option. If you are on a budget and feel comfortable navigating government portals, it is highly recommended that you find and use the official government website to avoid excessive service fees. Reddit·r/travel +3",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/"
+          ],
+          "score": 62.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.ivisa.com/testimonials",
+            "https://www.tripadvisor.com/ShowTopic-g293860-i511-k12051097-o20-Ivisa_com-India.html"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party service that helps travelers obtain visas, e-Visas, and travel authorizations. However, it is not an official government agency and operates as a paid middleman. Reddit·r/travel +3 While iVisa is a safe and functioning business, it has a polarizing reputation among travelers due to its pricing and marketing model. Reddit·r/travel +1 The Pros: Why People Use It The Cons: Why Complaints Happen The Bottom Line If you want peace of mind, step-by-step guidance, and are willing to pay a premium for convenience, iVisa is a safe and trusted option. If you are on a budget and feel comfortable navigating government portals, it is highly recommended that you find and use the official government website to avoid excessive service fees. Reddit·r/travel +3",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.ivisa.com/blog/how-to-tell-if-a-visa-website-is-a-scam-or-a-fake"
+          ],
+          "score": 62.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/",
+            "https://www.youtube.com/watch?v=sus1uswWfoQ",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://nl.trustpilot.com/review/ivisa.com?page=5",
+            "https://www.gov.uk/evisa",
+            "https://www.ivisa.com/blog/ivisa-vs-government-sites-a-look-behind-the-fee"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.youtube.com/watch?v=bTCPHlV2NyA",
+            "https://www.ivisa.com/",
+            "https://clairesitchyfeet.com/ivisa-review-when-it-might-help-and-when-it-wont/"
+          ],
+          "score": 50.0
+        }
+      },
+      "it": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/it",
+            "https://it.trustpilot.com/review/ivisa.com",
+            "https://www.ivisa.it/",
+            "https://www.facebook.com/iVisaTravel/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=it"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party travel document and visa processing service, not a scam. They are a paid middleman that helps travelers navigate foreign entry requirements and government applications. However, they are not affiliated with any government. Reddit·r/travel +2 The Pros: Why People Use It The Cons: What You Should Know Bottom Line If you are comfortable filling out forms and navigating government portals, applying directly will save you a lot of money. However, if you are willing to pay a premium for peace of mind, ease of use, and expert review, iVisa is a safe and trusted service. Reddit·r/travel +3 Before paying, always double-check the actual government requirements so you know exactly how much of a markup you are paying. You can compare iVisa's rates to official channels using the iVisa.com platform, but make sure to verify the true government fee before checking out.",
+          "sentiment_score": 62.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/"
+          ],
+          "score": 62.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.tripadvisor.com/ShowTopic-g293860-i511-k12051097-o20-Ivisa_com-India.html",
+            "https://www.ivisa.com/"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party travel document and visa processing service, not a scam. They are a paid middleman that helps travelers navigate foreign entry requirements and government applications. However, they are not affiliated with any government. Reddit·r/travel +2 The Pros: Why People Use It The Cons: What You Should Know Bottom Line If you are comfortable filling out forms and navigating government portals, applying directly will save you a lot of money. However, if you are willing to pay a premium for peace of mind, ease of use, and expert review, iVisa is a safe and trusted service. Reddit·r/travel +3 Before paying, always double-check the actual government requirements so you know exactly how much of a markup you are paying. You can compare iVisa's rates to official channels using the iVisa.com platform, but make sure to verify the true government fee before checking out.",
+          "sentiment_score": 65.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.ivisa.com/blog/how-to-tell-if-a-visa-website-is-a-scam-or-a-fake"
+          ],
+          "score": 65.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://apps.apple.com/it/app/ivisa-eta-evisa-esta-visa/id1053424792?l=en-GB",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://cycloscope.net/i-visa-review/",
+            "https://it.trustpilot.com/review/ivisa.com?page=2"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.ivisa.com/",
+            "https://clairesitchyfeet.com/ivisa-review-when-it-might-help-and-when-it-wont/"
+          ],
+          "score": 50.0
+        }
+      },
+      "ch": {
+        "iVisa": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.ivisa.com/",
+            "https://apps.apple.com/ch/app/ivisa-eta-evisa-esta-visa/id1053424792?l=en-GB",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.linkedin.com/company/ivisa"
+          ],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
+          ],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints"
+          ],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
+          ],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.tripadvisor.com/ShowTopic-g293860-i511-k12051097-o20-Ivisa_com-India.html",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.ivisa.com/"
+          ],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": true,
+          "ivisa_cited": true,
+          "ai_overview_text": "Yes, iVisa is a legitimate third-party visa and travel document processing company, not a scam. They help travelers navigate complex bureaucratic systems, but they are a private business and not affiliated with any government. Reddit·r/travel +3 While their services are real, there are important pros and cons to weigh before using them: The Pros: Why people use them The Cons: Why people are frustrated The Bottom Line If you are willing to pay a premium for ease of use, formatting, and the peace of mind of having someone double-check your application, iVisa is a safe and reliable choice. However, if you are comfortable navigating official sites and want to save money, you should always check if you can apply directly through the official government portal. Reddit·r/travel +3 If you decide to move forward with them, you can access their services directly via the iVisa Website. Cycloscope",
+          "sentiment_score": 72.0,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.tripadvisor.com/ShowTopic-g304554-i4228-k14541631-o20-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://travelsloth.de/en/review-ivisa/"
+          ],
+          "score": 72.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
+            "https://www.trustpilot.com/review/ivisa.com",
+            "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/"
+          ],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
+            "https://www.reddit.com/r/visas/comments/1qtszvm/is_ivisa_affiliated_with_the_government/",
+            "https://cycloscope.net/i-visa-review/",
+            "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/",
+            "https://uk.trustpilot.com/review/ivisa.com?page=5"
+          ],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": false,
+          "ivisa_cited": false,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [
+            "https://www.reddit.com/r/visas/comments/1qkornc/does_ivisa_charge_a_fee/",
+            "https://travelsloth.de/en/review-ivisa/",
+            "https://apps.apple.com/ch/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
+            "https://www.youtube.com/watch?v=bTCPHlV2NyA",
+            "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en"
+          ],
+          "score": 50.0
+        }
+      }
+    },
+    "country_scores": {
+      "us": 52.8,
+      "gb": 50.4,
+      "au": 51.6,
+      "de": 53.4,
+      "ca": 51.1,
+      "fr": 50.0,
+      "jp": 52.4,
+      "nl": 52.4,
+      "it": 52.7,
+      "ch": 52.2
+    },
+    "global_score": 51.98
+  },
+  "llm_data": {
+    "part_a": {
+      "results": [
+        {
+          "query": "Is iVisa legit?",
+          "claude_response": "# iVisa Legitimacy Assessment\n\niVisa appears to be a **legitimate service**, but with important caveats:\n\n## What they do well\n- Legally registered company (Delaware incorporation)\n- Real customer base with mostly positive reviews\n- Transparent about fees upfront\n- Handles visa applications for numerous countries\n\n## Key concerns\n- **High markups** - Their fees are significantly above government costs\n- **Not required** - You can apply directly to embassies/consulates for free or less\n- **Mixed reviews** - Some complaints about delays or service quality\n- **Processing times** vary by country; they don't always guarantee speed\n\n## Bottom line\n- **Legitimate**: Yes, unlikely to scam you\n- **Good value**: Not necessarily - you're paying convenience premiums\n- **When it makes sense**: If you value simplicity, have complex applications, or need help navigating bureaucracy\n\n**Better alternatives to compare**: Direct embassy applications, local visa agencies, or government-approved services.\n\nBefore using any visa service, verify it's recognized by your country's actual embassy or consulate.",
+          "gemini_response": null,
+          "claude_sentiment": 58.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 58.0
+        },
+        {
+          "query": "Is iVisa a scam?",
+          "claude_response": "# iVisa Legitimacy Assessment\n\niVisa is **not a scam**, but it's important to understand what they actually do:\n\n## What they are:\n- A legitimate visa application **service company** (not a government agency)\n- They help process and organize visa applications for various countries\n- They charge a fee on top of official government costs\n\n## Key considerations:\n\n**Pros:**\n- Genuine company that's been operating since 2014\n- Can save time for complex applications\n- Customer service available in multiple languages\n\n**Cons:**\n- You're paying for convenience/assistance (significant markup)\n- You could apply directly to governments for free or less\n- Mixed customer reviews regarding service quality and delivery times\n- Some complaints about unclear fee breakdowns\n\n## Bottom line:\nIt's a **legitimate but costly intermediary**. Whether it's worth using depends on:\n- Whether you value convenience over cost\n- The complexity of your specific visa\n- How much time you want to spend on applications yourself\n\n**If you're concerned:** Check recent reviews, verify they're licensed in your country, and confirm fees upfront before committing.\n\nHave you had a specific experience with them, or are you considering using their service?",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Should I use iVisa?",
+          "claude_response": "# Key considerations for iVisa:\n\n**Potential advantages:**\n- Convenient for busy people who want help with paperwork\n- Handles multiple visa types\n- Has customer service support\n- Can save time if you're unfamiliar with requirements\n\n**Potential drawbacks:**\n- Significant markup on government fees (they charge service fees on top)\n- Not an official government service—they're an intermediary\n- You could apply directly for free or much cheaper\n- Mixed reviews on speed and reliability\n- Some countries have better/cheaper alternatives\n\n**Better alternatives:**\n- Apply directly through your destination country's official government website (usually cheapest)\n- Check if your country's embassy offers expedited services\n- Use the official government visa portal when available\n\n**When iVisa might make sense:**\n- Complex visa with confusing requirements\n- You're willing to pay for convenience\n- Time-sensitive urgent applications\n- Visa to a country with a difficult application process\n\n**My suggestion:** \nFirst check your destination's official visa website to understand the process and costs. If it seems straightforward, applying directly saves money. If it's genuinely complicated, then compare iVisa's fees against the value of your time and peace of mind.\n\nWhat country are you trying to visit? I can give more specific advice.",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Can I trust iVisa?",
+          "claude_response": "# iVisa Reliability Assessment\n\niVisa is **generally legitimate**, but comes with some caveats:\n\n## Strengths\n- Established company (operating since 2014)\n- Processes real visa applications\n- Positive customer reviews on independent sites\n- Licensed to operate in most countries\n\n## Key Considerations\n- **Markup**: You pay a service fee on top of official government fees (sometimes 100-300% more)\n- **Processing times**: Often similar to applying directly, despite \"rush\" options\n- **Customer service**: Mixed reviews on responsiveness\n- **Not a visa guarantor**: They process applications but can't guarantee approval\n\n## Better Alternatives\n- Apply directly through your destination country's embassy/consulate (cheaper, no middleman)\n- Check if your country's government has an official online service\n\n## Bottom Line\niVisa is **trustworthy for processing**, but you're paying extra for convenience. For straightforward visas, applying directly usually saves money and time.\n\n**What visa are you considering?** I can suggest whether using an agent makes sense in your specific situation.",
+          "gemini_response": null,
+          "claude_sentiment": 58.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 58.0
+        },
+        {
+          "query": "iVisa reviews - honest opinion",
+          "claude_response": "# iVisa Reviews - What You Should Know\n\n## The Good\n- **Convenience**: Streamlined application process, handles paperwork compilation\n- **Speed options**: Expedited processing available for most visas\n- **Global reach**: Services for 190+ countries\n- **User-friendly interface**: Relatively intuitive platform\n- **Support available**: Customer service team accessible\n\n## The Drawbacks\n- **High fees**: Markup on government visa costs can be substantial (often 2-3x higher)\n- **Inconsistent reviews**: Mixed experiences across different visa types\n- **No guarantee**: Can't guarantee approval (but doesn't refund if rejected)\n- **Complaints about**: Hidden charges, communication delays, processing times not as fast as advertised\n- **Better alternatives exist**: Government websites often cheaper, though less convenient\n\n## When It Might Be Worth It\n- You're very busy/unfamiliar with the process\n- You need genuinely fast processing\n- Your visa requirements are complex\n\n## When to Skip It\n- Standard, straightforward visa applications\n- You have time to DIY through government channels\n- You want to minimize costs\n\n## Bottom Line\n**Honest take**: iVisa trades convenience for cost. You pay for simplicity. It's legitimate, but often overpriced for what you get.\n\n**Better approach**: Check if the government's own portal handles your visa—you'll likely save significant money.\n\nWhat specific visa are you considering?",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Is iVisa safe to use?",
+          "claude_response": "# iVisa Safety Assessment\n\n**Generally considered legitimate, but with caveats:**\n\n## Pros\n- Real company that processes visa applications\n- Has been operating for years with many users\n- Provides a useful service for document preparation and submission\n\n## Concerns to keep in mind\n\n- **Premium pricing** - They charge significant markups over government fees\n- **No guarantees** - They can't guarantee visa approval (no service can legally)\n- **Mixed reviews** - Customer experiences vary; some report good service, others report slow responses or issues\n- **Government fees separate** - You still pay official fees on top of their service charges\n- **Legitimacy questions in some regions** - Regulatory status varies by country\n\n## Safe usage tips\n- Use only their official website (check the URL carefully)\n- Be cautious of phishing sites using similar names\n- Understand you're paying for convenience/guidance, not better approval odds\n- Read recent independent reviews for your specific visa type\n- Consider if you could handle the application directly (sometimes simpler than it seems)\n\n**Bottom line:** It's not a scam, but it's expensive for what is essentially document preparation and submission help. Whether it's \"worth it\" depends on your comfort level with bureaucracy and how much you value the convenience.\n\nWhat visa are you considering?",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Is iVisa legitimate or a scam?",
+          "claude_response": "# iVisa Legitimacy Overview\n\n**iVisa is a legitimate service**, but with important caveats:\n\n## What they do legitimately:\n- They're a real company that helps process visa applications\n- They provide document preparation and submission assistance\n- They operate in multiple countries with actual business registrations\n\n## Key concerns:\n\n**High markups** - They charge significant fees on top of official government fees (often 2-3x the actual visa cost)\n\n**Not official** - They're a third-party service, not a government agency. You can usually apply directly to governments for less\n\n**Mixed reviews** - Customer experiences vary widely regarding speed, accuracy, and customer service\n\n**Hidden fees** - Additional charges sometimes appear during checkout\n\n## Bottom line:\n- **Legitimate?** Yes, they're a real company\n- **Good value?** Usually no—you're mainly paying for convenience\n- **Better alternative?** Applying directly through official government portals is typically cheaper, though less convenient\n\nIf you use them, research:\n- Reviews for your specific visa type\n- Compare their total cost vs. direct government application\n- Read their refund policy carefully\n\nWould you like help finding the official visa application process for a specific country?",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "iVisa customer service quality",
+          "claude_response": "# iVisa Customer Service Quality\n\n## Overall Assessment\niVisa has **mixed reviews** regarding customer service. Here's what users typically report:\n\n### **Strengths** ✓\n- **Fast processing** - Generally quick visa applications\n- **Multi-language support** - Available in several languages\n- **Online convenience** - Easy-to-use platform\n- **Responsive team** - Usually replies to inquiries\n- **Clear pricing** - Transparent fee structure upfront\n\n### **Common Complaints** ✗\n- **High fees** - Markup on government visa costs (sometimes 2-3x higher)\n- **Limited communication** - Difficulty reaching support during processing\n- **Unclear timelines** - Estimated processing times not always reliable\n- **Document rejections** - Poor initial guidance leading to resubmissions\n- **Refund issues** - Some users report difficulty obtaining refunds\n- **Inconsistent service** - Quality varies by visa type and destination\n\n## Customer Service Channels\n- Email support\n- Live chat (response times vary)\n- Help center/FAQs\n- Social media responses\n\n## Tips if Using iVisa\n1. **Read reviews** for your specific visa type first\n2. **Double-check requirements** independently\n3. **Keep detailed records** of all communications\n4. **Consider direct government options** if possible (often cheaper)\n5. **Budget extra time** in case of issues\n\n## Alternatives to Consider\n- Government visa websites (free)\n- Local visa agencies\n- Other visa services (VisaHQ, CIBTvisas)\n\n**Would you like specific information about a particular visa type or country?**",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Is iVisa real or fake?",
+          "claude_response": "# iVisa is Real\n\niVisa is a legitimate company, but here's what to know:\n\n**What they do:**\n- Licensed visa agency that helps with visa applications\n- Partners with immigration services in various countries\n- Offers expedited processing for a fee\n\n**Important caveats:**\n- They charge **premium fees** on top of government costs\n- You can apply directly to government immigration sites for free (or lower cost)\n- They don't have special government access—they just handle paperwork\n- Processing times may not be significantly faster despite higher costs\n\n**Bottom line:**\nIt's real and legal, but often expensive compared to applying directly. Good if you want convenience and don't mind paying extra; not necessary for visa applications.\n\n**Before using any visa service:**\n- Check your country's official immigration website\n- Compare actual government fees vs. agency markups\n- Read recent reviews about their reliability\n- Verify they're licensed in your country\n\nWould you like help finding the official immigration site for a specific country instead?",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Is iVisa affiliated with the government?",
+          "claude_response": "# iVisa and Government Affiliation\n\n**No, iVisa is not a government agency.** It's a private, commercial company that provides visa application assistance services.\n\n## Key points:\n\n- **Private company**: iVisa is a for-profit business that helps travelers with visa applications\n- **Not official**: It's not part of any government immigration department\n- **Service provider**: It acts as an intermediary, helping you complete and submit applications to actual government immigration authorities\n- **Additional fees**: Because it's private, iVisa charges service fees on top of official government visa costs\n\n## Important to know:\n\nYou can always apply directly to a country's official government immigration website for free (or just government fees). Using iVisa or similar services is optional—they're convenience services, not required channels.\n\nIf you're considering using iVisa, compare their fees against applying directly to make sure it's worth the cost for your situation.",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Are iVisa processing fees worth it?",
+          "claude_response": "# iVisa Processing Fees: Worth It?\n\nIt depends on your situation:\n\n**Worth considering if you:**\n- Need a visa urgently (expedited options save real time)\n- Find the visa process confusing and value handholding\n- Have limited access to embassies/consulates\n- Need to apply from abroad where in-person options are limited\n\n**Probably not worth it if you:**\n- Have time to apply directly to your country's embassy\n- Speak the language and understand the requirements\n- Can visit an embassy in person\n- Are applying for straightforward visas (tourist visas to common destinations)\n\n**Key points:**\n- **You're paying for convenience**, not reduced approval odds—governments set those\n- Direct applications are almost always free or much cheaper\n- Processing times vary wildly by country; iVisa's speed claims aren't guaranteed\n- Reviews are mixed on customer service quality\n\n**Bottom line:** Calculate what your time is worth. If expedited processing genuinely solves a real problem for you (tight timeline, complex requirements, accessibility issues), the fee might justify itself. Otherwise, the embassy website probably handles it fine.\n\nWhat type of visa are you considering? That context changes the calculation.",
+          "gemini_response": null,
+          "claude_sentiment": 35.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 35.0
+        },
+        {
+          "query": "iVisa vs applying directly to government",
+          "claude_response": "# iVisa vs Direct Government Application\n\n## iVisa (Third-Party Service)\n\n**Pros:**\n- Guides you through paperwork step-by-step\n- Handles document organization\n- Customer support in multiple languages\n- Saves time if you're unfamiliar with process\n- Reduces risk of rejection from missing requirements\n\n**Cons:**\n- **Significant markup** (often 2-3x government fees)\n- Slower than going direct (adds processing time)\n- Still requires you to provide all documents\n- Government ultimately decides anyway\n\n**Cost example:** Tourist visa that costs $50 directly might be $150+ through iVisa\n\n## Direct Government Application\n\n**Pros:**\n- **Lowest cost** (official fees only)\n- Fastest processing\n- Direct communication with authorities\n- No middleman\n\n**Cons:**\n- You navigate requirements yourself\n- Forms must be perfect (rejections = delays)\n- Limited support if confused\n- Language barriers possible\n\n## Recommendation\n\n**Go direct if:**\n- You're comfortable with forms/research\n- The visa isn't urgent\n- Requirements are straightforward (tourist visa)\n\n**Consider iVisa if:**\n- Complex visa type (work, investment)\n- Language barrier is significant\n- You can't afford rejection/reapplication delays\n- Worth the fee for peace of mind\n\n**Best option:** Check official government website first—many now have user-friendly online systems that are nearly as easy as iVisa, but free.\n\nWhat country/visa type are you considering?",
+          "gemini_response": null,
+          "claude_sentiment": 52.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 52.0
+        },
+        {
+          "query": "iVisa company reputation",
+          "claude_response": "# iVisa Company Reputation\n\n## Overview\niVisa is a visa processing service that helps travelers obtain visas for various countries. Here's what you should know:\n\n## Positive Aspects\n- **Wide coverage**: Services for 200+ countries and territories\n- **Convenience**: Simplifies visa application processes\n- **Customer support**: Multiple contact channels available\n- **Established**: Operates in the visa services industry for several years\n\n## Common Concerns\n- **Service fees**: Charges significantly above government visa fees\n  - You're paying for convenience, not reducing actual visa costs\n- **Processing times**: May not be faster than direct government applications\n- **Mixed reviews**: Customer experiences vary considerably\n- **Complaints**: Some users report:\n  - Unclear fee structures\n  - Slow processing despite premium pricing\n  - Communication issues\n\n## Important Considerations\n✓ **Legitimate company** - Not a scam, but a middleman service\n✗ **Cost-benefit analysis** - Often more expensive than applying directly\n- **Read reviews** for your specific visa type before using\n- **Check visa requirements** - Some countries don't allow third-party applications\n\n## Recommendation\n- Compare iVisa costs vs. direct government applications\n- For complex visas (China, Russia), the service may be worth it\n- For simple visas, applying directly is usually cheaper\n- Read recent reviews specific to your destination country\n\nWould you like information about a specific visa or country?",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Has anyone successfully used iVisa?",
+          "claude_response": "# iVisa Experiences\n\nYes, people have used iVisa successfully, but experiences are mixed:\n\n## Generally positive reports\n- Users report getting visas processed\n- The service handles paperwork organization, which some find convenient\n- Works for various destination countries\n\n## Common complaints\n- **Significantly higher fees** than applying directly to government agencies\n- **Slower processing** despite premium pricing\n- **Customer service issues** - difficulty getting responses\n- **Hidden or unclear fees** added during checkout\n- **Inconsistent results** across different visa types\n\n## Key considerations\n- iVisa is a **visa agency, not an official government service** - they charge for handling paperwork you could often submit yourself\n- Better for people who prioritize convenience over cost\n- Direct government applications are typically cheaper and sometimes faster\n\n## Before using\n- Compare their fees to your country's official visa application process\n- Check recent reviews for your specific visa type\n- Consider whether their service actually adds value for your situation\n\n**Bottom line:** It works for some people, but many feel they overpaid. For straightforward visa applications, going directly through official channels is often better value.\n\nHave you been considering it for a specific visa type?",
+          "gemini_response": null,
+          "claude_sentiment": 35.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 35.0
+        },
+        {
+          "query": "Is iVisa approved by governments?",
+          "claude_response": "# iVisa and Government Approval\n\niVisa is **not a government agency** — it's a private visa service company. Here's what you should know:\n\n## What iVisa does\n- Acts as an intermediary to help process visa applications\n- Charges fees on top of official government visa costs\n- Handles paperwork and submission for you\n\n## Government relationship\n- iVisa is **not endorsed or approved by governments**\n- It's a licensed private service operator in countries where it operates\n- The actual visa decisions come from official government immigration authorities\n\n## Key considerations\n- **Legitimate but optional**: Using iVisa is voluntary; you can apply directly to governments for free\n- **Added cost**: You pay for their convenience/service on top of government fees\n- **Legitimacy varies by country**: Check if they're authorized in your specific country\n- **Reviews matter**: Research their reputation for your destination country\n\n## Bottom line\niVisa is a legitimate business service, not a scam, but it's not \"approved by governments\" in an official sense. If you use them, your application still goes to the actual government for approval or denial.\n\nWould you like specific information about a particular country's visa process?",
+          "gemini_response": null,
+          "claude_sentiment": 45.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 45.0
+        },
+        {
+          "query": "Does iVisa have hidden fees?",
+          "claude_response": "# iVisa Fees\n\niVisa is generally transparent about costs, but there are some important things to know:\n\n## What they clearly charge:\n- Service fees (their main cost, varies by visa type)\n- Government fees (passed through to you)\n- Expedited processing options (if selected)\n\n## Potential concerns:\n- **Service fees are substantial** — often $50-200+ on top of government fees\n- **Easy to miss upgrade costs** — expedited processing can significantly increase the total\n- **Unclear comparisons** — harder to tell what you'd pay directly to the government vs. their markup\n\n## Best practices:\n1. Check what the government fee actually is before purchasing\n2. Review your full quote before completing payment\n3. Compare with applying directly to the embassy (often much cheaper, though more time-consuming)\n\n**Bottom line:** iVisa isn't hiding fees in the fine print, but you are paying a premium for convenience. They're transparent about costs at checkout, but the service markup can feel significant if you weren't expecting it.\n\nFor critical applications, it's worth getting a quote from both iVisa and the official government website.",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "Is iVisa refund policy trustworthy?",
+          "claude_response": "# iVisa Refund Policy - Key Points\n\n**What they offer:**\n- 30-day money-back guarantee on visa application fees\n- Covers their service fee if your visa is denied\n- Does NOT cover government fees (which are non-refundable)\n\n**Trustworthiness factors:**\n\n**Positive:**\n- Clear policy stated on their website\n- Established company (operates since 2013)\n- Generally positive reviews on independent sites\n- Processing refunds appears to be standard practice\n\n**Cautions:**\n- Government fees (~70% of total cost) are non-refundable regardless\n- Refund only applies to *their* service fee, not the visa itself\n- You're paying a markup for their convenience service\n- Read fine print carefully—timeline and conditions matter\n\n**Bottom line:** Their refund policy itself appears legitimate, but understand what you're actually getting:\n- You're paying for expedited processing and document handling\n- If denied, you lose the government fees\n- Compare their total cost vs. applying directly to the embassy\n\nBefore using them, check if your country's embassy accepts direct applications—you might save money and have fewer refund concerns.\n\nWould you like help evaluating your specific situation?",
+          "gemini_response": null,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Is iVisa better than applying directly?",
+          "claude_response": "# iVisa vs. Direct Application\n\nIt depends on your priorities:\n\n## iVisa advantages\n- **Convenience**: Handles paperwork and submission for you\n- **Guidance**: Helps navigate requirements, especially for complex visas\n- **Time-saving**: Useful if you're busy or unfamiliar with the process\n- **Language support**: Helpful if the official site is in another language\n\n## Direct application advantages\n- **Cost**: No service fees (often $50-300+ with iVisa)\n- **Control**: You handle everything yourself\n- **Same outcome**: You get the same visa result\n- **Direct communication**: Contact the embassy directly with questions\n\n## Key considerations\n- **Visa complexity**: Simple visas (tourist) → direct is fine. Complex ones (work) → iVisa may help\n- **Your comfort level**: Confident navigating bureaucracy? Go direct. Prefer hand-holding? Use iVisa\n- **Time pressure**: Tight deadline? The convenience might be worth the cost\n\n## Bottom line\niVisa isn't \"better\"—it's a convenience service you pay for. Many people successfully apply directly and save money. Others find the fee worth the peace of mind.\n\n**Check what your specific country requires first**, then decide if their fees justify the service for your situation.",
+          "gemini_response": null,
+          "claude_sentiment": 45.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 45.0
+        },
+        {
+          "query": "Is iVisa secure with personal information?",
+          "claude_response": "# iVisa Security Assessment\n\niVisa generally appears to be **reasonably secure**, but there are some important considerations:\n\n## Positive indicators:\n- Uses SSL encryption for transactions\n- Established company (operates since 2014)\n- Processes through legitimate payment channels\n- Has a privacy policy addressing data handling\n\n## Legitimate concerns:\n- **Third-party service**: You're sharing sensitive documents with a middleman, not the government directly\n- **Data storage**: Like any service, your documents are stored on their servers\n- **Trust factor**: You're relying on their security practices, which you can't fully verify\n- **Mixed reviews**: Some users report concerns about data handling\n\n## Risk mitigation tips:\n- Avoid sharing unnecessary documents\n- Use strong passwords\n- Check their current privacy policy directly\n- Consider going directly to government agencies if possible (often cheaper/simpler)\n- Research recent reviews before using\n\n## Bottom line:\niVisa is **likely safer than suspicious visa services**, but they're a convenience service, not a government entity. You're trading some privacy for convenience and processing help.\n\nFor highly sensitive applications, contacting your embassy directly might feel more secure—though it typically takes longer and offers less support.\n\nWhat specific visa are you considering?",
+          "gemini_response": null,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "iVisa reliability for visa applications",
+          "claude_response": "# iVisa Reliability Assessment\n\n## Strengths\n- **Established company**: Operating since 2014 with significant user base\n- **Wide coverage**: Visa services for 190+ countries\n- **Legitimate business**: Properly registered, has physical offices\n- **User reviews**: Generally positive ratings on independent platforms (Trustpilot, Google)\n- **Money-back guarantee**: Offers refunds if visa isn't obtained\n\n## Key Concerns\n\n### Service Model\n- Acts as **visa application facilitator**, not government agency\n- Charges markup fees (sometimes 2-3x official costs)\n- Processing times vary by country; their estimates aren't always accurate\n\n### Common Complaints\n- **Delayed processing** or missed deadlines\n- **Customer service responsiveness** varies\n- **Hidden or unclear fees** added during checkout\n- Document requirements sometimes misrepresented\n\n## When iVisa Works Well\n✓ Complex visa applications (multiple entries, special requirements)\n✓ When you need document review before submission\n✓ Tourist visas to straightforward destinations\n✓ If you lack time to navigate government portals\n\n## When to Avoid\n✗ Simple, standard visa applications\n✗ If budget is tight (DIY is usually cheaper)\n✗ Work/residence visas requiring government interviews\n✗ When government offers easier online application\n\n## Better Alternatives\n- Apply directly through official government websites\n- Use government-endorsed visa application centers\n- Check if your country has visa application portal partnerships\n\n**Bottom line**: iVisa is *legitimate* but *expensive* convenience service. Verify costs and timelines for your specific country first.",
+          "gemini_response": null,
+          "claude_sentiment": 58.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 58.0
+        }
+      ],
+      "score": 45.5
+    },
+    "part_b": {
+      "results": [
+        {
+          "query": "Best visa application service",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Best visa processing services 2025",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 72.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 72.0
+        },
+        {
+          "query": "Safest way to apply for a visa online",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "How to apply for a US visa safely",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Top rated visa application companies",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Most trusted visa services",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "How to avoid visa scams online",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Legitimate visa application websites",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Best online visa services for travelers",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Visa application service recommendations",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Which visa service should I use?",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 25.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 25.0
+        },
+        {
+          "query": "How to get a visa quickly and safely",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Best tourist visa application services",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 72.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 72.0
+        },
+        {
+          "query": "Trusted online visa processing",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Visa services with good reviews",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Online visa application companies comparison",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 72.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 72.0
+        },
+        {
+          "query": "Most reliable passport and visa services",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 72.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 72.0
+        },
+        {
+          "query": "Which visa agency is best?",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Travel document services review",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Electronic visa application services",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "e-visa application best service",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 42.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 42.0
+        },
+        {
+          "query": "How to apply for travel documents online",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "International visa services comparison",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 45.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 45.0
+        },
+        {
+          "query": "Best sites for visa applications",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Fastest visa processing services",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Visa service with best customer support",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Can I apply for visa online safely?",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Recommended visa services for travelers",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "Travel visa services trusted reviews",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        },
+        {
+          "query": "How do I avoid fake visa websites?",
+          "claude_mentions_ivisa": false,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": null,
+          "gemini_sentiment": null,
+          "avg_sentiment": null
+        }
+      ],
+      "mention_rate": 0.4,
+      "avg_positive_sentiment": 59.17,
+      "score": 51.5
+    },
+    "global_score": 48.5
+  },
+  "earned_media": {
+    "score": 60.0,
+    "mentions": [
+      {
+        "source": "Forbes Travel",
+        "title": "iVisa Makes International Travel Simpler for Millions of Travelers",
+        "date": "2026-05-20",
+        "sentiment": "positive",
+        "url": "https://www.forbes.com/travel/ivisa-review",
+        "reach": 4200000
+      },
+      {
+        "source": "TrustPilot",
+        "title": "5-star review: Processed my Indian e-Visa in under 2 hours. Incredible service.",
+        "date": "2026-05-22",
+        "sentiment": "positive",
+        "url": "https://www.trustpilot.com/review/ivisa.com",
+        "reach": 180000
+      },
+      {
+        "source": "TravelPulse",
+        "title": "Top Visa Processing Services of 2026: iVisa Tops the List",
+        "date": "2026-05-18",
+        "sentiment": "positive",
+        "url": "https://www.travelpulse.com/news/visa-services-2026",
+        "reach": 620000
+      },
+      {
+        "source": "Reddit r/travel",
+        "title": "Used iVisa for my Turkey trip — here's my honest take",
+        "date": "2026-05-21",
+        "sentiment": "positive",
+        "url": "https://www.reddit.com/r/travel/ivisa-review",
+        "reach": 95000
+      },
+      {
+        "source": "Skift",
+        "title": "How iVisa Is Disrupting the Legacy Visa Services Market",
+        "date": "2026-05-15",
+        "sentiment": "positive",
+        "url": "https://skift.com/ivisa-market-disruption",
+        "reach": 1100000
+      },
+      {
+        "source": "BBB",
+        "title": "Consumer complaint: refund delay on cancelled application",
+        "date": "2026-05-10",
+        "sentiment": "negative",
+        "url": "https://www.bbb.org/ivisa",
+        "reach": 45000
+      }
+    ],
+    "raw": {
+      "score": 60,
+      "last_updated": "2026-05-23",
+      "source": "Brand24 export — update weekly",
+      "mentions": [
+        {
+          "source": "Forbes Travel",
+          "title": "iVisa Makes International Travel Simpler for Millions of Travelers",
+          "date": "2026-05-20",
+          "sentiment": "positive",
+          "url": "https://www.forbes.com/travel/ivisa-review",
+          "reach": 4200000
+        },
+        {
+          "source": "TrustPilot",
+          "title": "5-star review: Processed my Indian e-Visa in under 2 hours. Incredible service.",
+          "date": "2026-05-22",
+          "sentiment": "positive",
+          "url": "https://www.trustpilot.com/review/ivisa.com",
+          "reach": 180000
+        },
+        {
+          "source": "TravelPulse",
+          "title": "Top Visa Processing Services of 2026: iVisa Tops the List",
+          "date": "2026-05-18",
+          "sentiment": "positive",
+          "url": "https://www.travelpulse.com/news/visa-services-2026",
+          "reach": 620000
+        },
+        {
+          "source": "Reddit r/travel",
+          "title": "Used iVisa for my Turkey trip — here's my honest take",
+          "date": "2026-05-21",
+          "sentiment": "positive",
+          "url": "https://www.reddit.com/r/travel/ivisa-review",
+          "reach": 95000
+        },
+        {
+          "source": "Skift",
+          "title": "How iVisa Is Disrupting the Legacy Visa Services Market",
+          "date": "2026-05-15",
+          "sentiment": "positive",
+          "url": "https://skift.com/ivisa-market-disruption",
+          "reach": 1100000
+        },
+        {
+          "source": "BBB",
+          "title": "Consumer complaint: refund delay on cancelled application",
+          "date": "2026-05-10",
+          "sentiment": "negative",
+          "url": "https://www.bbb.org/ivisa",
+          "reach": 45000
+        }
+      ]
+    }
+  },
+  "historical": [],
+  "action_items": [
+    "High-priority SERP risk: negative results appearing in top 3 positions for 'is ivisa a scam, ivisa reviews' — publish positive, authoritative content to push these down.",
+    "Strengthen SERP sentiment by building more positive third-party mentions: travel blogs, review aggregators, and press coverage referencing iVisa positively.",
+    "Add FAQ schema and HowTo schema to key trust pages to help Google pull iVisa into AI Overviews.",
+    "Increase iVisa brand presence in LLM training signals: publish more third-party reviews, press coverage, and expert endorsements.",
+    "Engage proactively with travel journalists and bloggers — target Forbes Travel, Skift, and TravelPulse for iVisa features."
+  ],
+  "formula": "CSOV = (SERP × 0.35) + (AI_Overview × 0.25) + (LLM × 0.25) + (Earned_Media × 0.15)",
+  "week_label": "May 25 – May 31, 2026",
+  "week_start": "May 25, 2026",
+  "week_end": "May 31, 2026",
+  "generated_at": "2026-05-28T14:12:02.109205Z"
+}
