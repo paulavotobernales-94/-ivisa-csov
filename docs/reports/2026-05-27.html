@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iVisa Credibility Share of Voice Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --blue:    #2563EB;
+    --navy:    #1e3a5f;
+    --green:   #16a34a;
+    --yellow:  #d97706;
+    --red:     #dc2626;
+    --bg:      #f8fafc;
+    --card:    #ffffff;
+    --border:  #e2e8f0;
+    --text:    #1e293b;
+    --muted:   #64748b;
+    --radius:  12px;
+    --shadow:  0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.5; }
+
+  /* ── Header ── */
+  .header { background: linear-gradient(135deg, var(--navy) 0%, #2d5a9e 100%);
+             color: #fff; padding: 20px 32px; display: flex; align-items: center;
+             justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .header-brand { display: flex; align-items: center; gap: 14px; }
+  .header-logo { width: 42px; height: 42px; background: var(--blue);
+                  border-radius: 10px; display: flex; align-items: center;
+                  justify-content: center; font-weight: 900; font-size: 18px; }
+  .header-title h1 { font-size: 1.25rem; font-weight: 700; }
+  .header-title p  { font-size: .8rem; opacity: .75; }
+  .header-meta { text-align: right; font-size: .8rem; opacity: .8; }
+  .header-meta strong { display: block; font-size: 1rem; opacity: 1; }
+
+  /* ── Layout ── */
+  .container { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+  .section-title { font-size: 1.1rem; font-weight: 700; color: var(--navy);
+                   margin-bottom: 16px; padding-bottom: 8px;
+                   border-bottom: 2px solid var(--blue); }
+
+  /* ── Hero ── */
+  .hero { display: flex; gap: 24px; align-items: stretch; margin-bottom: 32px; flex-wrap: wrap; }
+  .hero-score-card { background: var(--card); border-radius: var(--radius);
+                      box-shadow: var(--shadow); padding: 32px;
+                      display: flex; flex-direction: column; align-items: center;
+                      justify-content: center; gap: 12px; flex: 0 0 320px; }
+  .hero-score-number { font-size: 5rem; font-weight: 900; color: var(--navy); line-height: 1; }
+  .hero-score-denom  { font-size: 1.5rem; color: var(--muted); font-weight: 400; }
+  .hero-score-label  { font-size: .9rem; color: var(--muted); text-transform: uppercase;
+                        letter-spacing: .06em; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px;
+            border-radius: 20px; font-size: .82rem; font-weight: 600; }
+  .badge-up   { background: #dcfce7; color: var(--green); }
+  .badge-down { background: #fee2e2; color: var(--red); }
+  .badge-flat { background: #f1f5f9; color: var(--muted); }
+  .hero-week  { font-size: .85rem; color: var(--muted); }
+
+  /* ── Gauge ── */
+  .gauge-wrap { width: 180px; height: 100px; position: relative; }
+  .gauge-wrap svg { width: 100%; height: 100%; }
+
+  /* ── Component Cards ── */
+  .component-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+                     margin-bottom: 32px; }
+  @media(max-width:900px){ .component-grid { grid-template-columns: repeat(2,1fr); } }
+  @media(max-width:500px){ .component-grid { grid-template-columns: 1fr; } }
+  .comp-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+               padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .comp-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .comp-card-title  { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em;
+                       color: var(--muted); font-weight: 600; }
+  .comp-card-weight { font-size: .75rem; color: var(--muted); background: var(--bg);
+                       padding: 2px 8px; border-radius: 10px; }
+  .comp-score { font-size: 2.2rem; font-weight: 800; color: var(--navy); line-height: 1; }
+  .comp-score span { font-size: 1rem; color: var(--muted); font-weight: 400; }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+  .fill-green  { background: var(--green); }
+  .fill-yellow { background: var(--yellow); }
+  .fill-red    { background: var(--red); }
+  .fill-blue   { background: var(--blue); }
+
+  /* ── Charts ── */
+  .chart-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+                 padding: 24px; margin-bottom: 32px; }
+  .chart-container { position: relative; height: 300px; }
+
+  /* ── Country Grid ── */
+  .country-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+                   margin-bottom: 32px; }
+  @media(max-width:900px){ .country-grid { grid-template-columns: repeat(3,1fr); } }
+  @media(max-width:500px){ .country-grid { grid-template-columns: repeat(2,1fr); } }
+  .country-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+                   padding: 16px; cursor: pointer; transition: transform .15s, box-shadow .15s;
+                   border: 2px solid transparent; }
+  .country-card:hover  { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+  .country-card.active { border-color: var(--blue); }
+  .country-flag  { font-size: 2rem; margin-bottom: 6px; }
+  .country-name  { font-size: .8rem; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .country-score { font-size: 1.5rem; font-weight: 800; color: var(--navy); }
+  .mini-bar-wrap { display: flex; gap: 2px; margin-top: 8px; height: 5px; border-radius: 3px; overflow:hidden; }
+  .mini-seg { height: 100%; }
+
+  /* ── Country Selector + Tables ── */
+  .country-detail { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+                     padding: 24px; margin-bottom: 32px; }
+  .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tab-btn { padding: 7px 16px; border-radius: 8px; border: 1.5px solid var(--border);
+              background: #fff; font-size: .85rem; cursor: pointer; transition: all .15s;
+              font-weight: 500; color: var(--muted); }
+  .tab-btn:hover  { border-color: var(--blue); color: var(--blue); }
+  .tab-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th { background: var(--bg); padding: 10px 14px; text-align: left; font-weight: 600;
+       color: var(--muted); font-size: .78rem; text-transform: uppercase;
+       letter-spacing: .04em; border-bottom: 2px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+  .pos-badge { display: inline-flex; align-items: center; justify-content: center;
+               width: 28px; height: 28px; border-radius: 8px; font-weight: 700;
+               font-size: .85rem; }
+  .pos-1 { background: #fef3c7; color: #92400e; }
+  .pos-top3 { background: #dbeafe; color: #1e40af; }
+  .pos-mid   { background: #f1f5f9; color: var(--muted); }
+  .pos-bad   { background: #fee2e2; color: var(--red); }
+  .pill { padding: 2px 10px; border-radius: 10px; font-size: .75rem; font-weight: 600; }
+  .pill-pos  { background: #dcfce7; color: var(--green); }
+  .pill-neg  { background: #fee2e2; color: var(--red); }
+  .pill-neu  { background: #f1f5f9; color: var(--muted); }
+  .pill-yes  { background: #dbeafe; color: var(--blue); }
+  .pill-no   { background: #f1f5f9; color: var(--muted); }
+  .domain-link { color: var(--blue); text-decoration: none; font-size: .8rem; }
+  .domain-link:hover { text-decoration: underline; }
+  .ivisa-row td { background: #eff6ff !important; font-weight: 600; }
+
+  /* ── LLM Section ── */
+  .llm-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .llm-response { font-size: .8rem; color: var(--muted); max-width: 300px;
+                   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ── Earned Media ── */
+  .mentions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media(max-width:800px){ .mentions-grid { grid-template-columns: 1fr; } }
+  .mention-card { background: var(--bg); border-radius: 10px; padding: 16px;
+                   border: 1px solid var(--border); }
+  .mention-source { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em;
+                     color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+  .mention-title  { font-size: .9rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .mention-footer { display: flex; gap: 8px; align-items: center; font-size: .78rem; color: var(--muted); }
+
+  /* ── Action Items ── */
+  .actions-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .action-item  { display: flex; gap: 12px; align-items: flex-start; background: var(--bg);
+                   border-radius: 10px; padding: 14px 16px; border-left: 4px solid var(--blue); }
+  .action-icon  { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .action-text  { font-size: .9rem; color: var(--text); }
+
+  /* ── Footer ── */
+  .footer { text-align: center; padding: 24px; font-size: .78rem; color: var(--muted);
+             border-top: 1px solid var(--border); margin-top: 16px; }
+
+  /* ── Hero chart ── */
+  .hero-chart { flex: 1; min-width: 280px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">iV</div>
+    <div class="header-title">
+      <h1>iVisa</h1>
+      <p>Credibility Share of Voice Dashboard</p>
+    </div>
+  </div>
+  <div class="header-meta">
+    <strong id="weekRange">Loading...</strong>
+    Updated every Friday
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero" style="margin-bottom:32px;">
+    <div class="hero-score-card">
+      <div class="gauge-wrap" id="gaugeWrap"></div>
+      <div class="hero-score-number" id="heroScore">--</div>
+      <div class="hero-score-denom">/100 CSOV</div>
+      <div id="heroBadge"></div>
+      <div class="hero-week" id="heroWeek"></div>
+    </div>
+    <div class="hero-chart chart-card" style="flex:1;min-width:280px;">
+      <div class="section-title">CSOV Trend — Last 8 Weeks</div>
+      <div class="chart-container"><canvas id="trendChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COMPONENT CARDS -->
+  <div class="section-title">Component Breakdown</div>
+  <div class="component-grid" id="componentGrid"></div>
+
+  <!-- COUNTRY BREAKDOWN -->
+  <div class="section-title">Country Breakdown</div>
+  <div class="country-grid" id="countryGrid"></div>
+
+  <!-- DETAIL SECTION -->
+  <div class="country-detail">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <h2 class="section-title" style="margin:0;border:none;" id="detailTitle">United States — Detail</h2>
+      <div class="tab-bar" id="countryTabs"></div>
+    </div>
+
+    <!-- SERP Tab -->
+    <div class="tab-content active" id="tab-serp">
+      <h3 style="font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:12px;">SERP Results</h3>
+      <div class="table-wrap"><table id="serpTable">
+        <thead><tr>
+          <th>Keyword</th><th>Pos</th><th>Domain</th><th>URL</th><th>Sentiment</th>
+        </tr></thead>
+        <tbody id="serpTableBody"></tbody>
+      </table></div>
+    </div>
+
+    <!-- AI Overview Tab -->
+    <div class="tab-content" id="tab-aio">
+      <h3 style="font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:12px;">AI Overview Results</h3>
+      <div class="table-wrap"><table id="aioTable">
+        <thead><tr>
+          <th>Keyword</th><th>AI Overview?</th><th>iVisa Cited?</th>
+          <th>Sentiment</th><th>Score</th>
+        </tr></thead>
+        <tbody id="aioTableBody"></tbody>
+      </table></div>
+    </div>
+
+    <!-- LLM Tab -->
+    <div class="tab-content" id="tab-llm">
+      <div class="llm-tabs">
+        <button class="tab-btn active" onclick="showLlmTab('parta',this)">Part A — Brand Queries</button>
+        <button class="tab-btn"        onclick="showLlmTab('partb',this)">Part B — General Queries</button>
+      </div>
+      <div id="llm-parta">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Query</th><th>Claude Score</th><th>Gemini Score</th><th>Avg Sentiment</th></tr></thead>
+          <tbody id="llmPartABody"></tbody>
+        </table></div>
+      </div>
+      <div id="llm-partb" style="display:none;">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Query</th><th>Claude Mentions?</th><th>Gemini Mentions?</th><th>Avg Sentiment</th></tr></thead>
+          <tbody id="llmPartBBody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- Earned Media Tab -->
+    <div class="tab-content" id="tab-em">
+      <div class="mentions-grid" id="mentionsGrid"></div>
+    </div>
+  </div>
+
+  <!-- ACTION ITEMS -->
+  <div class="chart-card" style="margin-bottom:32px;">
+    <div class="section-title">Action Items</div>
+    <ul class="actions-list" id="actionsList"></ul>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  Generated automatically every Friday at 10 AM UTC &bull; iVisa Brand Team &bull; Credibility Share of Voice Dashboard
+</footer>
+
+<script>
+// ── Embedded Data ──────────────────────────────────────────────────────────
+const REPORT_DATA = {"_comment": "Realistic sample data for --dry-run mode. Simulates a typical Friday report.", "csov_score": 58.3, "previous_csov_score": 55.1, "week_label": "May 25 – May 31, 2026", "week_start": "May 25, 2026", "week_end": "May 31, 2026", "generated_at": "2026-05-31T10:00:00Z", "components": {"serp": {"score": 52.4, "weight": 0.35, "weighted_contribution": 18.34, "label": "SERP Score", "prev_score": 49.1}, "ai_overview": {"score": 58.2, "weight": 0.25, "weighted_contribution": 14.55, "label": "AI Overview Score", "prev_score": 54.0}, "llm": {"score": 65.1, "weight": 0.25, "weighted_contribution": 16.275, "label": "LLM Score", "prev_score": 63.8}, "earned_media": {"score": 60.0, "weight": 0.15, "weighted_contribution": 9.0, "label": "Earned Media Score", "prev_score": 60.0}}, "historical": [{"week_label": "Apr 4", "csov": 47.2, "serp": 41.0, "ai_overview": 50.0, "llm": 58.0, "earned_media": 55.0}, {"week_label": "Apr 11", "csov": 48.9, "serp": 43.5, "ai_overview": 51.2, "llm": 59.5, "earned_media": 55.0}, {"week_label": "Apr 18", "csov": 50.1, "serp": 44.8, "ai_overview": 52.0, "llm": 60.2, "earned_media": 57.0}, {"week_label": "Apr 25", "csov": 51.6, "serp": 46.0, "ai_overview": 53.5, "llm": 61.0, "earned_media": 58.0}, {"week_label": "May 2", "csov": 53.4, "serp": 47.2, "ai_overview": 55.0, "llm": 62.5, "earned_media": 58.0}, {"week_label": "May 9", "csov": 54.0, "serp": 47.9, "ai_overview": 55.8, "llm": 63.0, "earned_media": 59.0}, {"week_label": "May 16", "csov": 55.1, "serp": 49.1, "ai_overview": 54.0, "llm": 63.8, "earned_media": 60.0}, {"week_label": "May 23", "csov": 58.3, "serp": 52.4, "ai_overview": 58.2, "llm": 65.1, "earned_media": 60.0}], "country_data": {"us": {"name": "United States", "flag": "🇺🇸", "weight": 0.35, "csov_score": 59.8, "components": {"serp": 54.5, "ai_overview": 62.0, "llm": 66.0, "earned_media": 60.0}}, "gb": {"name": "United Kingdom", "flag": "🇬🇧", "weight": 0.14, "csov_score": 57.2, "components": {"serp": 50.0, "ai_overview": 58.5, "llm": 65.0, "earned_media": 60.0}}, "au": {"name": "Australia", "flag": "🇦🇺", "weight": 0.1, "csov_score": 56.5, "components": {"serp": 49.5, "ai_overview": 57.0, "llm": 64.5, "earned_media": 60.0}}, "de": {"name": "Germany", "flag": "🇩🇪", "weight": 0.08, "csov_score": 55.0, "components": {"serp": 48.0, "ai_overview": 55.0, "llm": 63.0, "earned_media": 60.0}}, "ca": {"name": "Canada", "flag": "🇨🇦", "weight": 0.07, "csov_score": 58.1, "components": {"serp": 52.0, "ai_overview": 59.0, "llm": 65.0, "earned_media": 60.0}}, "fr": {"name": "France", "flag": "🇫🇷", "weight": 0.07, "csov_score": 53.4, "components": {"serp": 45.0, "ai_overview": 54.0, "llm": 62.0, "earned_media": 60.0}}, "jp": {"name": "Japan", "flag": "🇯🇵", "weight": 0.04, "csov_score": 51.8, "components": {"serp": 43.0, "ai_overview": 52.0, "llm": 61.0, "earned_media": 60.0}}, "nl": {"name": "Netherlands", "flag": "🇳🇱", "weight": 0.04, "csov_score": 54.2, "components": {"serp": 46.0, "ai_overview": 56.0, "llm": 62.5, "earned_media": 60.0}}, "it": {"name": "Italy", "flag": "🇮🇹", "weight": 0.03, "csov_score": 52.5, "components": {"serp": 44.0, "ai_overview": 53.0, "llm": 61.5, "earned_media": 60.0}}, "ch": {"name": "Switzerland", "flag": "🇨🇭", "weight": 0.03, "csov_score": 53.0, "components": {"serp": 45.0, "ai_overview": 54.0, "llm": 61.0, "earned_media": 60.0}}}, "serp_data": {"global_score": 52.4, "country_scores": {"us": 54.5, "gb": 50.0, "au": 49.5, "de": 48.0, "ca": 52.0, "fr": 45.0, "jp": 43.0, "nl": 46.0, "it": 44.0, "ch": 45.0}, "results": {"us": {"iVisa": [{"position": 1, "url": "https://www.ivisa.com", "domain": "ivisa.com", "title": "iVisa — Official Visa Application Service", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 2, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Reviews — Trustpilot", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 3, "url": "https://www.sitejabber.com/reviews/ivisa.com", "domain": "sitejabber.com", "title": "iVisa Reviews & Complaints", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 4, "url": "https://www.forbes.com/ivisa-review", "domain": "forbes.com", "title": "iVisa Review 2026", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 5, "url": "https://www.reddit.com/r/travel/ivisa", "domain": "reddit.com", "title": "iVisa experiences — Reddit", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}], "iVisa scam": [{"position": 1, "url": "https://www.ivisa.com/legit", "domain": "ivisa.com", "title": "Is iVisa Legit? Here's the Truth", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 2, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Reviews on Trustpilot", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 3, "url": "https://www.reddit.com/r/Scams/ivisa-legit", "domain": "reddit.com", "title": "Is iVisa a scam? My experience", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 4, "url": "https://www.quora.com/Is-iVisa-a-scam", "domain": "quora.com", "title": "Is iVisa a scam? — Quora", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 5, "url": "https://scamalert.com/ivisa", "domain": "scamalert.com", "title": "iVisa — Scam Alert Report", "is_ivisa": false, "sentiment": "negative", "source": "semrush"}, {"position": 6, "url": "https://www.sitejabber.com/reviews/ivisa.com", "domain": "sitejabber.com", "title": "iVisa Complaints", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}], "ivisa legit": [{"position": 2, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Reviews", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 3, "url": "https://www.ivisa.com/about", "domain": "ivisa.com", "title": "About iVisa — Trusted Visa Service", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 4, "url": "https://www.reddit.com/r/travel/ivisa_legit", "domain": "reddit.com", "title": "Is iVisa legit? Experiences", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 7, "url": "https://www.bbb.org/ivisa", "domain": "bbb.org", "title": "iVisa BBB Profile", "is_ivisa": false, "sentiment": "negative", "source": "semrush"}], "is ivisa a scam": [{"position": 1, "url": "https://www.ivisa.com/legit", "domain": "ivisa.com", "title": "iVisa: Not a Scam — Here's Why", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 2, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Customer Reviews", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 5, "url": "https://www.reddit.com/r/travel/is-ivisa-scam", "domain": "reddit.com", "title": "Reddit: Is iVisa a scam?", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 8, "url": "https://www.ripoffreport.com/ivisa", "domain": "ripoffreport.com", "title": "iVisa — RipOff Report", "is_ivisa": false, "sentiment": "negative", "source": "semrush"}], "is ivisa legit": [{"position": 1, "url": "https://www.ivisa.com", "domain": "ivisa.com", "title": "iVisa — Official Site", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 3, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Reviews", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 6, "url": "https://www.reddit.com/r/travel", "domain": "reddit.com", "title": "r/travel — iVisa experiences", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 9, "url": "https://www.bbb.org/ivisa", "domain": "bbb.org", "title": "iVisa BBB Rating", "is_ivisa": false, "sentiment": "negative", "source": "semrush"}], "ivisa reviews": [{"position": 1, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Reviews on Trustpilot", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 2, "url": "https://www.ivisa.com/reviews", "domain": "ivisa.com", "title": "iVisa Customer Reviews", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 4, "url": "https://www.sitejabber.com/reviews/ivisa.com", "domain": "sitejabber.com", "title": "iVisa on SiteJabber", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 7, "url": "https://www.reddit.com/r/travel/ivisa-review", "domain": "reddit.com", "title": "My iVisa review", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}], "ivisa fake or real": [{"position": 1, "url": "https://www.ivisa.com/legit", "domain": "ivisa.com", "title": "iVisa Is Real — See Our Story", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 2, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "Is iVisa real? — Reviews", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 5, "url": "https://www.quora.com/ivisa-fake-or-real", "domain": "quora.com", "title": "Is iVisa fake or real? — Quora", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}], "is ivisa safe": [{"position": 2, "url": "https://www.ivisa.com/security", "domain": "ivisa.com", "title": "iVisa Security & Privacy", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 3, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Safety Reviews", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}, {"position": 6, "url": "https://www.reddit.com/r/travel/ivisa-safe", "domain": "reddit.com", "title": "Is iVisa safe? — Reddit discussion", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}], "iVisa affiliated with the gov": [{"position": 3, "url": "https://www.ivisa.com/faq", "domain": "ivisa.com", "title": "iVisa FAQ — Government Affiliation", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 5, "url": "https://www.quora.com/ivisa-gov-affiliation", "domain": "quora.com", "title": "Is iVisa affiliated with the government?", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 8, "url": "https://travel.state.gov", "domain": "travel.state.gov", "title": "U.S. Visas — Official Government Site", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}], "ivisa fee": [{"position": 1, "url": "https://www.ivisa.com/pricing", "domain": "ivisa.com", "title": "iVisa Fees & Pricing", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 2, "url": "https://www.reddit.com/r/travel/ivisa-fee", "domain": "reddit.com", "title": "Are iVisa fees worth it? — Reddit", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 4, "url": "https://www.quora.com/ivisa-service-fee", "domain": "quora.com", "title": "How much does iVisa charge?", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}, {"position": 7, "url": "https://www.pissedconsumer.com/ivisa", "domain": "pissedconsumer.com", "title": "iVisa hidden fees complaint", "is_ivisa": false, "sentiment": "negative", "source": "semrush"}]}, "gb": {"iVisa": [{"position": 1, "url": "https://www.ivisa.com", "domain": "ivisa.com", "title": "iVisa — Apply for Your Visa Online", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 3, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Reviews", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}], "iVisa scam": [{"position": 2, "url": "https://www.ivisa.com/legit", "domain": "ivisa.com", "title": "Is iVisa Legit?", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}, {"position": 5, "url": "https://www.reddit.com/r/travel", "domain": "reddit.com", "title": "iVisa scam or legit — UK Reddit", "is_ivisa": false, "sentiment": "neutral", "source": "semrush"}], "ivisa legit": [{"position": 1, "url": "https://www.ivisa.com", "domain": "ivisa.com", "title": "iVisa Official", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}], "is ivisa a scam": [{"position": 2, "url": "https://www.ivisa.com/legit", "domain": "ivisa.com", "title": "iVisa: Legit Service", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}], "is ivisa legit": [{"position": 1, "url": "https://www.ivisa.com", "domain": "ivisa.com", "title": "iVisa", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}], "ivisa reviews": [{"position": 2, "url": "https://www.trustpilot.com/review/ivisa.com", "domain": "trustpilot.com", "title": "iVisa Reviews", "is_ivisa": false, "sentiment": "positive", "source": "semrush"}], "ivisa fake or real": [{"position": 3, "url": "https://www.ivisa.com/legit", "domain": "ivisa.com", "title": "iVisa Is Real", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}], "is ivisa safe": [{"position": 2, "url": "https://www.ivisa.com/security", "domain": "ivisa.com", "title": "iVisa Security", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}], "iVisa affiliated with the gov": [{"position": 4, "url": "https://www.ivisa.com/faq", "domain": "ivisa.com", "title": "iVisa FAQ", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}], "ivisa fee": [{"position": 1, "url": "https://www.ivisa.com/pricing", "domain": "ivisa.com", "title": "iVisa Pricing", "is_ivisa": true, "sentiment": "positive", "source": "semrush"}]}}}, "ai_overview_data": {"global_score": 58.2, "country_scores": {"us": 62.0, "gb": 58.5, "au": 57.0, "de": 55.0, "ca": 59.0, "fr": 54.0, "jp": 52.0, "nl": 56.0, "it": 53.0, "ch": 54.0}, "results": {"us": {"iVisa": {"has_ai_overview": true, "ivisa_cited": true, "ai_overview_text": "iVisa is a legitimate online visa application service that helps travelers apply for visas, e-visas, and travel documents. It is not affiliated with any government but acts as a third-party facilitator. With over 1 million customers and a 4.8/5 rating on Trustpilot, iVisa is widely considered safe and reliable.", "sentiment_score": 85.0, "sources": ["https://www.ivisa.com", "https://www.trustpilot.com/review/ivisa.com"], "score": 85.0}, "iVisa scam": {"has_ai_overview": true, "ivisa_cited": true, "ai_overview_text": "iVisa is not a scam. It is a registered company that processes visa applications on behalf of travelers. The service charges a processing fee on top of official government visa fees. Most customer reviews are positive, with high ratings on Trustpilot and SiteJabber.", "sentiment_score": 78.0, "sources": ["https://www.ivisa.com", "https://www.trustpilot.com"], "score": 78.0}, "ivisa legit": {"has_ai_overview": true, "ivisa_cited": true, "ai_overview_text": "Yes, iVisa is a legitimate service. The company is accredited and has processed over 1 million visa applications worldwide.", "sentiment_score": 88.0, "sources": ["https://www.ivisa.com"], "score": 88.0}, "is ivisa a scam": {"has_ai_overview": false, "ivisa_cited": false, "ai_overview_text": null, "sentiment_score": null, "sources": [], "score": 50.0}, "is ivisa legit": {"has_ai_overview": true, "ivisa_cited": true, "ai_overview_text": "iVisa is a legitimate online visa application platform trusted by millions of travelers. It is not a government website but provides a convenient service to help process travel documents.", "sentiment_score": 82.0, "sources": ["https://www.ivisa.com", "https://www.forbes.com"], "score": 82.0}, "ivisa reviews": {"has_ai_overview": false, "ivisa_cited": false, "ai_overview_text": null, "sentiment_score": null, "sources": [], "score": 50.0}, "ivisa fake or real": {"has_ai_overview": true, "ivisa_cited": true, "ai_overview_text": "iVisa is a real company, not fake. It has been operating since 2013 and is headquartered in Miami, Florida. The service is used by travelers in over 180 countries.", "sentiment_score": 90.0, "sources": ["https://www.ivisa.com"], "score": 90.0}, "is ivisa safe": {"has_ai_overview": true, "ivisa_cited": true, "ai_overview_text": "iVisa uses 256-bit SSL encryption and complies with GDPR standards to protect user data. It is generally considered safe for submitting personal and passport information.", "sentiment_score": 80.0, "sources": ["https://www.ivisa.com/security"], "score": 80.0}, "iVisa affiliated with the gov": {"has_ai_overview": false, "ivisa_cited": false, "ai_overview_text": null, "sentiment_score": null, "sources": [], "score": 50.0}, "ivisa fee": {"has_ai_overview": true, "ivisa_cited": true, "ai_overview_text": "iVisa charges a service fee in addition to the official government visa fee. Fees vary by visa type and destination country. The service fee is transparent and shown upfront before checkout.", "sentiment_score": 65.0, "sources": ["https://www.ivisa.com/pricing"], "score": 65.0}}, "gb": {"iVisa": {"has_ai_overview": true, "ivisa_cited": true, "sentiment_score": 80.0, "score": 80.0, "sources": [], "ai_overview_text": "iVisa is a trusted visa service."}, "iVisa scam": {"has_ai_overview": false, "ivisa_cited": false, "sentiment_score": null, "score": 50.0, "sources": [], "ai_overview_text": null}, "ivisa legit": {"has_ai_overview": true, "ivisa_cited": true, "sentiment_score": 75.0, "score": 75.0, "sources": [], "ai_overview_text": "iVisa is legitimate."}, "is ivisa a scam": {"has_ai_overview": false, "ivisa_cited": false, "sentiment_score": null, "score": 50.0, "sources": [], "ai_overview_text": null}, "is ivisa legit": {"has_ai_overview": true, "ivisa_cited": true, "sentiment_score": 78.0, "score": 78.0, "sources": [], "ai_overview_text": "iVisa is a legitimate visa service."}, "ivisa reviews": {"has_ai_overview": false, "ivisa_cited": false, "sentiment_score": null, "score": 50.0, "sources": [], "ai_overview_text": null}, "ivisa fake or real": {"has_ai_overview": true, "ivisa_cited": true, "sentiment_score": 82.0, "score": 82.0, "sources": [], "ai_overview_text": "iVisa is a real company."}, "is ivisa safe": {"has_ai_overview": false, "ivisa_cited": false, "sentiment_score": null, "score": 50.0, "sources": [], "ai_overview_text": null}, "iVisa affiliated with the gov": {"has_ai_overview": false, "ivisa_cited": false, "sentiment_score": null, "score": 50.0, "sources": [], "ai_overview_text": null}, "ivisa fee": {"has_ai_overview": true, "ivisa_cited": true, "sentiment_score": 60.0, "score": 60.0, "sources": [], "ai_overview_text": "iVisa charges a transparent service fee."}}}}, "llm_data": {"global_score": 65.1, "part_a": {"score": 72.4, "results": [{"query": "Is iVisa legit?", "claude_response": "Yes, iVisa is a legitimate and well-established visa application service. They have processed over 1 million applications and maintain a 4.8/5 rating on Trustpilot.", "gemini_response": "iVisa is indeed a legitimate service. It's a third-party visa processing company that helps travelers navigate complex visa applications. They are not a government agency but are a reputable intermediary.", "claude_sentiment": 88.0, "gemini_sentiment": 85.0, "avg_sentiment": 86.5}, {"query": "Is iVisa a scam?", "claude_response": "No, iVisa is not a scam. It's a registered business that charges a service fee for processing visa applications. The fees are transparent and shown before checkout.", "gemini_response": "iVisa is not a scam. It is a legitimate company with years of operation. They charge fees for convenience services on top of government fees, which is standard in the visa services industry.", "claude_sentiment": 82.0, "gemini_sentiment": 80.0, "avg_sentiment": 81.0}, {"query": "Should I use iVisa?", "claude_response": "iVisa can be a convenient option if you want guided assistance with your visa application. Their service simplifies the process, especially for complex visas.", "gemini_response": "Using iVisa depends on your needs. If you want a streamlined process and are willing to pay a service fee for convenience, iVisa is a solid choice.", "claude_sentiment": 75.0, "gemini_sentiment": 72.0, "avg_sentiment": 73.5}, {"query": "Can I trust iVisa?", "claude_response": "iVisa is generally trustworthy. They use encryption to protect your data and have a strong track record with millions of satisfied customers.", "gemini_response": "iVisa has a good reputation for reliability. Their data security measures and customer support make them a trusted choice among travelers.", "claude_sentiment": 84.0, "gemini_sentiment": 81.0, "avg_sentiment": 82.5}, {"query": "iVisa reviews - honest opinion", "claude_response": "Most iVisa reviews are positive, praising their user-friendly interface and fast processing. Some users mention the service fee as a drawback but most find it worth the convenience.", "gemini_response": "iVisa generally receives positive reviews for ease of use and responsive customer service. A small percentage of reviews mention processing delays.", "claude_sentiment": 70.0, "gemini_sentiment": 68.0, "avg_sentiment": 69.0}, {"query": "Is iVisa safe to use?", "claude_response": "Yes, iVisa uses SSL encryption and follows GDPR guidelines. Your personal information is handled securely.", "gemini_response": "iVisa is safe for personal data submission. They comply with data protection regulations and have security certifications.", "claude_sentiment": 85.0, "gemini_sentiment": 83.0, "avg_sentiment": 84.0}, {"query": "Is iVisa legitimate or a scam?", "claude_response": "iVisa is legitimate. It has been in business since 2013, is incorporated in the US, and has served millions of customers worldwide.", "gemini_response": "iVisa is definitely legitimate — a well-funded travel tech company with transparent operations and strong customer satisfaction scores.", "claude_sentiment": 90.0, "gemini_sentiment": 88.0, "avg_sentiment": 89.0}, {"query": "iVisa customer service quality", "claude_response": "iVisa's customer service receives mixed but mostly positive reviews. Many users praise the 24/7 support availability, while others note occasional delays.", "gemini_response": "Customer service quality at iVisa is generally rated well. They offer live chat, email, and phone support.", "claude_sentiment": 68.0, "gemini_sentiment": 66.0, "avg_sentiment": 67.0}, {"query": "Is iVisa real or fake?", "claude_response": "iVisa is very much real. It's a Miami-based company with a large team, multiple offices, and years of service history.", "gemini_response": "iVisa is a real, operating business. Not fake.", "claude_sentiment": 92.0, "gemini_sentiment": 90.0, "avg_sentiment": 91.0}, {"query": "Is iVisa affiliated with the government?", "claude_response": "No, iVisa is not affiliated with any government. It is a private company that acts as a facilitator for official government visa applications.", "gemini_response": "iVisa is a private company with no government affiliation. However, they work within official government frameworks to submit visa applications on behalf of travelers.", "claude_sentiment": 60.0, "gemini_sentiment": 58.0, "avg_sentiment": 59.0}, {"query": "Are iVisa processing fees worth it?", "claude_response": "Whether iVisa fees are worth it depends on your time and comfort with bureaucracy. For complex applications or travelers without experience, the fee is generally considered worthwhile.", "gemini_response": "Many travelers find iVisa fees worth it for the time saved and peace of mind. The fees vary but are typically reasonable for the service provided.", "claude_sentiment": 65.0, "gemini_sentiment": 63.0, "avg_sentiment": 64.0}, {"query": "iVisa vs applying directly to government", "claude_response": "Applying directly is free but can be complicated. iVisa charges a fee but simplifies the process significantly, especially for less tech-savvy travelers.", "gemini_response": "Direct government applications are cheaper but more complex. iVisa's value proposition is convenience and error reduction.", "claude_sentiment": 60.0, "gemini_sentiment": 62.0, "avg_sentiment": 61.0}, {"query": "iVisa company reputation", "claude_response": "iVisa has a strong reputation in the travel industry, backed by high review scores across multiple platforms and coverage in major travel publications.", "gemini_response": "iVisa's reputation is solid, with consistent high ratings on Trustpilot, Google, and travel forums.", "claude_sentiment": 82.0, "gemini_sentiment": 80.0, "avg_sentiment": 81.0}, {"query": "Has anyone successfully used iVisa?", "claude_response": "Yes, millions of travelers have successfully used iVisa. Trustpilot shows thousands of positive reviews describing successful visa applications.", "gemini_response": "Absolutely — iVisa has millions of successful applications on record. Travel communities like r/travel frequently share positive experiences.", "claude_sentiment": 88.0, "gemini_sentiment": 86.0, "avg_sentiment": 87.0}, {"query": "Is iVisa approved by governments?", "claude_response": "iVisa is not 'approved' in the official sense but is an authorized partner or recognized intermediary for many government e-visa systems.", "gemini_response": "iVisa works within official government systems. They are recognized processors for many e-visa programs.", "claude_sentiment": 62.0, "gemini_sentiment": 64.0, "avg_sentiment": 63.0}, {"query": "Does iVisa have hidden fees?", "claude_response": "iVisa does not have hidden fees. All fees, including service charges and government fees, are shown transparently before checkout.", "gemini_response": "No hidden fees — iVisa is transparent about their pricing. The total cost including government fees is shown upfront.", "claude_sentiment": 75.0, "gemini_sentiment": 73.0, "avg_sentiment": 74.0}, {"query": "Is iVisa refund policy trustworthy?", "claude_response": "iVisa's refund policy is generally considered trustworthy, though some users have reported delays in receiving refunds for cancelled applications.", "gemini_response": "iVisa offers refunds for denied visas and cancellations within their policy window. Most users report satisfactory refund experiences.", "claude_sentiment": 62.0, "gemini_sentiment": 60.0, "avg_sentiment": 61.0}, {"query": "Is iVisa better than applying directly?", "claude_response": "For many travelers, especially those unfamiliar with visa processes, iVisa provides significant value through its guided experience, even with the added service fee.", "gemini_response": "iVisa offers a more streamlined experience than direct applications for most travelers, particularly for complex multi-document visas.", "claude_sentiment": 70.0, "gemini_sentiment": 68.0, "avg_sentiment": 69.0}, {"query": "Is iVisa secure with personal information?", "claude_response": "iVisa uses industry-standard encryption and follows GDPR and CCPA compliance requirements for personal data handling.", "gemini_response": "Your personal information is secure with iVisa. They use 256-bit SSL, have ISO 27001 data security practices, and comply with global privacy regulations.", "claude_sentiment": 83.0, "gemini_sentiment": 85.0, "avg_sentiment": 84.0}, {"query": "iVisa reliability for visa applications", "claude_response": "iVisa is highly reliable for standard visa applications. They have a strong track record and alert customers immediately if any issues arise with their applications.", "gemini_response": "iVisa is a reliable service for visa applications, with millions of successful submissions and strong support channels.", "claude_sentiment": 80.0, "gemini_sentiment": 82.0, "avg_sentiment": 81.0}]}, "part_b": {"score": 57.8, "mention_rate": 0.4667, "avg_positive_sentiment": 72.5, "results": [{"query": "Best visa application service", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 76.0, "gemini_sentiment": 74.0, "avg_sentiment": 75.0}, {"query": "Best visa processing services 2025", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": false, "claude_sentiment": 72.0, "gemini_sentiment": null, "avg_sentiment": 72.0}, {"query": "Safest way to apply for a visa online", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "How to apply for a US visa safely", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": true, "claude_sentiment": null, "gemini_sentiment": 65.0, "avg_sentiment": 65.0}, {"query": "Top rated visa application companies", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 78.0, "gemini_sentiment": 76.0, "avg_sentiment": 77.0}, {"query": "Most trusted visa services", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 80.0, "gemini_sentiment": 78.0, "avg_sentiment": 79.0}, {"query": "How to avoid visa scams online", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Legitimate visa application websites", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 74.0, "gemini_sentiment": 72.0, "avg_sentiment": 73.0}, {"query": "Best online visa services for travelers", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": false, "claude_sentiment": 70.0, "gemini_sentiment": null, "avg_sentiment": 70.0}, {"query": "Visa application service recommendations", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Which visa service should I use?", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 76.0, "gemini_sentiment": 74.0, "avg_sentiment": 75.0}, {"query": "How to get a visa quickly and safely", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Best tourist visa application services", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 72.0, "gemini_sentiment": 70.0, "avg_sentiment": 71.0}, {"query": "Trusted online visa processing", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": true, "claude_sentiment": null, "gemini_sentiment": 68.0, "avg_sentiment": 68.0}, {"query": "Visa services with good reviews", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Online visa application companies comparison", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": false, "claude_sentiment": 66.0, "gemini_sentiment": null, "avg_sentiment": 66.0}, {"query": "Most reliable passport and visa services", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Which visa agency is best?", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 74.0, "gemini_sentiment": 72.0, "avg_sentiment": 73.0}, {"query": "Travel document services review", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Electronic visa application services", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 78.0, "gemini_sentiment": 76.0, "avg_sentiment": 77.0}, {"query": "e-visa application best service", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": false, "claude_sentiment": 74.0, "gemini_sentiment": null, "avg_sentiment": 74.0}, {"query": "How to apply for travel documents online", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "International visa services comparison", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": true, "claude_sentiment": null, "gemini_sentiment": 68.0, "avg_sentiment": 68.0}, {"query": "Best sites for visa applications", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 76.0, "gemini_sentiment": 74.0, "avg_sentiment": 75.0}, {"query": "Fastest visa processing services", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Visa service with best customer support", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Can I apply for visa online safely?", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "Recommended visa services for travelers", "claude_mentions_ivisa": true, "gemini_mentions_ivisa": true, "claude_sentiment": 78.0, "gemini_sentiment": 76.0, "avg_sentiment": 77.0}, {"query": "Travel visa services trusted reviews", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}, {"query": "How do I avoid fake visa websites?", "claude_mentions_ivisa": false, "gemini_mentions_ivisa": false, "claude_sentiment": null, "gemini_sentiment": null, "avg_sentiment": null}]}}, "earned_media": {"score": 60.0, "mentions": [{"source": "Forbes Travel", "title": "iVisa Makes International Travel Simpler for Millions of Travelers", "date": "2026-05-20", "sentiment": "positive", "url": "https://www.forbes.com/travel/ivisa-review"}, {"source": "TrustPilot", "title": "5-star review: Processed my Indian e-Visa in under 2 hours. Incredible service.", "date": "2026-05-22", "sentiment": "positive", "url": "https://www.trustpilot.com/review/ivisa.com"}, {"source": "TravelPulse", "title": "Top Visa Processing Services of 2026: iVisa Tops the List", "date": "2026-05-18", "sentiment": "positive", "url": "https://www.travelpulse.com/news/visa-services-2026"}, {"source": "Reddit r/travel", "title": "Used iVisa for my Turkey trip — here's my honest take", "date": "2026-05-21", "sentiment": "positive", "url": "https://www.reddit.com/r/travel/ivisa-review"}, {"source": "Skift", "title": "How iVisa Is Disrupting the Legacy Visa Services Market", "date": "2026-05-15", "sentiment": "positive", "url": "https://skift.com/ivisa-market-disruption"}, {"source": "BBB", "title": "Consumer complaint: refund delay on cancelled application", "date": "2026-05-10", "sentiment": "negative", "url": "https://www.bbb.org/ivisa"}]}, "action_items": ["Improve rankings for 'is ivisa a scam', 'ivisa legit', 'ivisa fake or real' — iVisa not in top 3 for several countries.", "Create more AI-citable structured content (FAQ schema, HowTo schema) for 'iVisa affiliated with gov' and 'is ivisa a scam' queries.", "Increase LLM mention rate for general visa queries — target 60%+ by publishing on Forbes, Skift, and TravelPulse.", "Address BBB and RipOff Report SERP appearances — respond to complaints and publish authoritative rebuttals.", "Submit iVisa to more travel publication roundups to improve Part B LLM mention rate from 47% to 60%."]};
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+function scoreColor(s) {
+  if (s >= 75) return 'var(--green)';
+  if (s >= 55) return 'var(--yellow)';
+  return 'var(--red)';
+}
+function fillClass(s) {
+  if (s >= 75) return 'fill-green';
+  if (s >= 55) return 'fill-yellow';
+  return 'fill-red';
+}
+function posBadge(p) {
+  const cls = p === 1 ? 'pos-1' : p <= 3 ? 'pos-top3' : p <= 7 ? 'pos-mid' : 'pos-bad';
+  return `<span class="pos-badge ${cls}">${p}</span>`;
+}
+function pillSentiment(s) {
+  const map = { positive:'pill-pos', negative:'pill-neg', neutral:'pill-neu' };
+  return `<span class="pill ${map[s]||'pill-neu'}">${s||'neutral'}</span>`;
+}
+function pillBool(b, labelY='Yes', labelN='No') {
+  return b
+    ? `<span class="pill pill-yes">${labelY}</span>`
+    : `<span class="pill pill-no">${labelN}</span>`;
+}
+function fmtScore(v) {
+  return v == null ? '—' : Number(v).toFixed(1);
+}
+
+// ── Gauge SVG ──────────────────────────────────────────────────────────────
+function buildGauge(score) {
+  const pct   = Math.min(Math.max(score, 0), 100) / 100;
+  const angle = -180 + pct * 180;   // -180° to 0°
+  const r = 70, cx = 90, cy = 90;
+  const toRad = d => d * Math.PI / 180;
+  const arcX  = cx + r * Math.cos(toRad(angle - 90));
+  const arcY  = cy + r * Math.sin(toRad(angle - 90));
+  const color = score >= 75 ? '#16a34a' : score >= 55 ? '#d97706' : '#dc2626';
+
+  return `<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20,90 A70,70 0 0,1 160,90" fill="none" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round"/>
+    <path d="M20,90 A70,70 0 0,1 ${arcX.toFixed(2)},${arcY.toFixed(2)}" fill="none"
+          stroke="${color}" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="${arcX.toFixed(2)}" cy="${arcY.toFixed(2)}" r="6" fill="${color}"/>
+  </svg>`;
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const D = REPORT_DATA;
+
+  // Header
+  document.getElementById('weekRange').textContent = D.week_label || '';
+  document.getElementById('heroWeek').textContent  = 'Week of ' + (D.week_start || '');
+
+  // Hero score
+  const csov = D.csov_score || 0;
+  document.getElementById('heroScore').textContent  = csov.toFixed(1);
+  document.getElementById('gaugeWrap').innerHTML = buildGauge(csov);
+
+  // Trend badge
+  const prev  = D.previous_csov_score;
+  const diff  = prev != null ? csov - prev : null;
+  const bdEl  = document.getElementById('heroBadge');
+  if (diff != null) {
+    const cls  = diff > 0 ? 'badge-up' : diff < 0 ? 'badge-down' : 'badge-flat';
+    const sign = diff > 0 ? '+' : '';
+    bdEl.innerHTML = `<span class="badge ${cls}">${sign}${diff.toFixed(1)} MoM</span>`;
+  }
+
+  // Component Cards
+  buildComponentCards(D.components);
+
+  // Trend Chart
+  buildTrendChart(D.historical);
+
+  // Country Grid
+  buildCountryGrid(D.country_data);
+
+  // Country Detail Tabs
+  buildCountryTabs(D.country_data);
+
+  // LLM Tables
+  buildLlmTables(D.llm_data);
+
+  // Earned Media
+  buildEarnedMedia(D.earned_media);
+
+  // Actions
+  buildActions(D.action_items);
+
+  // Select first country by default
+  const firstCode = Object.keys(D.country_data)[0];
+  if (firstCode) selectCountry(firstCode, D);
+});
+
+// ── Component Cards ────────────────────────────────────────────────────────
+function buildComponentCards(components) {
+  const grid = document.getElementById('componentGrid');
+  const items = [
+    { key: 'serp',         label: 'SERP Score',        icon: '🔍', weight: '35%' },
+    { key: 'ai_overview',  label: 'AI Overview Score',  icon: '🤖', weight: '25%' },
+    { key: 'llm',          label: 'LLM Score',          icon: '💬', weight: '25%' },
+    { key: 'earned_media', label: 'Earned Media Score', icon: '📰', weight: '15%' },
+  ];
+
+  items.forEach(({ key, label, icon, weight }) => {
+    const comp  = components[key] || {};
+    const score = comp.score || 0;
+    const prev  = comp.prev_score;
+    const diff  = prev != null ? (score - prev) : null;
+    const trend = diff != null
+      ? `<span class="badge ${diff>0?'badge-up':diff<0?'badge-down':'badge-flat'}">${diff>0?'+':''}${diff.toFixed(1)}</span>`
+      : '';
+
+    grid.innerHTML += `
+      <div class="comp-card">
+        <div class="comp-card-header">
+          <span class="comp-card-title">${icon} ${label}</span>
+          <span class="comp-card-weight">${weight}</span>
+        </div>
+        <div class="comp-score">${score.toFixed(1)}<span>/100</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill ${fillClass(score)}" style="width:${score}%"></div>
+        </div>
+        ${trend}
+      </div>`;
+  });
+}
+
+// ── Trend Chart ────────────────────────────────────────────────────────────
+function buildTrendChart(history) {
+  if (!history || !history.length) return;
+  const labels   = history.map(h => h.week_label);
+  const datasets = [
+    { label: 'Overall CSOV',  data: history.map(h=>h.csov),         borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,.1)',  tension:.35, fill:false, borderWidth:3 },
+    { label: 'SERP',          data: history.map(h=>h.serp),         borderColor:'#16a34a', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'AI Overview',   data: history.map(h=>h.ai_overview),  borderColor:'#d97706', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'LLM',           data: history.map(h=>h.llm),          borderColor:'#7c3aed', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'Earned Media',  data: history.map(h=>h.earned_media), borderColor:'#ec4899', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+  ];
+
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16, font: { size: 11 } } } },
+      scales: {
+        y: { min: 0, max: 100, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+      },
+    },
+  });
+}
+
+// ── Country Grid ───────────────────────────────────────────────────────────
+function buildCountryGrid(countryData) {
+  const grid = document.getElementById('countryGrid');
+  Object.entries(countryData).forEach(([code, country]) => {
+    const score = (country.csov_score || 0).toFixed(1);
+    const c     = country.components || {};
+    const segs  = [
+      { w: (c.serp||0)*0.35, color:'#2563EB' },
+      { w: (c.ai_overview||0)*0.25, color:'#d97706' },
+      { w: (c.llm||0)*0.25,  color:'#7c3aed' },
+      { w: (c.earned_media||0)*0.15, color:'#ec4899' },
+    ];
+    const total = segs.reduce((s,x)=>s+x.w,0)||1;
+
+    grid.innerHTML += `
+      <div class="country-card" id="cc-${code}" onclick="selectCountry('${code}', REPORT_DATA)">
+        <div class="country-flag">${country.flag||''}</div>
+        <div class="country-name">${country.name}</div>
+        <div class="country-score" style="color:${scoreColor(country.csov_score||0)}">${score}</div>
+        <div class="mini-bar-wrap">
+          ${segs.map(s=>`<div class="mini-seg" style="width:${(s.w/total*100).toFixed(1)}%;background:${s.color}"></div>`).join('')}
+        </div>
+      </div>`;
+  });
+}
+
+// ── Country Selection ──────────────────────────────────────────────────────
+let activeCountry = null;
+function selectCountry(code, D) {
+  if (activeCountry) document.getElementById('cc-'+activeCountry)?.classList.remove('active');
+  activeCountry = code;
+  document.getElementById('cc-'+code)?.classList.add('active');
+
+  const country = D.country_data[code];
+  document.getElementById('detailTitle').textContent = `${country.flag} ${country.name} — Detail`;
+
+  // SERP Table
+  buildSerpTable(D.serp_data?.results?.[code] || {});
+  // AIO Table
+  buildAioTable(D.ai_overview_data?.results?.[code] || {});
+}
+
+// ── Country Tabs ───────────────────────────────────────────────────────────
+function buildCountryTabs(countryData) {
+  // These are top-level section tabs: SERP / AI Overview / LLM / Earned Media
+  const tabBar = document.getElementById('countryTabs');
+  const tabs = [
+    { id: 'serp', label: '🔍 SERP' },
+    { id: 'aio',  label: '🤖 AI Overview' },
+    { id: 'llm',  label: '💬 LLM' },
+    { id: 'em',   label: '📰 Earned Media' },
+  ];
+  tabs.forEach((t, i) => {
+    tabBar.innerHTML += `
+      <button class="tab-btn${i===0?' active':''}" onclick="showTab('${t.id}',this)">${t.label}</button>`;
+  });
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('#countryTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function showLlmTab(part, btn) {
+  document.getElementById('llm-parta').style.display = part==='parta'?'block':'none';
+  document.getElementById('llm-partb').style.display = part==='partb'?'block':'none';
+  document.querySelectorAll('.llm-tabs .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── SERP Table ─────────────────────────────────────────────────────────────
+function buildSerpTable(countryResults) {
+  const tbody = document.getElementById('serpTableBody');
+  tbody.innerHTML = '';
+  Object.entries(countryResults).forEach(([kw, results]) => {
+    results.forEach(r => {
+      const isIv = r.is_ivisa;
+      tbody.innerHTML += `
+        <tr class="${isIv?'ivisa-row':''}">
+          <td>${kw}</td>
+          <td>${r.position ? posBadge(r.position) : '—'}</td>
+          <td><a class="domain-link" href="https://${r.domain}" target="_blank">${r.domain||'—'}</a></td>
+          <td><a class="domain-link" href="${r.url}" target="_blank">${(r.url||'').substring(0,50)}${(r.url||'').length>50?'…':''}</a></td>
+          <td>${pillSentiment(r.sentiment)}</td>
+        </tr>`;
+    });
+  });
+  if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No SERP data available</td></tr>';
+}
+
+// ── AIO Table ──────────────────────────────────────────────────────────────
+function buildAioTable(countryResults) {
+  const tbody = document.getElementById('aioTableBody');
+  tbody.innerHTML = '';
+  Object.entries(countryResults).forEach(([kw, r]) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${kw}</td>
+        <td>${r.has_ai_overview == null ? '<span class="pill pill-neu">No data</span>' : pillBool(r.has_ai_overview)}</td>
+        <td>${r.ivisa_cited == null     ? '<span class="pill pill-neu">—</span>'      : pillBool(r.ivisa_cited, 'Cited', 'Not cited')}</td>
+        <td>${r.sentiment_score != null ? fmtScore(r.sentiment_score)+'%' : '—'}</td>
+        <td>${r.score != null           ? fmtScore(r.score) : '—'}</td>
+      </tr>`;
+  });
+  if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No AI Overview data available</td></tr>';
+}
+
+// ── LLM Tables ─────────────────────────────────────────────────────────────
+function buildLlmTables(llmData) {
+  if (!llmData) return;
+
+  // Part A
+  const partA = llmData.part_a?.results || [];
+  const tbodyA = document.getElementById('llmPartABody');
+  partA.forEach(r => {
+    tbodyA.innerHTML += `
+      <tr>
+        <td style="max-width:260px">${r.query}</td>
+        <td>
+          <span style="font-weight:700;color:${scoreColor(r.claude_sentiment||0)}">${fmtScore(r.claude_sentiment)}</span>
+          <div class="llm-response">${(r.claude_response||'').substring(0,80)}…</div>
+        </td>
+        <td>
+          <span style="font-weight:700;color:${scoreColor(r.gemini_sentiment||0)}">${fmtScore(r.gemini_sentiment)}</span>
+          <div class="llm-response">${(r.gemini_response||'').substring(0,80)}…</div>
+        </td>
+        <td>
+          <span style="font-weight:700;color:${scoreColor(r.avg_sentiment||0)}">${fmtScore(r.avg_sentiment)}</span>
+          <div class="progress-bar" style="width:80px">
+            <div class="progress-fill ${fillClass(r.avg_sentiment||0)}" style="width:${r.avg_sentiment||0}%"></div>
+          </div>
+        </td>
+      </tr>`;
+  });
+  if (!tbodyA.innerHTML) tbodyA.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part A data</td></tr>';
+
+  // Part B
+  const partB = llmData.part_b?.results || [];
+  const tbodyB = document.getElementById('llmPartBBody');
+  partB.forEach(r => {
+    tbodyB.innerHTML += `
+      <tr>
+        <td style="max-width:260px">${r.query}</td>
+        <td>${pillBool(r.claude_mentions_ivisa, 'Yes ✓', 'No')}</td>
+        <td>${pillBool(r.gemini_mentions_ivisa, 'Yes ✓', 'No')}</td>
+        <td>${r.avg_sentiment != null
+          ? `<span style="font-weight:700;color:${scoreColor(r.avg_sentiment)}">${fmtScore(r.avg_sentiment)}</span>`
+          : '—'}</td>
+      </tr>`;
+  });
+  if (!tbodyB.innerHTML) tbodyB.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part B data</td></tr>';
+}
+
+// ── Earned Media ───────────────────────────────────────────────────────────
+function buildEarnedMedia(earnedMedia) {
+  const grid = document.getElementById('mentionsGrid');
+  const mentions = earnedMedia?.mentions || [];
+
+  if (!mentions.length) {
+    grid.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;">No earned media mentions on record. Update data/earned_media.json with Brand24 export.</p>';
+    return;
+  }
+
+  mentions.forEach(m => {
+    const sentCls = m.sentiment === 'positive' ? 'pill-pos' : m.sentiment === 'negative' ? 'pill-neg' : 'pill-neu';
+    grid.innerHTML += `
+      <div class="mention-card">
+        <div class="mention-source">${m.source || 'Unknown Source'}</div>
+        <div class="mention-title">${m.title || 'Untitled mention'}</div>
+        <div class="mention-footer">
+          <span class="pill ${sentCls}">${m.sentiment || 'neutral'}</span>
+          <span>${m.date || ''}</span>
+          ${m.url ? `<a class="domain-link" href="${m.url}" target="_blank">View →</a>` : ''}
+        </div>
+      </div>`;
+  });
+}
+
+// ── Action Items ───────────────────────────────────────────────────────────
+function buildActions(actions) {
+  const list = document.getElementById('actionsList');
+  const icons = ['🎯','📈','🔗','✍️','💡','⚠️','🚀'];
+  (actions || []).forEach((a, i) => {
+    list.innerHTML += `
+      <li class="action-item">
+        <span class="action-icon">${icons[i % icons.length]}</span>
+        <span class="action-text">${a}</span>
+      </li>`;
+  });
+  if (!actions?.length) {
+    list.innerHTML = '<li class="action-item"><span class="action-icon">✅</span><span class="action-text">All scores are healthy — maintain current strategy.</span></li>';
+  }
+}
+</script>
+</body>
+</html>

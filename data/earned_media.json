@@ -1,0 +1,55 @@
+{
+  "score": 60,
+  "last_updated": "2026-05-23",
+  "source": "Brand24 export — update weekly",
+  "mentions": [
+    {
+      "source": "Forbes Travel",
+      "title": "iVisa Makes International Travel Simpler for Millions of Travelers",
+      "date": "2026-05-20",
+      "sentiment": "positive",
+      "url": "https://www.forbes.com/travel/ivisa-review",
+      "reach": 4200000
+    },
+    {
+      "source": "TrustPilot",
+      "title": "5-star review: Processed my Indian e-Visa in under 2 hours. Incredible service.",
+      "date": "2026-05-22",
+      "sentiment": "positive",
+      "url": "https://www.trustpilot.com/review/ivisa.com",
+      "reach": 180000
+    },
+    {
+      "source": "TravelPulse",
+      "title": "Top Visa Processing Services of 2026: iVisa Tops the List",
+      "date": "2026-05-18",
+      "sentiment": "positive",
+      "url": "https://www.travelpulse.com/news/visa-services-2026",
+      "reach": 620000
+    },
+    {
+      "source": "Reddit r/travel",
+      "title": "Used iVisa for my Turkey trip — here's my honest take",
+      "date": "2026-05-21",
+      "sentiment": "positive",
+      "url": "https://www.reddit.com/r/travel/ivisa-review",
+      "reach": 95000
+    },
+    {
+      "source": "Skift",
+      "title": "How iVisa Is Disrupting the Legacy Visa Services Market",
+      "date": "2026-05-15",
+      "sentiment": "positive",
+      "url": "https://skift.com/ivisa-market-disruption",
+      "reach": 1100000
+    },
+    {
+      "source": "BBB",
+      "title": "Consumer complaint: refund delay on cancelled application",
+      "date": "2026-05-10",
+      "sentiment": "negative",
+      "url": "https://www.bbb.org/ivisa",
+      "reach": 45000
+    }
+  ]
+}
