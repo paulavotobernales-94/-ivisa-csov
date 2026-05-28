@@ -196,6 +196,14 @@ def run(dry_run: bool = False) -> None:
                 "global_score": 50.0,
             }
 
+        # 2b. Enrich SERP with SerpAPI organic results (titles + fill gaps)
+        logger.info("[2b/6] Enriching SERP data with SerpAPI organic titles...")
+        try:
+            from scripts.fetch_serp import enrich_with_serpapi_organic
+            serp_data = enrich_with_serpapi_organic(serp_data, ai_overview_data.get("organic_data", {}))
+        except Exception as exc:
+            logger.warning("SERP enrichment skipped: %s", exc)
+
         # 4. Earned Media + CSOV calculation
         logger.info("[4/6] Loading earned media & calculating CSOV...")
         try:

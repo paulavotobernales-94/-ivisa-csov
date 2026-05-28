@@ -306,6 +306,75 @@ def calculate_global_serp_score(country_scores: dict[str, float]) -> float:
 
 
 # ---------------------------------------------------------------------------
+# SerpAPI organic enrichment
+# ---------------------------------------------------------------------------
+
+def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
+    """
+    Enrich SERP results using organic data already fetched by fetch_ai_overviews.
+
+    Two jobs:
+    1. Fill in page titles (SEMrush/Ahrefs don't return titles).
+    2. Replace empty keyword results (keywords with no SEMrush/Ahrefs coverage)
+       with SerpAPI organic results — same API call, zero extra cost.
+
+    organic_data shape: { country_code: { keyword: [ {position, url, domain, title, snippet} ] } }
+    """
+    results = serp_data.get("results", {})
+
+    for country_code, keyword_organic in organic_data.items():
+        if country_code not in results:
+            results[country_code] = {}
+
+        for keyword, organic_list in keyword_organic.items():
+            existing = results[country_code].get(keyword, [])
+
+            if not existing:
+                # No SEMrush/Ahrefs data at all — use SerpAPI organic as source
+                results[country_code][keyword] = [
+                    {
+                        "position": r["position"],
+                        "url": r["url"],
+                        "domain": r["domain"],
+                        "title": r["title"],
+                        "snippet": r.get("snippet", ""),
+                        "is_ivisa": _is_ivisa(r["domain"]),
+                        "sentiment": _classify_result(r["domain"], r["title"]),
+                        "source": "serpapi",
+                    }
+                    for r in organic_list
+                    if r.get("position") and r.get("url")
+                ]
+            else:
+                # SEMrush/Ahrefs data exists — fill in missing titles + snippets
+                url_map = {r["url"]: r for r in organic_list if r.get("url")}
+
+                for item in existing:
+                    url = item.get("url", "")
+                    organic_match = url_map.get(url)
+                    if organic_match:
+                        if not item.get("title"):
+                            item["title"] = organic_match.get("title", "")
+                        if not item.get("snippet"):
+                            item["snippet"] = organic_match.get("snippet", "")
+
+                    # Re-classify sentiment now that we have the title
+                    if item.get("title"):
+                        item["sentiment"] = _classify_result(
+                            item.get("domain", ""), item.get("title", "")
+                        )
+
+    # Recompute scores with enriched data
+    for country_code in list(results.keys()):
+        serp_data["country_scores"][country_code] = _country_serp_score(results[country_code])
+
+    serp_data["global_score"] = calculate_global_serp_score(serp_data["country_scores"])
+    serp_data["results"] = results
+    logger.info("  → SERP enriched with SerpAPI organic data. New global score: %.1f", serp_data["global_score"])
+    return serp_data
+
+
+# ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
 

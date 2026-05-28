@@ -161,10 +161,37 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .domain-link:hover { text-decoration: underline; }
   .ivisa-row td { background: #eff6ff !important; font-weight: 600; }
 
+  /* ── Methodology Panel ── */
+  .method-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+                   padding: 0; margin-bottom: 32px; overflow: hidden; }
+  .method-toggle { width: 100%; text-align: left; padding: 16px 24px; border: none; background: none;
+                    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+                    font-size: .9rem; font-weight: 600; color: var(--navy); }
+  .method-toggle:hover { background: var(--bg); }
+  .method-body { display: none; padding: 0 24px 24px; border-top: 1px solid var(--border); }
+  .method-body.open { display: block; }
+  .method-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; margin-top: 16px; }
+  @media(max-width:700px){ .method-grid { grid-template-columns: 1fr; } }
+  .method-item { background: var(--bg); border-radius: 10px; padding: 16px; }
+  .method-item h4 { font-size: .85rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .method-item p, .method-item li { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+  .method-item ul { padding-left: 16px; }
+  .method-formula { font-family: monospace; background: #1e293b; color: #7dd3fc;
+                     padding: 10px 14px; border-radius: 8px; font-size: .8rem;
+                     margin-top: 10px; white-space: pre-wrap; }
+
   /* ── LLM Section ── */
   .llm-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-  .llm-response { font-size: .8rem; color: var(--muted); max-width: 300px;
-                   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .llm-response-full { font-size: .78rem; color: var(--muted); line-height: 1.5;
+                        max-height: 100px; overflow: hidden; transition: max-height .3s;
+                        cursor: pointer; }
+  .llm-response-full.expanded { max-height: 600px; }
+  .llm-expand-hint { font-size: .72rem; color: var(--blue); cursor: pointer; margin-top: 3px; }
+
+  /* ── AIO text ── */
+  .aio-text-cell { font-size: .78rem; color: var(--muted); line-height: 1.5;
+                    max-height: 60px; overflow: hidden; cursor: pointer; }
+  .aio-text-cell.expanded { max-height: 400px; }
 
   /* ── Earned Media ── */
   .mentions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -229,6 +256,67 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <div class="section-title">Component Breakdown</div>
   <div class="component-grid" id="componentGrid"></div>
 
+  <!-- METHODOLOGY PANEL -->
+  <div class="method-panel">
+    <button class="method-toggle" onclick="toggleMethod(this)">
+      ℹ️ How is this score calculated? — Click to expand scoring methodology
+      <span id="methodArrow">▼</span>
+    </button>
+    <div class="method-body" id="methodBody">
+      <div class="method-grid">
+        <div class="method-item">
+          <h4>🧮 Master Formula</h4>
+          <div class="method-formula">CSOV = (SERP × 35%) + (AI Overview × 25%)
+       + (LLM × 25%) + (Earned Media × 15%)</div>
+          <p style="margin-top:10px;">Each component is scored 0–100. The weighted average gives the Global CSOV Score. Country scores use the same formula but with country-specific SERP and AI Overview data.</p>
+        </div>
+        <div class="method-item">
+          <h4>🔍 SERP Score (35%)</h4>
+          <p>Measures whether the <strong>top-10 Google results</strong> per keyword are positive, neutral, or negative about iVisa — regardless of whether iVisa.com itself ranks.</p>
+          <ul style="margin-top:8px;">
+            <li>🟢 <strong>Positive</strong> = page title/domain signals trust (review sites, "is iVisa legit", "how to use iVisa")</li>
+            <li>⚪ <strong>Neutral</strong> = no clear signal (social media, informational pages)</li>
+            <li>🔴 <strong>Negative</strong> = complaints, scam accusations, BBB, "avoid iVisa"</li>
+          </ul>
+          <p style="margin-top:8px;">Each result is weighted by position: pos 1 = 10× more than pos 10. Score = weighted average × 100.</p>
+        </div>
+        <div class="method-item">
+          <h4>🤖 AI Overview Score (25%)</h4>
+          <p>Checks whether Google's AI-generated summaries mention iVisa, using SerpAPI to scrape each keyword × country.</p>
+          <ul style="margin-top:8px;">
+            <li>iVisa cited in AI overview → score = Claude sentiment (0–100)</li>
+            <li>AI overview exists but iVisa not cited → score = sentiment × 30%</li>
+            <li>No AI overview shown → neutral baseline (50)</li>
+          </ul>
+          <p style="margin-top:8px;">Final score = weighted average across 10 keywords × 10 countries.</p>
+        </div>
+        <div class="method-item">
+          <h4>💬 LLM Score (25%)</h4>
+          <p>Asks Claude and Gemini 50 questions about iVisa and the visa industry. Two parts:</p>
+          <ul style="margin-top:8px;">
+            <li><strong>Part A (20 queries):</strong> Direct brand questions ("Is iVisa legit?"). Scored 0–100 sentiment by each model.</li>
+            <li><strong>Part B (30 queries):</strong> General travel queries. Score = mention rate (40%) + avg sentiment when mentioned (60%).</li>
+          </ul>
+          <p style="margin-top:8px;">LLM Score = (Part A + Part B) / 2</p>
+        </div>
+        <div class="method-item">
+          <h4>📰 Earned Media Score (15%)</h4>
+          <p>Measures iVisa's coverage in press, travel media, and review sites. Currently uses a manually updated score from Brand24 exports.</p>
+          <p style="margin-top:8px;"><strong>Pending:</strong> Automated Brand24 integration will replace the manual score. Update <code>data/earned_media.json</code> with your monthly Brand24 export.</p>
+        </div>
+        <div class="method-item">
+          <h4>📊 Score Thresholds</h4>
+          <ul>
+            <li>🟢 <strong>75–100:</strong> Healthy — maintain strategy</li>
+            <li>🟡 <strong>55–74:</strong> Needs attention — some risks present</li>
+            <li>🔴 <strong>0–54:</strong> Critical — active reputation risk</li>
+          </ul>
+          <p style="margin-top:8px;"><strong>Data sources:</strong> SEMrush, Ahrefs, SerpAPI (Google), Claude (Anthropic), Gemini (Google), Brand24.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- COUNTRY BREAKDOWN -->
   <div class="section-title">Country Breakdown</div>
   <div class="country-grid" id="countryGrid"></div>
@@ -252,11 +340,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <!-- AI Overview Tab -->
     <div class="tab-content" id="tab-aio">
-      <h3 style="font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:12px;">AI Overview Results</h3>
+      <h3 style="font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:4px;">Google AI Overview Results</h3>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">
+        Score logic: iVisa cited → Claude sentiment score &nbsp;|&nbsp;
+        iVisa not cited → sentiment × 30% &nbsp;|&nbsp;
+        No AI overview → 50 (neutral baseline). Click AI Overview text to expand.
+      </p>
       <div class="table-wrap"><table id="aioTable">
         <thead><tr>
           <th>Keyword</th><th>AI Overview?</th><th>iVisa Cited?</th>
-          <th>Sentiment</th><th>Score</th>
+          <th>AI Overview Text</th><th>Sources</th><th style="text-align:right;">Score</th>
         </tr></thead>
         <tbody id="aioTableBody"></tbody>
       </table></div>
@@ -264,19 +357,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <!-- LLM Tab -->
     <div class="tab-content" id="tab-llm">
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">
+        <strong>Part A:</strong> 20 direct brand queries asked to Claude + Gemini, scored 0–100 sentiment. &nbsp;
+        <strong>Part B:</strong> 30 general travel queries — score = mention rate (40%) + sentiment when cited (60%). &nbsp;
+        LLM Score = (A + B) / 2. Click any response to expand.
+      </p>
       <div class="llm-tabs">
-        <button class="tab-btn active" onclick="showLlmTab('parta',this)">Part A — Brand Queries</button>
-        <button class="tab-btn"        onclick="showLlmTab('partb',this)">Part B — General Queries</button>
+        <button class="tab-btn active" onclick="showLlmTab('parta',this)">Part A — Brand Queries (20)</button>
+        <button class="tab-btn"        onclick="showLlmTab('partb',this)">Part B — General Queries (30)</button>
       </div>
       <div id="llm-parta">
         <div class="table-wrap"><table>
-          <thead><tr><th>Query</th><th>Claude Score</th><th>Gemini Score</th><th>Avg Sentiment</th></tr></thead>
+          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th>Gemini Response &amp; Score</th><th>Avg</th></tr></thead>
           <tbody id="llmPartABody"></tbody>
         </table></div>
       </div>
       <div id="llm-partb" style="display:none;">
         <div class="table-wrap"><table>
-          <thead><tr><th>Query</th><th>Claude Mentions?</th><th>Gemini Mentions?</th><th>Avg Sentiment</th></tr></thead>
+          <thead><tr><th>Query</th><th>Claude Response</th><th>Gemini Response</th><th>iVisa Mentioned?</th><th>Avg Sentiment</th></tr></thead>
           <tbody id="llmPartBBody"></tbody>
         </table></div>
       </div>
@@ -606,67 +704,110 @@ function buildSerpTable(countryResults) {
   });
 }
 
+// ── Methodology toggle ─────────────────────────────────────────────────────
+function toggleMethod(btn) {
+  const body  = document.getElementById('methodBody');
+  const arrow = document.getElementById('methodArrow');
+  const open  = body.classList.toggle('open');
+  arrow.textContent = open ? '▲' : '▼';
+}
+
 // ── AIO Table ──────────────────────────────────────────────────────────────
+let aioExpandCount = 0;
 function buildAioTable(countryResults) {
   const tbody = document.getElementById('aioTableBody');
   tbody.innerHTML = '';
   Object.entries(countryResults).forEach(([kw, r]) => {
+    const textId = 'aio-text-' + (++aioExpandCount);
+    const aioText = r.ai_overview_text || '';
+    const sources = (r.sources || []);
+    const sourcesHtml = sources.length
+      ? sources.slice(0,5).map(u => `<a class="domain-link" href="${u}" target="_blank" style="display:block;font-size:.72rem;margin-bottom:2px;">${u.replace(/^https?:\/\//,'').substring(0,50)}…</a>`).join('')
+      : '<span style="color:var(--muted);font-size:.75rem;">—</span>';
+
+    const scoreVal = r.score != null ? parseFloat(r.score) : null;
+    const scoreHtml = scoreVal != null
+      ? `<span style="font-weight:700;color:${scoreColor(scoreVal)}">${fmtScore(scoreVal)}</span>
+         <div class="progress-bar" style="width:60px;margin-top:4px">
+           <div class="progress-fill ${fillClass(scoreVal)}" style="width:${scoreVal}%"></div>
+         </div>`
+      : '—';
+
     tbody.innerHTML += `
       <tr>
-        <td>${kw}</td>
+        <td style="font-weight:600;min-width:140px">${kw}</td>
         <td>${r.has_ai_overview == null ? '<span class="pill pill-neu">No data</span>' : pillBool(r.has_ai_overview)}</td>
-        <td>${r.ivisa_cited == null     ? '<span class="pill pill-neu">—</span>'      : pillBool(r.ivisa_cited, 'Cited', 'Not cited')}</td>
-        <td>${r.sentiment_score != null ? fmtScore(r.sentiment_score)+'%' : '—'}</td>
-        <td>${r.score != null           ? fmtScore(r.score) : '—'}</td>
+        <td>${r.ivisa_cited == null ? '<span class="pill pill-neu">—</span>' : pillBool(r.ivisa_cited, '✅ Cited', '❌ Not cited')}</td>
+        <td style="max-width:280px">
+          ${aioText
+            ? `<div class="aio-text-cell" id="${textId}" onclick="this.classList.toggle('expanded')">${aioText}</div>
+               <div class="llm-expand-hint" onclick="document.getElementById('${textId}').classList.toggle('expanded')">▼ tap to expand</div>`
+            : '<span style="color:var(--muted);font-size:.75rem;">No AI overview found</span>'}
+        </td>
+        <td style="min-width:180px">${sourcesHtml}</td>
+        <td style="text-align:right">${scoreHtml}</td>
       </tr>`;
   });
-  if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No AI Overview data available</td></tr>';
+  if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No AI Overview data available</td></tr>';
 }
 
 // ── LLM Tables ─────────────────────────────────────────────────────────────
+let llmExpandCount = 0;
+function llmResponseCell(text, score) {
+  if (!text) return '<span style="color:var(--muted);font-size:.75rem;">No response</span>';
+  const id = 'llm-r-' + (++llmExpandCount);
+  const scoreHtml = score != null
+    ? `<span style="font-weight:700;color:${scoreColor(score)};margin-right:6px;">${fmtScore(score)}/100</span>`
+    : '';
+  return `${scoreHtml}
+    <div class="llm-response-full" id="${id}" onclick="this.classList.toggle('expanded')">${text}</div>
+    <div class="llm-expand-hint" onclick="document.getElementById('${id}').classList.toggle('expanded')">▼ click to expand</div>`;
+}
+
 function buildLlmTables(llmData) {
   if (!llmData) return;
 
   // Part A
-  const partA = llmData.part_a?.results || [];
+  const partA  = llmData.part_a?.results || [];
   const tbodyA = document.getElementById('llmPartABody');
   partA.forEach(r => {
     tbodyA.innerHTML += `
       <tr>
-        <td style="max-width:260px">${r.query}</td>
-        <td>
-          <span style="font-weight:700;color:${scoreColor(r.claude_sentiment||0)}">${fmtScore(r.claude_sentiment)}</span>
-          <div class="llm-response">${(r.claude_response||'').substring(0,80)}…</div>
-        </td>
-        <td>
-          <span style="font-weight:700;color:${scoreColor(r.gemini_sentiment||0)}">${fmtScore(r.gemini_sentiment)}</span>
-          <div class="llm-response">${(r.gemini_response||'').substring(0,80)}…</div>
-        </td>
-        <td>
-          <span style="font-weight:700;color:${scoreColor(r.avg_sentiment||0)}">${fmtScore(r.avg_sentiment)}</span>
-          <div class="progress-bar" style="width:80px">
+        <td style="max-width:200px;font-weight:600;">${r.query}</td>
+        <td style="max-width:280px">${llmResponseCell(r.claude_response, r.claude_sentiment)}</td>
+        <td style="max-width:280px">${llmResponseCell(r.gemini_response, r.gemini_sentiment)}</td>
+        <td style="text-align:center">
+          <span style="font-weight:800;font-size:1.1rem;color:${scoreColor(r.avg_sentiment||0)}">${fmtScore(r.avg_sentiment)}</span>
+          <div class="progress-bar" style="width:60px;margin:4px auto 0">
             <div class="progress-fill ${fillClass(r.avg_sentiment||0)}" style="width:${r.avg_sentiment||0}%"></div>
           </div>
         </td>
       </tr>`;
   });
-  if (!tbodyA.innerHTML) tbodyA.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part A data</td></tr>';
+  if (!tbodyA.innerHTML) tbodyA.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part A data — check API keys.</td></tr>';
 
   // Part B
-  const partB = llmData.part_b?.results || [];
+  const partB  = llmData.part_b?.results || [];
   const tbodyB = document.getElementById('llmPartBBody');
   partB.forEach(r => {
+    const mentioned = r.claude_mentions_ivisa || r.gemini_mentions_ivisa;
     tbodyB.innerHTML += `
       <tr>
-        <td style="max-width:260px">${r.query}</td>
-        <td>${pillBool(r.claude_mentions_ivisa, 'Yes ✓', 'No')}</td>
-        <td>${pillBool(r.gemini_mentions_ivisa, 'Yes ✓', 'No')}</td>
-        <td>${r.avg_sentiment != null
+        <td style="max-width:200px;font-weight:600;">${r.query}</td>
+        <td style="max-width:240px">${llmResponseCell(r.claude_response, null)}</td>
+        <td style="max-width:240px">${llmResponseCell(r.gemini_response, null)}</td>
+        <td style="text-align:center">
+          ${mentioned
+            ? `<span class="pill pill-yes">✅ iVisa mentioned</span><br>
+               <small style="color:var(--muted);font-size:.7rem;">Claude: ${r.claude_mentions_ivisa?'✓':'✗'} &nbsp; Gemini: ${r.gemini_mentions_ivisa?'✓':'✗'}</small>`
+            : '<span class="pill pill-no">Not mentioned</span>'}
+        </td>
+        <td style="text-align:center">${r.avg_sentiment != null
           ? `<span style="font-weight:700;color:${scoreColor(r.avg_sentiment)}">${fmtScore(r.avg_sentiment)}</span>`
-          : '—'}</td>
+          : '<span style="color:var(--muted)">—</span>'}</td>
       </tr>`;
   });
-  if (!tbodyB.innerHTML) tbodyB.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part B data</td></tr>';
+  if (!tbodyB.innerHTML) tbodyB.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part B data — check API keys.</td></tr>';
 }
 
 // ── Earned Media ───────────────────────────────────────────────────────────
@@ -675,7 +816,29 @@ function buildEarnedMedia(earnedMedia) {
   const mentions = earnedMedia?.mentions || [];
 
   if (!mentions.length) {
-    grid.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;">No earned media mentions on record. Update data/earned_media.json with Brand24 export.</p>';
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;background:var(--bg);border-radius:10px;padding:20px;border:1px solid var(--border);">
+        <p style="font-weight:700;color:var(--navy);margin-bottom:8px;">📰 Earned Media — Manual Score Active</p>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.6;">
+          Current score is a manually set baseline (${earnedMedia?.score || 60}/100).
+          No individual mentions are loaded yet.<br><br>
+          <strong>To populate this section:</strong> Export your Brand24 data and update
+          <code>data/earned_media.json</code> in the repo with the following structure:<br>
+        </p>
+        <pre style="background:#1e293b;color:#7dd3fc;padding:12px;border-radius:8px;font-size:.75rem;margin-top:10px;overflow-x:auto;">
+{
+  "score": 65,
+  "mentions": [
+    {
+      "source": "Forbes",
+      "title": "Best visa services in 2025",
+      "date": "2025-05-01",
+      "url": "https://forbes.com/...",
+      "sentiment": "positive"
+    }
+  ]
+}</pre>
+      </div>`;
     return;
   }
 

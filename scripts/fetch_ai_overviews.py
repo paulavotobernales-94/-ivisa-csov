@@ -99,21 +99,43 @@ def _extract_sources(data: dict) -> list[str]:
     """Extract cited source URLs from the AI Overview section."""
     sources = []
 
-    # Sources cited inside the AI Overview
     ai_overview = data.get("ai_overview", {})
     for source in ai_overview.get("sources", []):
         link = source.get("link", "")
         if link:
             sources.append(link)
 
-    # Fallback: top organic results if no AI overview sources
     if not sources:
         for result in data.get("organic_results", [])[:5]:
             link = result.get("link", "")
             if link:
                 sources.append(link)
 
-    return sources[:10]  # cap at 10
+    return sources[:10]
+
+
+def _extract_organic_results(data: dict) -> list[dict]:
+    """
+    Extract top-10 organic results from SerpAPI response.
+    Reused by fetch_serp to fill in page titles and fix keywords with no
+    SEMrush/Ahrefs coverage — zero extra API calls, same request.
+    """
+    from urllib.parse import urlparse
+
+    results = []
+    for item in data.get("organic_results", [])[:10]:
+        link = item.get("link", "")
+        domain = item.get("domain", "")
+        if not domain and link:
+            domain = urlparse(link).netloc.replace("www.", "")
+        results.append({
+            "position": item.get("position", 0),
+            "url": link,
+            "domain": domain,
+            "title": item.get("title", ""),
+            "snippet": item.get("snippet", ""),
+        })
+    return results
 
 
 def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
@@ -125,7 +147,8 @@ def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
             "ai_overview_text": None,
             "sentiment_score": None,
             "sources": [],
-            "score": 50.0,  # neutral when data unavailable
+            "score": 50.0,
+            "organic_results": [],
         }
 
     params = {
@@ -150,22 +173,24 @@ def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
             "sentiment_score": None,
             "sources": [],
             "score": 50.0,
+            "organic_results": [],
         }
 
     ai_text = _extract_ai_overview_text(data)
     has_ai_overview = bool(ai_text)
     ivisa_cited = "ivisa" in ai_text.lower() if ai_text else False
     sources = _extract_sources(data)
+    organic_results = _extract_organic_results(data)
 
     # Score sentiment via Claude if there's AI Overview text
     sentiment_score = None
     if has_ai_overview and ai_text:
         sentiment_score = _score_sentiment_with_claude(ai_text)
-        time.sleep(0.5)  # gentle on Claude rate limits
+        time.sleep(0.5)
 
     # Compute keyword score
     if not has_ai_overview:
-        score = 50.0  # neutral baseline when Google shows no AI overview
+        score = 50.0
     elif ivisa_cited:
         score = sentiment_score if sentiment_score is not None else 70.0
     else:
@@ -178,6 +203,7 @@ def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
         "sentiment_score": sentiment_score,
         "sources": sources,
         "score": round(score, 2),
+        "organic_results": organic_results,
     }
 
 
@@ -209,10 +235,14 @@ def _global_ai_score(country_scores: dict[str, float]) -> float:
 def fetch_ai_overview_data() -> dict[str, Any]:
     """
     Fetch AI Overview data for all keywords × countries via SerpAPI.
+    Also extracts organic SERP results (titles, snippets) from the same
+    API call — passed to fetch_serp for enrichment at zero extra cost.
     Falls back gracefully if SERPAPI_KEY is not set.
     """
     results: dict[str, dict[str, dict]] = {}
     country_scores: dict[str, float] = {}
+    # organic_data: { country_code: { keyword: [ {position, url, domain, title, snippet}, ... ] } }
+    organic_data: dict[str, dict[str, list]] = {}
 
     if not SERPAPI_KEY:
         logger.warning("SERPAPI_KEY not set — AI Overview data will use neutral baseline (50).")
@@ -220,12 +250,15 @@ def fetch_ai_overview_data() -> dict[str, Any]:
     for country_code, country_info in COUNTRIES.items():
         logger.info("  Fetching AI Overviews for country: %s", country_info["name"])
         results[country_code] = {}
+        organic_data[country_code] = {}
 
         for keyword in KEYWORDS:
             logger.debug("    Keyword: %s", keyword)
             result = _fetch_serpapi_result(keyword, country_code)
+            # Separate organic results from AIO result before storing
+            organic_data[country_code][keyword] = result.pop("organic_results", [])
             results[country_code][keyword] = result
-            time.sleep(0.3)  # stay within SerpAPI rate limits
+            time.sleep(0.3)
 
         country_scores[country_code] = _country_ai_score(results[country_code])
         logger.info("    → Country AI Overview score: %.1f", country_scores[country_code])
@@ -237,4 +270,5 @@ def fetch_ai_overview_data() -> dict[str, Any]:
         "results": results,
         "country_scores": country_scores,
         "global_score": global_score,
+        "organic_data": organic_data,   # used by fetch_serp to enrich titles + fill gaps
     }
