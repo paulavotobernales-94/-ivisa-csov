@@ -242,13 +242,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <!-- SERP Tab -->
     <div class="tab-content active" id="tab-serp">
-      <h3 style="font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:12px;">SERP Results</h3>
-      <div class="table-wrap"><table id="serpTable">
-        <thead><tr>
-          <th>Keyword</th><th>Pos</th><th>Domain</th><th>URL</th><th>Sentiment</th>
-        </tr></thead>
-        <tbody id="serpTableBody"></tbody>
-      </table></div>
+      <h3 style="font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:4px;">Top 10 SERP Results per Keyword</h3>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">
+        Score = weighted sentiment of all 10 results (pos 1 = highest weight).
+        🟢 Positive &nbsp;⚪ Neutral &nbsp;🔴 Negative
+      </p>
+      <div id="serpKeywordBlocks"></div>
     </div>
 
     <!-- AI Overview Tab -->
@@ -532,24 +531,79 @@ function showLlmTab(part, btn) {
   btn.classList.add('active');
 }
 
-// ── SERP Table ─────────────────────────────────────────────────────────────
+// ── SERP Blocks (per-keyword grouped) ─────────────────────────────────────
 function buildSerpTable(countryResults) {
-  const tbody = document.getElementById('serpTableBody');
-  tbody.innerHTML = '';
+  const container = document.getElementById('serpKeywordBlocks');
+  container.innerHTML = '';
+
+  if (!countryResults || !Object.keys(countryResults).length) {
+    container.innerHTML = '<p style="color:var(--muted);padding:24px;text-align:center;">No SERP data available for this country.</p>';
+    return;
+  }
+
+  // Sentiment helpers
+  const SENT_SCORE = { positive: 1.0, neutral: 0.5, negative: 0.0 };
+  function kwScore(results) {
+    let totalW = 0, weightedS = 0;
+    (results || []).slice(0,10).forEach(r => {
+      const pos = r.position || 0;
+      if (pos < 1 || pos > 10) return;
+      const w = 11 - pos;
+      weightedS += w * (SENT_SCORE[r.sentiment] ?? 0.5);
+      totalW += w;
+    });
+    return totalW ? Math.round((weightedS / totalW) * 100) : 50;
+  }
+  function sentEmoji(s) {
+    return s === 'positive' ? '🟢' : s === 'negative' ? '🔴' : '⚪';
+  }
+
   Object.entries(countryResults).forEach(([kw, results]) => {
-    results.forEach(r => {
-      const isIv = r.is_ivisa;
-      tbody.innerHTML += `
-        <tr class="${isIv?'ivisa-row':''}">
-          <td>${kw}</td>
+    const score = kwScore(results);
+    const scoreColor = score >= 70 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
+
+    let rows = '';
+    (results || []).slice(0,10).forEach(r => {
+      const titleText = (r.title || '').substring(0, 70) + ((r.title||'').length > 70 ? '…' : '');
+      const urlShort  = (r.url || '').replace(/^https?:\/\//, '').substring(0, 55);
+      rows += `
+        <tr class="${r.is_ivisa ? 'ivisa-row' : ''}">
           <td>${r.position ? posBadge(r.position) : '—'}</td>
+          <td>
+            <div style="font-size:.82rem;font-weight:${r.is_ivisa?'700':'400'};color:var(--text);">${titleText || '—'}</div>
+            <a class="domain-link" href="${r.url||'#'}" target="_blank" style="font-size:.75rem;">${urlShort}</a>
+          </td>
           <td><a class="domain-link" href="https://${r.domain}" target="_blank">${r.domain||'—'}</a></td>
-          <td><a class="domain-link" href="${r.url}" target="_blank">${(r.url||'').substring(0,50)}${(r.url||'').length>50?'…':''}</a></td>
-          <td>${pillSentiment(r.sentiment)}</td>
+          <td style="text-align:center">${sentEmoji(r.sentiment)} ${pillSentiment(r.sentiment)}</td>
         </tr>`;
     });
+
+    if (!rows) {
+      rows = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px;">No data</td></tr>';
+    }
+
+    container.innerHTML += `
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <span style="font-size:.85rem;font-weight:700;color:var(--navy);">${kw}</span>
+          <span style="font-size:.8rem;font-weight:700;color:${scoreColor};background:var(--bg);
+                       padding:2px 10px;border-radius:10px;border:1px solid var(--border);">
+            SERP Score: ${score}/100
+          </span>
+        </div>
+        <div class="table-wrap">
+          <table style="font-size:.82rem;">
+            <thead><tr>
+              <th style="width:40px;">Pos</th>
+              <th>Page Title / URL</th>
+              <th>Domain</th>
+              <th style="text-align:center;">Sentiment</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
   });
-  if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No SERP data available</td></tr>';
 }
 
 // ── AIO Table ──────────────────────────────────────────────────────────────

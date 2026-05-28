@@ -119,34 +119,59 @@ def calculate_csov(
 def generate_action_items(components: dict[str, dict], serp_data: dict, ai_data: dict) -> list[str]:
     """
     Auto-generate action items based on lowest-scoring components and specifics.
+
+    SERP logic: score reflects sentiment of all top-10 results per keyword
+    (positive/neutral/negative), not iVisa's own ranking position.
     """
     actions = []
     scores = {k: v["score"] for k, v in components.items()}
 
-    # SERP-based actions
-    if scores["serp"] < 50:
-        actions.append("Strengthen on-page SEO and link building for bottom-ranking reputation keywords.")
-    if scores["serp"] < 70:
-        # Find keywords where iVisa doesn't rank top-3
-        weak_keywords = []
-        if serp_data and serp_data.get("results"):
-            for country_code, keywords in serp_data["results"].items():
-                for kw, results in keywords.items():
-                    ivisa_pos = next((r["position"] for r in results if r.get("is_ivisa")), None)
-                    if ivisa_pos is None or ivisa_pos > 3:
-                        weak_keywords.append(kw)
-            if weak_keywords:
-                top_weak = list(set(weak_keywords))[:3]
-                actions.append(
-                    f"Improve rankings for: {', '.join(top_weak[:3])} — iVisa not ranking in top 3."
-                )
+    # ── SERP-based actions ────────────────────────────────────────────────────
+    if serp_data and serp_data.get("results"):
+        # Collect keywords with negative results in top positions
+        negative_kw: dict[str, int] = {}   # keyword → count of negative results
+        high_risk_kw: list[str] = []        # keyword with negative result at pos 1-3
 
-    # AI Overview actions
+        for country_results in serp_data["results"].values():
+            for kw, results in country_results.items():
+                for r in results:
+                    if r.get("sentiment") == "negative":
+                        negative_kw[kw] = negative_kw.get(kw, 0) + 1
+                        if r.get("position", 99) <= 3:
+                            if kw not in high_risk_kw:
+                                high_risk_kw.append(kw)
+
+        total_negatives = sum(negative_kw.values())
+
+        if high_risk_kw:
+            kw_list = ", ".join(high_risk_kw[:3])
+            actions.append(
+                f"High-priority SERP risk: negative results appearing in top 3 positions for "
+                f"'{kw_list}' — publish positive, authoritative content to push these down."
+            )
+        elif total_negatives > 5:
+            top_kw = sorted(negative_kw, key=lambda k: negative_kw[k], reverse=True)[:3]
+            actions.append(
+                f"Address {total_negatives} negative SERP appearances — most frequent for: "
+                f"{', '.join(top_kw)}. Respond on review sites and strengthen positive content."
+            )
+
+    if scores["serp"] < 50:
+        actions.append(
+            "SERP landscape is mostly negative — prioritize content that ranks positively for "
+            "reputation keywords ('is iVisa legit', 'iVisa reviews', 'is iVisa safe')."
+        )
+    elif scores["serp"] < 70:
+        actions.append(
+            "Strengthen SERP sentiment by building more positive third-party mentions: "
+            "travel blogs, review aggregators, and press coverage referencing iVisa positively."
+        )
+
+    # ── AI Overview actions ───────────────────────────────────────────────────
     if scores["ai_overview"] < 50:
         actions.append(
             "Create more AI-citable content — structured FAQs and authoritative pages about iVisa's legitimacy and safety."
         )
-        # Find specific keywords without AI citation
         uncited = []
         if ai_data and ai_data.get("results"):
             for country_results in ai_data["results"].values():
@@ -160,10 +185,10 @@ def generate_action_items(components: dict[str, dict], serp_data: dict, ai_data:
                 )
     elif scores["ai_overview"] < 70:
         actions.append(
-            "Add more structured data (FAQ schema, HowTo schema) to help Google pull iVisa content into AI Overviews."
+            "Add FAQ schema and HowTo schema to key trust pages to help Google pull iVisa into AI Overviews."
         )
 
-    # LLM actions
+    # ── LLM actions ───────────────────────────────────────────────────────────
     if scores["llm"] < 50:
         actions.append(
             "Increase iVisa brand presence in LLM training signals: publish more third-party reviews, press coverage, and expert endorsements."
@@ -173,7 +198,7 @@ def generate_action_items(components: dict[str, dict], serp_data: dict, ai_data:
             "Submit iVisa info to trusted review aggregators and travel publications to improve LLM mention rate."
         )
 
-    # Earned media actions
+    # ── Earned media actions ──────────────────────────────────────────────────
     if scores["earned_media"] < 50:
         actions.append(
             "Launch a proactive PR campaign targeting travel media and review platforms to build earned media volume."
@@ -182,20 +207,6 @@ def generate_action_items(components: dict[str, dict], serp_data: dict, ai_data:
         actions.append(
             "Engage proactively with travel journalists and bloggers — target Forbes Travel, Skift, and TravelPulse for iVisa features."
         )
-
-    # Negative domain presence
-    if serp_data and serp_data.get("results"):
-        negative_count = 0
-        for country_results in serp_data["results"].values():
-            for kw_results in country_results.values():
-                for result in kw_results:
-                    if result.get("sentiment") == "negative":
-                        negative_count += 1
-        if negative_count > 5:
-            actions.append(
-                f"Address {negative_count} negative-domain appearances in SERPs — "
-                "respond to BBB complaints, engage on review sites, and publish rebuttals."
-            )
 
     if not actions:
         actions.append("All scores are healthy — maintain current SEO, PR, and content strategy.")

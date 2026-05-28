@@ -51,7 +51,7 @@ jobs:
           GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
           SERPAPI_KEY:        ${{ secrets.SERPAPI_KEY }}
           SLACK_WEBHOOK_URL:  ${{ secrets.SLACK_WEBHOOK_URL }}
-          GITHUB_PAGES_URL:   ${{ vars.GITHUB_PAGES_URL || 'https://paulavotobernales-94.github.io/ivisa-csov' }}
+          GITHUB_PAGES_URL:   ${{ vars.GITHUB_PAGES_URL || 'https://paulavotobernales-94.github.io/-ivisa-csov' }}
         run: |
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             python main.py --dry-run

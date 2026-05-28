@@ -1,6 +1,12 @@
 """
 fetch_serp.py — Pulls SERP rankings from SEMrush and Ahrefs APIs.
 
+Scoring philosophy:
+  The SERP score measures whether the top-10 results for each keyword
+  are positive, neutral, or negative about iVisa — regardless of whether
+  iVisa.com itself ranks. A blog post saying "iVisa is legit" scores positive
+  even if it's not on iVisa.com. A complaint on BBB scores negative.
+
 Returns a dict shaped:
 {
   "country_code": {
@@ -34,28 +40,79 @@ from scripts.config import (
     NEGATIVE_DOMAINS,
     NEUTRAL_DOMAINS,
     POSITIVE_DOMAINS,
-    POSITION_POINTS,
     SEMRUSH_API_KEY,
 )
 
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
+# Sentiment signals for title-based classification
+# ---------------------------------------------------------------------------
+
+# Words in a page title that strongly signal POSITIVE content about iVisa
+POSITIVE_TITLE_SIGNALS = [
+    "legit", "legitimate", "safe", "trusted", "trust", "reliable", "review",
+    "honest", "worth", "recommend", "guide", "official", "best", "how to",
+    "real", "verified", "approved", "faq", "is it", "should i", "pros",
+    "everything you need", "comparison", "honest review", "my experience",
+    "used ivisa", "tried ivisa", "work", "works", "worked", "helped",
+]
+
+# Words in a page title that strongly signal NEGATIVE content
+NEGATIVE_TITLE_SIGNALS = [
+    "scam", "fraud", "fake", "avoid", "danger", "problem", "complaint",
+    "steal", "stolen", "worst", "terrible", "rip off", "ripoff", "warning",
+    "cheat", "mislead", "suspicious", "beware", "do not use", "don't use",
+    "stay away", "con ", "overcharged", "refund denied", "lost money",
+    "never again", "waste of", "disappointed", "not legit", "not safe",
+    "not legitimate", "not trusted", "not reliable",
+]
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _classify_domain(domain: str) -> str:
-    """Return 'positive', 'negative', or 'neutral' for a root domain."""
-    domain = domain.lower().strip()
-    for d in POSITIVE_DOMAINS:
-        if d in domain:
-            return "positive"
+def _classify_result(domain: str, title: str) -> str:
+    """
+    Return 'positive', 'negative', or 'neutral' for a SERP result.
+
+    Priority order:
+    1. Negative domain → always negative (BBB, ripoffreport, scamalert, etc.)
+    2. Negative title keywords → negative (scam, fraud, avoid, etc.)
+    3. Positive domain → positive (trustpilot, forbes, ivisa.com itself, etc.)
+    4. Positive title keywords → positive
+    5. Neutral domain → neutral
+    6. Default → neutral
+    """
+    domain_lower = domain.lower().strip()
+    title_lower = (title or "").lower()
+
+    # Negative domain — strongest signal, overrides title
     for d in NEGATIVE_DOMAINS:
-        if d in domain:
+        if d in domain_lower:
             return "negative"
+
+    # Negative title signals
+    for signal in NEGATIVE_TITLE_SIGNALS:
+        if signal in title_lower:
+            return "negative"
+
+    # Positive domain (trusted review sites, iVisa's own pages, travel press)
+    for d in POSITIVE_DOMAINS:
+        if d in domain_lower:
+            return "positive"
+
+    # Positive title signals
+    for signal in POSITIVE_TITLE_SIGNALS:
+        if signal in title_lower:
+            return "positive"
+
+    # Neutral domain list (reddit, quora, twitter/X, yelp)
     for d in NEUTRAL_DOMAINS:
-        if d in domain:
+        if d in domain_lower:
             return "neutral"
+
     return "neutral"
 
 
@@ -65,14 +122,39 @@ def _is_ivisa(domain: str) -> bool:
 
 def _position_score(results: list[dict]) -> float:
     """
-    Given a list of SERP result dicts for one keyword,
-    return the keyword score (0–100).
+    Score one keyword based on the sentiment of its top-10 SERP results.
+
+    Logic:
+    - Each result is positive (1.0), neutral (0.5), or negative (0.0).
+    - Results are weighted by position: pos 1 = 10 pts, pos 2 = 9 pts … pos 10 = 1 pt.
+    - Final score = weighted_average * 100
+
+    Meaning:
+    - 100 = all top-10 results are positive about iVisa
+    -  50 = all top-10 results are neutral (mixed / no strong signal)
+    -   0 = all top-10 results are negative about iVisa
     """
-    for item in results:
-        if item.get("is_ivisa") and item.get("position") in POSITION_POINTS:
-            pts = POSITION_POINTS[item["position"]]
-            return (pts / 5.0) * 100.0
-    return 0.0
+    if not results:
+        return 50.0  # neutral baseline when no data
+
+    SENTIMENT_SCORE = {"positive": 1.0, "neutral": 0.5, "negative": 0.0}
+
+    total_weight = 0.0
+    weighted_score = 0.0
+
+    for item in results[:10]:
+        pos = item.get("position", 0)
+        if pos < 1 or pos > 10:
+            continue
+        weight = float(11 - pos)  # pos 1 → 10, pos 10 → 1
+        sentiment = item.get("sentiment", "neutral")
+        weighted_score += weight * SENTIMENT_SCORE.get(sentiment, 0.5)
+        total_weight += weight
+
+    if total_weight == 0:
+        return 50.0
+
+    return round((weighted_score / total_weight) * 100, 2)
 
 
 # ---------------------------------------------------------------------------
@@ -115,13 +197,14 @@ def _fetch_semrush_keyword(keyword: str, database: str) -> list[dict]:
         except (ValueError, TypeError):
             pos = 0
         domain = row.get("Domain", "").strip()
+        title  = row.get("Title", "").strip()
         results.append({
             "position": pos,
             "url": row.get("URL", "").strip(),
             "domain": domain,
-            "title": row.get("Title", "").strip(),
+            "title": title,
             "is_ivisa": _is_ivisa(domain),
-            "sentiment": _classify_domain(domain),
+            "sentiment": _classify_result(domain, title),
             "source": "semrush",
         })
     return results
@@ -162,13 +245,14 @@ def _fetch_ahrefs_keyword(keyword: str, country: str) -> list[dict]:
     results = []
     for item in data.get("serp", []):
         domain = item.get("domain", "").strip()
+        title  = item.get("title", "").strip()
         results.append({
             "position": item.get("position", 0),
             "url": item.get("url", "").strip(),
             "domain": domain,
-            "title": item.get("title", "").strip(),
+            "title": title,
             "is_ivisa": _is_ivisa(domain),
-            "sentiment": _classify_domain(domain),
+            "sentiment": _classify_result(domain, title),
             "source": "ahrefs",
         })
     return results

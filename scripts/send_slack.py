@@ -69,14 +69,24 @@ def send_slack_notification(report_data: dict) -> bool:
             },
             {
                 "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": (
+                        f"Weekly global reputation snapshot across 10 countries and 10 keywords. "
+                        f"Score measures positive vs. negative brand signals in search, AI, and media."
+                    ),
+                },
+            },
+            {
+                "type": "section",
                 "fields": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*Overall CSOV Score*\n`{csov:.1f} / 100` {trend}",
+                        "text": f"*🌍 Global CSOV Score*\n`{csov:.1f} / 100`  {trend}",
                     },
                     {
                         "type": "mrkdwn",
-                        "text": f"*Dashboard*\n<{report_url}|View full report →>",
+                        "text": f"*📊 Full Report*\n<{report_url}|View breakdown by country & keyword →>",
                     },
                 ],
             },
@@ -87,10 +97,10 @@ def send_slack_notification(report_data: dict) -> bool:
                     "type": "mrkdwn",
                     "text": (
                         f"*Component Breakdown*\n"
-                        f"{_score_emoji(serp)} SERP Score: *{serp:.1f}* (weight 35%)\n"
-                        f"{_score_emoji(aio)} AI Overview Score: *{aio:.1f}* (weight 25%)\n"
-                        f"{_score_emoji(llm)} LLM Score: *{llm:.1f}* (weight 25%)\n"
-                        f"{_score_emoji(em)} Earned Media Score: *{em:.1f}* (weight 15%)"
+                        f"{_score_emoji(serp)} *SERP Sentiment:* {serp:.1f}/100  _(35% weight)_\n"
+                        f"{_score_emoji(aio)} *AI Overview:* {aio:.1f}/100  _(25% weight)_\n"
+                        f"{_score_emoji(llm)} *LLM Mentions:* {llm:.1f}/100  _(25% weight)_\n"
+                        f"{_score_emoji(em)} *Earned Media:* {em:.1f}/100  _(15% weight)_"
                     ),
                 },
             },
@@ -107,7 +117,10 @@ def send_slack_notification(report_data: dict) -> bool:
                 "elements": [
                     {
                         "type": "mrkdwn",
-                        "text": "Generated automatically every Friday at 10 AM UTC • iVisa Brand Team • Credibility Share of Voice Dashboard",
+                        "text": (
+                            f"Auto-generated every Friday at 10 AM UTC  •  iVisa Brand Team  •  "
+                            f"<{report_url}|Full CSOV Dashboard>"
+                        ),
                     }
                 ],
             },

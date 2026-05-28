@@ -15,7 +15,7 @@ CLAUDE_API_KEY    = os.environ.get("CLAUDE_API_KEY", "")
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "")
 SERPAPI_KEY       = os.environ.get("SERPAPI_KEY", "")
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
-GITHUB_PAGES_URL  = os.environ.get("GITHUB_PAGES_URL", "https://paulavotobernales-94.github.io/ivisa-csov")
+GITHUB_PAGES_URL  = os.environ.get("GITHUB_PAGES_URL", "https://paulavotobernales-94.github.io/-ivisa-csov")
 
 # ── CSOV Formula Weights ──────────────────────────────────────────────────────
 WEIGHT_SERP         = 0.35
