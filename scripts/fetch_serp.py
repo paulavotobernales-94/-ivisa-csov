@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 fetch_serp.py — Pulls SERP rankings from SEMrush and Ahrefs APIs.
 

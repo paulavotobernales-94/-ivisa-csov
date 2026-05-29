@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 fetch_ai_overviews.py — Scrapes Google AI Overview content via SerpAPI.
 

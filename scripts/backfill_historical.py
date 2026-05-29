@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 backfill_historical.py — Creates historical monthly snapshots for Jan–May 2026.
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 main.py — iVisa CSOV Weekly Reputation Dashboard
 Entry point for the weekly report pipeline.

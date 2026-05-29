@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 fetch_earned_media.py — Fetches earned media mentions via SerpAPI.
 
