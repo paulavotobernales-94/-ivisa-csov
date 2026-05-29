@@ -193,6 +193,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     max-height: 60px; overflow: hidden; cursor: pointer; }
   .aio-text-cell.expanded { max-height: 400px; }
 
+  /* ── Sentiment Counts ── */
+  .sent-counts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .sent-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px;
+               border-radius: 12px; font-size: .74rem; font-weight: 700; }
+  .sent-chip-pos { background: #dcfce7; color: var(--green); }
+  .sent-chip-neu { background: #f1f5f9; color: var(--muted); }
+  .sent-chip-neg { background: #fee2e2; color: var(--red); }
+
+  /* ── Period Framework ── */
+  .period-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+                   padding: 24px; margin-bottom: 32px; }
+  .period-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+  @media(max-width:700px){ .period-grid { grid-template-columns: 1fr; } }
+  .period-col   { background: var(--bg); border-radius: 10px; padding: 16px; }
+  .period-col h4 { font-size: .88rem; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+  .period-row   { display: flex; justify-content: space-between; align-items: center;
+                   padding: 6px 0; border-bottom: 1px solid var(--border); font-size: .83rem; }
+  .period-row:last-child { border-bottom: none; }
+  .period-label { color: var(--muted); }
+  .period-val   { font-weight: 700; color: var(--navy); }
+  .period-delta-pos { color: var(--green); font-weight: 700; }
+  .period-delta-neg { color: var(--red); font-weight: 700; }
+  .period-target { background: #eff6ff; color: var(--blue); padding: 2px 8px;
+                    border-radius: 8px; font-size: .78rem; font-weight: 600; }
+
   /* ── Earned Media ── */
   .mentions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   @media(max-width:800px){ .mentions-grid { grid-template-columns: 1fr; } }
@@ -315,6 +340,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- PERIOD FRAMEWORK -->
+  <div class="period-panel" id="periodPanel" style="display:none;">
+    <div class="section-title" style="margin-bottom:4px;">📅 Measurement Periods</div>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:0;">
+      P1 = Feb–May 2026 baseline &nbsp;|&nbsp; P2 = Jun–Sep 2026 goal (tracked weekly)
+    </p>
+    <div class="period-grid" id="periodGrid"></div>
   </div>
 
   <!-- COUNTRY BREAKDOWN -->
@@ -490,6 +524,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Earned Media
   buildEarnedMedia(D.earned_media);
 
+  // Period Framework
+  buildPeriodPanel(D);
+
   // Actions
   buildActions(D.action_items);
 
@@ -507,6 +544,53 @@ function buildComponentCards(components) {
     { key: 'llm',          label: 'LLM Score',          icon: '💬', weight: '25%' },
     { key: 'earned_media', label: 'Earned Media Score', icon: '📰', weight: '15%' },
   ];
+
+  // Pre-compute sentiment counts per component from raw data
+  const D = REPORT_DATA;
+  function serpSentCounts() {
+    const c = { positive: 0, neutral: 0, negative: 0 };
+    Object.values(D.serp_data?.results || {}).forEach(countryKws => {
+      Object.values(countryKws).forEach(results => {
+        (results || []).forEach(r => { if (r.sentiment) c[r.sentiment] = (c[r.sentiment]||0) + 1; });
+      });
+    });
+    return c;
+  }
+  function aioSentCounts() {
+    const c = { positive: 0, neutral: 0, negative: 0 };
+    Object.values(D.ai_overview_data?.results || {}).forEach(countryKws => {
+      Object.values(countryKws).forEach(r => {
+        if (r.has_ai_overview && r.sentiment_score != null) {
+          const s = r.sentiment_score >= 65 ? 'positive' : r.sentiment_score >= 40 ? 'neutral' : 'negative';
+          c[s]++;
+        }
+      });
+    });
+    return c;
+  }
+  function llmSentCounts() {
+    const c = { positive: 0, neutral: 0, negative: 0 };
+    (D.llm_data?.part_a?.results || []).forEach(r => {
+      const avg = r.avg_sentiment;
+      if (avg != null) { const s = avg >= 65 ? 'positive' : avg >= 40 ? 'neutral' : 'negative'; c[s]++; }
+    });
+    return c;
+  }
+  function emSentCounts() {
+    const counts = D.earned_media?.counts;
+    if (counts) return { positive: counts.positive||0, neutral: counts.neutral||0, negative: counts.negative||0 };
+    return { positive: 0, neutral: 0, negative: 0 };
+  }
+  const sentCountsMap = { serp: serpSentCounts(), ai_overview: aioSentCounts(), llm: llmSentCounts(), earned_media: emSentCounts() };
+
+  function sentCountsHtml(counts) {
+    if (!counts || (!counts.positive && !counts.neutral && !counts.negative)) return '';
+    return `<div class="sent-counts">
+      <span class="sent-chip sent-chip-pos">🟢 ${counts.positive}</span>
+      <span class="sent-chip sent-chip-neu">⚪ ${counts.neutral}</span>
+      <span class="sent-chip sent-chip-neg">🔴 ${counts.negative}</span>
+    </div>`;
+  }
 
   items.forEach(({ key, label, icon, weight }) => {
     const comp  = components[key] || {};
@@ -527,6 +611,7 @@ function buildComponentCards(components) {
         <div class="progress-bar">
           <div class="progress-fill ${fillClass(score)}" style="width:${score}%"></div>
         </div>
+        ${sentCountsHtml(sentCountsMap[key])}
         ${trend}
       </div>`;
   });
@@ -660,6 +745,14 @@ function buildSerpTable(countryResults) {
     const score = kwScore(results);
     const scoreColor = score >= 70 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
 
+    // Sentiment counts for this keyword
+    const kwCounts = { positive: 0, neutral: 0, negative: 0 };
+    (results || []).slice(0,10).forEach(r => { if (r.sentiment) kwCounts[r.sentiment]++; });
+    const countsHtml = `
+      <span class="sent-chip sent-chip-pos">🟢 ${kwCounts.positive}</span>
+      <span class="sent-chip sent-chip-neu">⚪ ${kwCounts.neutral}</span>
+      <span class="sent-chip sent-chip-neg">🔴 ${kwCounts.negative}</span>`;
+
     let rows = '';
     (results || []).slice(0,10).forEach(r => {
       const titleText = (r.title || '').substring(0, 70) + ((r.title||'').length > 70 ? '…' : '');
@@ -682,12 +775,13 @@ function buildSerpTable(countryResults) {
 
     container.innerHTML += `
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap;">
           <span style="font-size:.85rem;font-weight:700;color:var(--navy);">${kw}</span>
           <span style="font-size:.8rem;font-weight:700;color:${scoreColor};background:var(--bg);
                        padding:2px 10px;border-radius:10px;border:1px solid var(--border);">
             SERP Score: ${score}/100
           </span>
+          <div class="sent-counts" style="margin-top:0;">${countsHtml}</div>
         </div>
         <div class="table-wrap">
           <table style="font-size:.82rem;">
@@ -812,49 +906,133 @@ function buildLlmTables(llmData) {
 
 // ── Earned Media ───────────────────────────────────────────────────────────
 function buildEarnedMedia(earnedMedia) {
-  const grid = document.getElementById('mentionsGrid');
-  const mentions = earnedMedia?.mentions || [];
+  const container = document.getElementById('tab-em');
+  const grid      = document.getElementById('mentionsGrid');
+  const mentions  = earnedMedia?.mentions || [];
+  const counts    = earnedMedia?.counts || {};
+  const srcBreak  = earnedMedia?.source_breakdown || {};
+  const score     = earnedMedia?.score || 0;
+
+  // Summary bar (always shown)
+  const summaryHtml = `
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+      <span style="font-size:.88rem;font-weight:700;color:var(--navy);">
+        ${counts.total || 0} mentions total
+      </span>
+      <div class="sent-counts">
+        <span class="sent-chip sent-chip-pos">🟢 ${counts.positive||0} positive</span>
+        <span class="sent-chip sent-chip-neu">⚪ ${counts.neutral||0} neutral</span>
+        <span class="sent-chip sent-chip-neg">🔴 ${counts.negative||0} negative</span>
+      </div>
+      ${Object.entries(srcBreak).filter(([,v])=>v>0).map(([src,n])=>
+        `<span style="font-size:.75rem;color:var(--muted);background:var(--bg);padding:2px 8px;
+                      border-radius:8px;border:1px solid var(--border);">${src}: ${n}</span>`
+      ).join('')}
+    </div>`;
+
+  // Insert summary before grid
+  const existing = container.querySelector('.em-summary');
+  if (!existing) {
+    const summaryEl = document.createElement('div');
+    summaryEl.className = 'em-summary';
+    summaryEl.innerHTML = summaryHtml;
+    container.insertBefore(summaryEl, grid);
+  }
 
   if (!mentions.length) {
     grid.innerHTML = `
       <div style="grid-column:1/-1;background:var(--bg);border-radius:10px;padding:20px;border:1px solid var(--border);">
-        <p style="font-weight:700;color:var(--navy);margin-bottom:8px;">📰 Earned Media — Manual Score Active</p>
+        <p style="font-weight:700;color:var(--navy);margin-bottom:8px;">📰 Earned Media — Score: ${score}/100</p>
         <p style="font-size:.85rem;color:var(--muted);line-height:1.6;">
-          Current score is a manually set baseline (${earnedMedia?.score || 60}/100).
-          No individual mentions are loaded yet.<br><br>
-          <strong>To populate this section:</strong> Export your Brand24 data and update
-          <code>data/earned_media.json</code> in the repo with the following structure:<br>
+          No individual mentions loaded — either SERPAPI_KEY is not set or no results were found.<br>
+          Score shown is the default neutral baseline.
         </p>
-        <pre style="background:#1e293b;color:#7dd3fc;padding:12px;border-radius:8px;font-size:.75rem;margin-top:10px;overflow-x:auto;">
-{
-  "score": 65,
-  "mentions": [
-    {
-      "source": "Forbes",
-      "title": "Best visa services in 2025",
-      "date": "2025-05-01",
-      "url": "https://forbes.com/...",
-      "sentiment": "positive"
-    }
-  ]
-}</pre>
       </div>`;
     return;
   }
 
+  const SOURCE_ICONS = { news:'📰', blog:'✈️', reddit:'💬', youtube:'▶️', instagram:'📸', tiktok:'🎵' };
+
   mentions.forEach(m => {
     const sentCls = m.sentiment === 'positive' ? 'pill-pos' : m.sentiment === 'negative' ? 'pill-neg' : 'pill-neu';
+    const icon    = SOURCE_ICONS[m.source] || '🔗';
+    const domain  = m.domain || '';
     grid.innerHTML += `
       <div class="mention-card">
-        <div class="mention-source">${m.source || 'Unknown Source'}</div>
-        <div class="mention-title">${m.title || 'Untitled mention'}</div>
+        <div class="mention-source">${icon} ${m.source || 'Unknown'} ${domain ? '· ' + domain : ''}</div>
+        <div class="mention-title">
+          ${m.url
+            ? `<a href="${m.url}" target="_blank" style="color:var(--navy);text-decoration:none;">${m.title || 'View mention →'}</a>`
+            : (m.title || 'Untitled mention')}
+        </div>
+        ${m.snippet ? `<div style="font-size:.76rem;color:var(--muted);margin:6px 0;line-height:1.4;">${m.snippet.substring(0,140)}…</div>` : ''}
         <div class="mention-footer">
           <span class="pill ${sentCls}">${m.sentiment || 'neutral'}</span>
-          <span>${m.date || ''}</span>
+          ${m.date ? `<span>${m.date}</span>` : ''}
           ${m.url ? `<a class="domain-link" href="${m.url}" target="_blank">View →</a>` : ''}
         </div>
       </div>`;
   });
+}
+
+// ── Period Framework ───────────────────────────────────────────────────────
+function buildPeriodPanel(D) {
+  const p1 = D.period1_baseline;
+  const panel = document.getElementById('periodPanel');
+  const grid  = document.getElementById('periodGrid');
+
+  if (!p1) return;  // No baseline yet — hide panel
+  panel.style.display = 'block';
+
+  const current = {
+    csov:         D.csov_score || 0,
+    serp:         D.components?.serp?.score || 0,
+    ai_overview:  D.components?.ai_overview?.score || 0,
+    llm:          D.components?.llm?.score || 0,
+    earned_media: D.components?.earned_media?.score || 0,
+  };
+
+  const P2_TARGETS = { csov: 70, serp: 70, ai_overview: 65, llm: 65, earned_media: 65 };
+
+  function deltaHtml(current, baseline) {
+    const d = current - baseline;
+    if (Math.abs(d) < 0.1) return '<span style="color:var(--muted)">→</span>';
+    const cls = d > 0 ? 'period-delta-pos' : 'period-delta-neg';
+    return `<span class="${cls}">${d > 0 ? '+' : ''}${d.toFixed(1)}</span>`;
+  }
+
+  const metrics = [
+    { label: 'Overall CSOV', key: 'csov' },
+    { label: 'SERP',         key: 'serp' },
+    { label: 'AI Overview',  key: 'ai_overview' },
+    { label: 'LLM',          key: 'llm' },
+    { label: 'Earned Media', key: 'earned_media' },
+  ];
+
+  let p1Html = `<div class="period-col"><h4>📊 Period 1 — Baseline (Feb–May 2026)<br><small style="font-weight:400;color:var(--muted);font-size:.78rem;">Used as starting benchmark for P2 goals</small></h4>`;
+  metrics.forEach(({ label, key }) => {
+    p1Html += `<div class="period-row">
+      <span class="period-label">${label}</span>
+      <span class="period-val">${(p1[key]||0).toFixed(1)}</span>
+    </div>`;
+  });
+  p1Html += `<div style="margin-top:8px;font-size:.75rem;color:var(--muted);">${p1.months_used||0} months averaged</div></div>`;
+
+  let p2Html = `<div class="period-col"><h4>🎯 Period 2 — Now vs P1 Baseline (Jun–Sep 2026 goal)<br><small style="font-weight:400;color:var(--muted);font-size:.78rem;">Current week vs P1 average · Target = 70+</small></h4>`;
+  metrics.forEach(({ label, key }) => {
+    const target = P2_TARGETS[key] || 70;
+    p2Html += `<div class="period-row">
+      <span class="period-label">${label}</span>
+      <span style="display:flex;gap:8px;align-items:center;">
+        <span class="period-val">${current[key].toFixed(1)}</span>
+        ${deltaHtml(current[key], p1[key]||0)}
+        <span class="period-target">Goal: ${target}</span>
+      </span>
+    </div>`;
+  });
+  p2Html += `</div>`;
+
+  grid.innerHTML = p1Html + p2Html;
 }
 
 // ── Action Items ───────────────────────────────────────────────────────────

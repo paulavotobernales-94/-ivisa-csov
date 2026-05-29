@@ -108,6 +108,17 @@ def _build_report_payload(
     except Exception as exc:
         logger.warning("Could not load historical series: %s", exc)
 
+    # Load Period 1 baseline if available
+    period1_baseline = None
+    try:
+        from scripts.config import DATA_DIR
+        p1_path = DATA_DIR / "period1_baseline.json"
+        if p1_path.exists():
+            with open(p1_path, "r", encoding="utf-8") as f:
+                period1_baseline = json.load(f)
+    except Exception:
+        pass
+
     return {
         "csov_score":          csov_result["csov_score"],
         "previous_csov_score": previous_csov,
@@ -120,6 +131,7 @@ def _build_report_payload(
         "historical":          history,
         "action_items":        action_items,
         "formula":             csov_result.get("formula", ""),
+        "period1_baseline":    period1_baseline,
     }
 
 
@@ -205,10 +217,11 @@ def run(dry_run: bool = False) -> None:
             logger.warning("SERP enrichment skipped: %s", exc)
 
         # 4. Earned Media + CSOV calculation
-        logger.info("[4/6] Loading earned media & calculating CSOV...")
+        logger.info("[4/6] Fetching earned media (SerpAPI) & calculating CSOV...")
         try:
-            from scripts.calculate_csov import calculate_csov, generate_action_items, load_earned_media
-            earned_media_data = load_earned_media()
+            from scripts.calculate_csov import calculate_csov, generate_action_items
+            from scripts.fetch_earned_media import fetch_earned_media_data
+            earned_media_data = fetch_earned_media_data()
             csov_result       = calculate_csov(
                 serp_score          = serp_data["global_score"],
                 ai_overview_score   = ai_overview_data["global_score"],
