@@ -742,7 +742,7 @@ function buildTrendChart(history) {
 
 // ── CSV Download ────────────────────────────────────────────────────────────
 function downloadTrendCSV() {
-  const history = REPORT_DATA.history || [];
+  const history = REPORT_DATA.historical || REPORT_DATA.history || [];
   if (!history.length) { alert('No historical data available yet.'); return; }
   const headers = ['Date','Overall CSOV','SERP','AI Overview','LLM','Earned Media'];
   const rows = history.map(h => [
@@ -875,18 +875,30 @@ function buildSerpTable(countryResults) {
     const kwId = 'serp-' + kw.replace(/[^a-z0-9]/gi, '_');
 
     function makeRows(items) {
-      if (!items.length) return '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px;">No data</td></tr>';
+      if (!items.length) return '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:12px;">No data</td></tr>';
       return items.map(r => {
-        const titleText = (r.title || '').substring(0, 70) + ((r.title||'').length > 70 ? '…' : '');
-        const urlShort  = (r.url || '').replace(/^https?:\/\//, '').substring(0, 55);
+        const title    = r.title || r.url || '—';
+        const snippet  = (r.snippet || '').trim();
+        // Snippet: first 15 words + expand toggle if longer
+        const words    = snippet.split(/\s+/).filter(Boolean);
+        const shortSnip = words.slice(0,15).join(' ');
+        const hasMore   = words.length > 15;
+        const snippetHtml = snippet
+          ? `<div style="font-size:.76rem;color:#555;margin-top:3px;line-height:1.45;">
+               <span class="snip-short">${shortSnip}${hasMore ? '…' : ''}</span>
+               ${hasMore ? `<span class="snip-full" style="display:none;">${snippet}</span>
+               <span onclick="this.previousElementSibling.style.display=this.previousElementSibling.style.display==='none'?'inline':'none';this.previousElementSibling.previousElementSibling.style.display=this.previousElementSibling.previousElementSibling.style.display==='none'?'inline':'none';this.textContent=this.textContent==='more'?'less':'more';" style="color:var(--green);cursor:pointer;font-size:.72rem;margin-left:3px;">more</span>` : ''}
+             </div>`
+          : '';
+        const domainDisplay = r.domain || '';
         return `<tr class="${r.is_ivisa ? 'ivisa-row' : ''}">
-          <td>${r.position ? posBadge(r.position) : '—'}</td>
-          <td>
-            <div style="font-size:.82rem;font-weight:${r.is_ivisa?'700':'400'};color:var(--text);">${titleText || '—'}</div>
-            <a class="domain-link" href="${r.url||'#'}" target="_blank" style="font-size:.75rem;">${urlShort}</a>
+          <td style="vertical-align:top;padding-top:10px;">${r.position ? posBadge(r.position) : '—'}</td>
+          <td style="vertical-align:top;">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:2px;">${domainDisplay}</div>
+            <a href="${r.url||'#'}" target="_blank" style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:#1a0dab;text-decoration:none;line-height:1.3;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${title}</a>
+            ${snippetHtml}
           </td>
-          <td><a class="domain-link" href="https://${r.domain}" target="_blank">${r.domain||'—'}</a></td>
-          <td style="text-align:center">${sentEmoji(r.sentiment)} ${pillSentiment(r.sentiment)}</td>
+          <td style="text-align:center;vertical-align:top;padding-top:10px;">${sentEmoji(r.sentiment)} ${pillSentiment(r.sentiment)}</td>
         </tr>`;
       }).join('');
     }
@@ -914,14 +926,13 @@ function buildSerpTable(countryResults) {
           <table style="font-size:.82rem;" id="${kwId}">
             <thead><tr>
               <th style="width:40px;">Pos</th>
-              <th>Page Title / URL</th>
-              <th>Domain</th>
-              <th style="text-align:center;">Sentiment</th>
+              <th>Page</th>
+              <th style="text-align:center;width:110px;">Sentiment</th>
             </tr></thead>
             <tbody id="${kwId}-body">${page1rows}</tbody>
           </table>
           ${pagerHtml}
-          ${page2rows ? `<div id="${kwId}-p2" style="display:none"><table style="font-size:.82rem;width:100%;"><thead><tr><th style="width:40px;">Pos</th><th>Page Title / URL</th><th>Domain</th><th style="text-align:center;">Sentiment</th></tr></thead><tbody>${page2rows}</tbody></table></div>` : ''}
+          ${page2rows ? `<div id="${kwId}-p2" style="display:none"><table style="font-size:.82rem;width:100%;"><thead><tr><th style="width:40px;">Pos</th><th>Page</th><th style="text-align:center;width:110px;">Sentiment</th></tr></thead><tbody>${page2rows}</tbody></table></div>` : ''}
         </div>
       </div>`;
   });
@@ -1192,6 +1203,7 @@ function buildScoreAnalysis(D) {
   if (!panel || !list) return;
 
   const insights = [];
+  const history  = D.historical  || D.history || [];
   const serp     = D.serp_data   || {};
   const aio      = D.ai_overview_data || {};
   const p1       = D.period1_baseline || null;
