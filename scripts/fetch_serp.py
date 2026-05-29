@@ -38,34 +38,81 @@ from scripts.config import (
     COUNTRIES,
     KEYWORDS,
     NEGATIVE_DOMAINS,
-    NEUTRAL_DOMAINS,
-    POSITIVE_DOMAINS,
     SEMRUSH_API_KEY,
 )
 
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Sentiment signals for title-based classification
+# Sentiment classification
+#
+# Philosophy: classify from CONTENT (title + snippet), not from domain.
+# Trustpilot, Tripadvisor, Sitejabber etc. are NOT automatically positive —
+# they surface user reviews that can be 1-star and very negative.
+# The only domain-level signal we keep is NEGATIVE domains (complaint sites)
+# because their structural purpose is to host complaints regardless of content.
+#
+# Neutral means MIXED: text contains both positive and negative signals,
+# or takes a "it works but has downsides" position.
+# Example: "iVisa isn't a scam, it's a platform that charges service fees
+# but handles all the work for you" → neutral (mixed signals present).
 # ---------------------------------------------------------------------------
 
-# Words in a page title that strongly signal POSITIVE content about iVisa
-POSITIVE_TITLE_SIGNALS = [
-    "legit", "legitimate", "safe", "trusted", "trust", "reliable", "review",
-    "honest", "worth", "recommend", "guide", "official", "best", "how to",
-    "real", "verified", "approved", "faq", "is it", "should i", "pros",
-    "everything you need", "comparison", "honest review", "my experience",
-    "used ivisa", "tried ivisa", "work", "works", "worked", "helped",
+# Signals that indicate POSITIVE content about iVisa
+# Read as: the text is defending, recommending, or vouching for iVisa
+POSITIVE_TEXT_SIGNALS = [
+    # Explicit legitimacy defence
+    "not a scam", "isn't a scam", "is not a scam", "no scam",
+    "why is this not a scam", "why you can use ivisa", "why use ivisa",
+    "yes ivisa is trustworthy", "ivisa is trustworthy", "ivisa is legitimate",
+    "ivisa is legit", "ivisa is safe", "ivisa is real", "ivisa is reliable",
+    "ivisa is trusted", "ivisa is worth it", "ivisa is approved",
+    "ivisa is verified", "ivisa is not fake",
+    # Positive framing
+    "legit", "legitimate", "safe to use", "trusted", "trust", "reliable",
+    "honest review", "worth it", "worth the money", "recommend", "recommended",
+    "highly recommend", "would use again", "used it successfully", "worked for me",
+    "worked perfectly", "it works", "great service", "excellent service",
+    "fast service", "easy to use", "convenient", "helpful", "approved",
+    "verified", "5 star", "five star", "4 star", "positive experience",
+    "my experience", "used ivisa", "tried ivisa", "helped me", "no issues",
+    "no problems", "smooth process", "everything went well",
+    "official", "government approved", "accredited",
+    # Intent-to-recommend
+    "should i use ivisa", "can i trust ivisa", "is ivisa worth",
+    "best visa service", "best way to apply", "how to use ivisa",
+    "guide to ivisa", "ivisa tutorial", "ivisa review",
 ]
 
-# Words in a page title that strongly signal NEGATIVE content
-NEGATIVE_TITLE_SIGNALS = [
-    "scam", "fraud", "fake", "avoid", "danger", "problem", "complaint",
-    "steal", "stolen", "worst", "terrible", "rip off", "ripoff", "warning",
-    "cheat", "mislead", "suspicious", "beware", "do not use", "don't use",
-    "stay away", "con ", "overcharged", "refund denied", "lost money",
-    "never again", "waste of", "disappointed", "not legit", "not safe",
-    "not legitimate", "not trusted", "not reliable",
+# Signals that indicate NEGATIVE content about iVisa
+NEGATIVE_TEXT_SIGNALS = [
+    "scam", "fraud", "fraudulent", "fake", "fake website", "not legitimate",
+    "not legit", "not safe", "not trusted", "not real", "not reliable",
+    "avoid", "avoid ivisa", "stay away", "do not use", "don't use",
+    "beware", "warning", "danger", "dangerous",
+    "complaint", "complaints", "problem", "problems", "issue", "issues",
+    "rip off", "ripoff", "overcharged", "hidden fees", "hidden charges",
+    "refund denied", "won't refund", "no refund", "lost money",
+    "stole", "stolen", "steal", "cheat", "cheated", "mislead", "misleading",
+    "suspicious", "shady", "untrustworthy", "terrible service", "worst service",
+    "worst experience", "never again", "waste of money", "waste of time",
+    "disappointing", "disappointed", "horrible", "awful", "nightmare",
+    "con ", "con man", "scammed", "got scammed", "money back",
+    "not affiliated with", "not government", "not official",
+]
+
+# Structural complaint site domains — always negative regardless of text
+# (We deliberately exclude Trustpilot, Tripadvisor, Sitejabber — their sentiment
+# depends entirely on what the review says, not the domain itself)
+ALWAYS_NEGATIVE_DOMAINS = [
+    "bbb.org",
+    "ripoffreport.com",
+    "scamalert.com",
+    "complaints.com",
+    "pissedconsumer.com",
+    "complaintsboard.com",
+    "scamadviser.com",
+    "reviewopedia.com",
 ]
 
 
@@ -73,46 +120,48 @@ NEGATIVE_TITLE_SIGNALS = [
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _classify_result(domain: str, title: str) -> str:
+def _classify_result(domain: str, title: str, snippet: str = "") -> str:
     """
     Return 'positive', 'negative', or 'neutral' for a SERP result.
 
-    Priority order:
-    1. Negative domain → always negative (BBB, ripoffreport, scamalert, etc.)
-    2. Negative title keywords → negative (scam, fraud, avoid, etc.)
-    3. Positive domain → positive (trustpilot, forbes, ivisa.com itself, etc.)
-    4. Positive title keywords → positive
-    5. Neutral domain → neutral
-    6. Default → neutral
+    Classification logic (in order of priority):
+    1. Structural complaint domains → always negative
+    2. Count positive and negative signals in (title + snippet) combined
+    3. If BOTH positive and negative signals present → neutral (mixed/balanced)
+    4. If only negative signals → negative
+    5. If only positive signals → positive
+    6. No signals → neutral (default)
+
+    This means a Trustpilot page with "iVisa — terrible service, took my money"
+    is correctly classified as negative. And "iVisa isn't a scam, it's pricey but
+    delivers" is correctly classified as neutral.
     """
     domain_lower = domain.lower().strip()
-    title_lower = (title or "").lower()
+    # Combine title + snippet for full text analysis
+    full_text = f"{title} {snippet}".lower()
 
-    # Negative domain — strongest signal, overrides title
-    for d in NEGATIVE_DOMAINS:
+    # 1. Structural complaint domains — always negative
+    for d in ALWAYS_NEGATIVE_DOMAINS:
         if d in domain_lower:
             return "negative"
 
-    # Negative title signals
-    for signal in NEGATIVE_TITLE_SIGNALS:
-        if signal in title_lower:
-            return "negative"
+    # 2. Count signals in the combined text
+    pos_hits = sum(1 for s in POSITIVE_TEXT_SIGNALS if s in full_text)
+    neg_hits = sum(1 for s in NEGATIVE_TEXT_SIGNALS if s in full_text)
 
-    # Positive domain (trusted review sites, iVisa's own pages, travel press)
-    for d in POSITIVE_DOMAINS:
-        if d in domain_lower:
-            return "positive"
+    # 3. Mixed signals = neutral (e.g. "not a scam but expensive" has both)
+    if pos_hits > 0 and neg_hits > 0:
+        return "neutral"
 
-    # Positive title signals
-    for signal in POSITIVE_TITLE_SIGNALS:
-        if signal in title_lower:
-            return "positive"
+    # 4. Clear negative
+    if neg_hits > 0:
+        return "negative"
 
-    # Neutral domain list (reddit, quora, twitter/X, yelp)
-    for d in NEUTRAL_DOMAINS:
-        if d in domain_lower:
-            return "neutral"
+    # 5. Clear positive
+    if pos_hits > 0:
+        return "positive"
 
+    # 6. No signals — default neutral
     return "neutral"
 
 
@@ -196,15 +245,17 @@ def _fetch_semrush_keyword(keyword: str, database: str) -> list[dict]:
             pos = int(row.get("Position", 0))
         except (ValueError, TypeError):
             pos = 0
-        domain = row.get("Domain", "").strip()
-        title  = row.get("Title", "").strip()
+        domain  = row.get("Domain", "").strip()
+        title   = row.get("Title", "").strip()
+        snippet = row.get("Snippet", "").strip()
         results.append({
             "position": pos,
             "url": row.get("URL", "").strip(),
             "domain": domain,
             "title": title,
+            "snippet": snippet,
             "is_ivisa": _is_ivisa(domain),
-            "sentiment": _classify_result(domain, title),
+            "sentiment": _classify_result(domain, title, snippet),
             "source": "semrush",
         })
     return results
@@ -244,15 +295,17 @@ def _fetch_ahrefs_keyword(keyword: str, country: str) -> list[dict]:
 
     results = []
     for item in data.get("serp", []):
-        domain = item.get("domain", "").strip()
-        title  = item.get("title", "").strip()
+        domain  = item.get("domain", "").strip()
+        title   = item.get("title", "").strip()
+        snippet = item.get("snippet", "").strip()
         results.append({
             "position": item.get("position", 0),
             "url": item.get("url", "").strip(),
             "domain": domain,
             "title": title,
+            "snippet": snippet,
             "is_ivisa": _is_ivisa(domain),
-            "sentiment": _classify_result(domain, title),
+            "sentiment": _classify_result(domain, title, snippet),
             "source": "ahrefs",
         })
     return results
@@ -339,7 +392,9 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                         "title": r["title"],
                         "snippet": r.get("snippet", ""),
                         "is_ivisa": _is_ivisa(r["domain"]),
-                        "sentiment": _classify_result(r["domain"], r["title"]),
+                        "sentiment": _classify_result(
+                            r["domain"], r["title"], r.get("snippet", "")
+                        ),
                         "source": "serpapi",
                     }
                     for r in organic_list
@@ -358,11 +413,12 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                         if not item.get("snippet"):
                             item["snippet"] = organic_match.get("snippet", "")
 
-                    # Re-classify sentiment now that we have the title
-                    if item.get("title"):
-                        item["sentiment"] = _classify_result(
-                            item.get("domain", ""), item.get("title", "")
-                        )
+                    # Re-classify with title + snippet now that both are available
+                    item["sentiment"] = _classify_result(
+                        item.get("domain", ""),
+                        item.get("title", ""),
+                        item.get("snippet", ""),
+                    )
 
     # Recompute scores with enriched data
     for country_code in list(results.keys()):

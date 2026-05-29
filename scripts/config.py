@@ -52,17 +52,20 @@ COUNTRIES = {
 }
 
 # ── Domain Sentiment Classification ───────────────────────────────────────────
-POSITIVE_DOMAINS = [
-    "ivisa.com", "trustpilot.com", "tripadvisor.com", "sitejabber.com",
-    "forbes.com", "travelpulse.com", "skift.com", "travel.state.gov",
-]
+# NOTE: SERP classification no longer uses positive/neutral domain lists.
+# Sentiment is determined purely from title + snippet text content.
+# Only structural complaint domains are kept as always-negative signals,
+# because their purpose is to host complaints regardless of content.
+# Trustpilot, Tripadvisor, Sitejabber etc. are NOT in positive_domains —
+# they can surface 1-star reviews that are very negative.
 NEGATIVE_DOMAINS = [
     "bbb.org", "scamalert.com", "ripoffreport.com",
-    "complaints.com", "pissedconsumer.com",
+    "complaints.com", "pissedconsumer.com", "complaintsboard.com",
+    "scamadviser.com",
 ]
-NEUTRAL_DOMAINS = [
-    "reddit.com", "quora.com", "yelp.com", "twitter.com", "x.com",
-]
+# Kept for backward compat / earned media module
+POSITIVE_DOMAINS = []
+NEUTRAL_DOMAINS  = []
 
 # ── SERP Position → Points Mapping ────────────────────────────────────────────
 POSITION_POINTS = {
