@@ -50,15 +50,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
          background: var(--bg); color: var(--text); line-height: 1.5; }
 
   /* ── Header ── */
-  .header { background: var(--navy);
-             color: #fff; padding: 18px 32px; display: flex; align-items: center;
+  .header { background: #fff;
+             color: var(--navy); padding: 18px 32px; display: flex; align-items: center;
              justify-content: space-between; gap: 16px; flex-wrap: wrap;
-             border-bottom: 3px solid var(--green); }
+             border-bottom: 3px solid var(--green);
+             box-shadow: 0 2px 8px rgba(0,0,0,.06); }
   .header-brand { display: flex; align-items: center; gap: 14px; }
   .header-logo { display: flex; align-items: center; gap: 10px; }
-  .header-title h1 { font-size: 1.25rem; font-weight: 700; }
-  .header-title p  { font-size: .8rem; opacity: .75; }
-  .header-meta { text-align: right; font-size: .8rem; opacity: .8; }
+  .header-title h1 { font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+  .header-title p  { font-size: .8rem; color: var(--muted); }
+  .header-meta { text-align: right; font-size: .8rem; color: var(--muted); }
   .header-meta strong { display: block; font-size: 1rem; opacity: 1; }
 
   /* ── Layout ── */
@@ -258,7 +259,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <div class="header-brand">
     <div class="header-logo">
       <img src="ivisa_logo.png" alt="iVisa" style="height:32px;width:auto;" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
-      <span id="logoFallback" style="display:none;align-items:center;gap:8px;"><svg width="36" height="28" viewBox="0 0 36 28" fill="none"><path d="M2 6 C6 6 10 14 14 20 C18 10 24 2 34 2" stroke="#00EA80" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span style="font-size:1.4rem;font-weight:900;color:#fff;">iVISA</span></span>
+      <span id="logoFallback" style="display:none;align-items:center;gap:8px;"><svg width="36" height="28" viewBox="0 0 36 28" fill="none"><path d="M2 6 C6 6 10 14 14 20 C18 10 24 2 34 2" stroke="#00EA80" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span style="font-size:1.4rem;font-weight:900;color:var(--navy);">iVISA</span></span>
     </div>
     <div class="header-title">
       <p style="font-size:.82rem;opacity:.7;margin-top:2px;">Credibility Share of Voice Dashboard</p>
