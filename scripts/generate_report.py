@@ -27,36 +27,35 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    /* iVisa brand palette */
-    --blue:      #394FE1;   /* electric-blue-500 — primary */
-    --blue-dark: #2538B8;   /* electric-blue-600 */
-    --navy:      #00398F;   /* blue-800 — deep navy */
-    --sky:       #08ADE4;   /* blue-500 — light accent */
-    --green:     #00D474;   /* green-500 — CTA / positive */
-    --green-dark:#0DB770;   /* green-600 */
-    --yellow:    #F59E0B;   /* amber — warning */
-    --red:       #EF4444;   /* red — negative */
-    --bg:        #F0F5F6;   /* gray-50 tint */
-    --card:      #ffffff;
-    --border:    #D5E1E2;   /* gray-100 */
-    --text:      #0D1B2A;   /* near-black */
-    --muted:     #5A7080;
-    --radius:    12px;
-    --shadow:    0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+    /* iVisa brand palette — matched from ivisa.com */
+    --green:      #00EA80;   /* iVisa hero green — CTA, accents, highlights */
+    --green-mid:  #00D474;   /* green-500 — positive signals */
+    --green-dark: #0DB770;   /* green-600 — text on light bg */
+    --navy:       #0A2540;   /* deep navy — headlines, header bg */
+    --navy-light: #133A5E;   /* slightly lighter navy */
+    --blue:       #394FE1;   /* electric blue — links, tabs */
+    --sky:        #08ADE4;   /* light blue — secondary data */
+    --yellow:     #F59E0B;   /* amber — warning/neutral */
+    --red:        #EF4444;   /* red — negative */
+    --bg:         #F4FBF7;   /* very light mint — page background */
+    --card:       #ffffff;
+    --border:     #D8EDE4;   /* soft green-tinted border */
+    --text:       #0A2540;   /* same as navy for body text */
+    --muted:      #5A7A6A;
+    --radius:     12px;
+    --shadow:     0 1px 3px rgba(10,37,64,.07), 0 4px 16px rgba(10,37,64,.06);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Manrope', Arial, sans-serif;
          background: var(--bg); color: var(--text); line-height: 1.5; }
 
   /* ── Header ── */
-  .header { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-             color: #fff; padding: 20px 32px; display: flex; align-items: center;
-             justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .header { background: var(--navy);
+             color: #fff; padding: 18px 32px; display: flex; align-items: center;
+             justify-content: space-between; gap: 16px; flex-wrap: wrap;
+             border-bottom: 3px solid var(--green); }
   .header-brand { display: flex; align-items: center; gap: 14px; }
-  .header-logo { width: 42px; height: 42px; background: var(--green);
-                  border-radius: 10px; display: flex; align-items: center;
-                  justify-content: center; font-weight: 900; font-size: 18px;
-                  color: var(--navy); }
+  .header-logo { display: flex; align-items: center; gap: 10px; }
   .header-title h1 { font-size: 1.25rem; font-weight: 700; }
   .header-title p  { font-size: .8rem; opacity: .75; }
   .header-meta { text-align: right; font-size: .8rem; opacity: .8; }
@@ -80,9 +79,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                         letter-spacing: .06em; }
   .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px;
             border-radius: 20px; font-size: .82rem; font-weight: 700; }
-  .badge-up   { background: #D0FAE8; color: var(--green-dark); }
+  .badge-up   { background: #D0F7E6; color: var(--green-dark); }
   .badge-down { background: #FEE2E2; color: var(--red); }
-  .badge-flat { background: #EBF0F1; color: var(--muted); }
+  .badge-flat { background: #EAF2EC; color: var(--muted); }
   .hero-week  { font-size: .85rem; color: var(--muted); }
 
   /* ── Gauge ── */
@@ -105,7 +104,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .comp-score span { font-size: 1rem; color: var(--muted); font-weight: 400; }
   .progress-bar { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
-  .fill-green  { background: linear-gradient(90deg, var(--green) 0%, var(--sky) 100%); }
+  .fill-green  { background: linear-gradient(90deg, var(--green-mid) 0%, var(--green) 100%); }
   .fill-yellow { background: var(--yellow); }
   .fill-red    { background: var(--red); }
   .fill-blue   { background: var(--blue); }
@@ -160,11 +159,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .pos-mid   { background: #f1f5f9; color: var(--muted); }
   .pos-bad   { background: #fee2e2; color: var(--red); }
   .pill { padding: 2px 10px; border-radius: 10px; font-size: .75rem; font-weight: 700; }
-  .pill-pos  { background: #D0FAE8; color: var(--green-dark); }
+  .pill-pos  { background: #D0F7E6; color: var(--green-dark); }
   .pill-neg  { background: #FEE2E2; color: var(--red); }
-  .pill-neu  { background: #EBF0F1; color: var(--muted); }
-  .pill-yes  { background: #E8EBFF; color: var(--blue); }
-  .pill-no   { background: #EBF0F1; color: var(--muted); }
+  .pill-neu  { background: #EAF2EC; color: var(--muted); }
+  .pill-yes  { background: #D0F7E6; color: var(--green-dark); }
+  .pill-no   { background: #EAF2EC; color: var(--muted); }
   .domain-link { color: var(--blue); text-decoration: none; font-size: .8rem; font-weight: 500; }
   .domain-link:hover { text-decoration: underline; }
   .ivisa-row td { background: #E8EBFF !important; font-weight: 700; }
@@ -205,8 +204,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .sent-counts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
   .sent-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px;
                border-radius: 12px; font-size: .74rem; font-weight: 700; }
-  .sent-chip-pos { background: #D0FAE8; color: var(--green-dark); }
-  .sent-chip-neu { background: #EBF0F1; color: var(--muted); }
+  .sent-chip-pos { background: #D0F7E6; color: var(--green-dark); }
+  .sent-chip-neu { background: #EAF2EC; color: var(--muted); }
   .sent-chip-neg { background: #FEE2E2; color: var(--red); }
 
   /* ── Period Framework ── */
@@ -257,10 +256,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <!-- HEADER -->
 <header class="header">
   <div class="header-brand">
-    <div class="header-logo">iV</div>
+    <div class="header-logo">
+      <!-- iVisa logo: green wing/check + IVISA wordmark -->
+      <svg width="36" height="28" viewBox="0 0 36 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 6 C6 6 10 14 14 20 C18 10 24 2 34 2" stroke="#00EA80" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span style="font-size:1.4rem;font-weight:900;color:#fff;letter-spacing:-.01em;">iVISA</span>
+    </div>
     <div class="header-title">
-      <h1>iVisa</h1>
-      <p>Credibility Share of Voice Dashboard</p>
+      <p style="font-size:.82rem;opacity:.7;margin-top:2px;">Credibility Share of Voice Dashboard</p>
     </div>
   </div>
   <div class="header-meta">
@@ -466,7 +470,7 @@ const REPORT_DATA = __REPORT_DATA_PLACEHOLDER__;
 
 // ── Utilities ──────────────────────────────────────────────────────────────
 function scoreColor(s) {
-  if (s >= 75) return '#00D474';
+  if (s >= 75) return '#00EA80';
   if (s >= 55) return '#F59E0B';
   return '#EF4444';
 }
@@ -500,7 +504,7 @@ function buildGauge(score) {
   const toRad = d => d * Math.PI / 180;
   const arcX  = cx + r * Math.cos(toRad(angle - 90));
   const arcY  = cy + r * Math.sin(toRad(angle - 90));
-  const color = score >= 75 ? '#00D474' : score >= 55 ? '#F59E0B' : '#EF4444';
+  const color = score >= 75 ? '#00EA80' : score >= 55 ? '#F59E0B' : '#EF4444';
 
   return `<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
     <path d="M20,90 A70,70 0 0,1 160,90" fill="none" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round"/>
@@ -649,11 +653,11 @@ function buildTrendChart(history) {
   if (!history || !history.length) return;
   const labels   = history.map(h => h.week_label);
   const datasets = [
-    { label: 'Overall CSOV',  data: history.map(h=>h.csov),         borderColor:'#394FE1', backgroundColor:'rgba(57,79,225,.1)',  tension:.35, fill:true, borderWidth:3 },
-    { label: 'SERP',          data: history.map(h=>h.serp),         borderColor:'#00D474', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'Overall CSOV',  data: history.map(h=>h.csov),         borderColor:'#00EA80', backgroundColor:'rgba(0,234,128,.12)', tension:.35, fill:true,  borderWidth:3 },
+    { label: 'SERP',          data: history.map(h=>h.serp),         borderColor:'#0DB770', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
     { label: 'AI Overview',   data: history.map(h=>h.ai_overview),  borderColor:'#08ADE4', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
     { label: 'LLM',           data: history.map(h=>h.llm),          borderColor:'#F59E0B', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
-    { label: 'Earned Media',  data: history.map(h=>h.earned_media), borderColor:'#00398F', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'Earned Media',  data: history.map(h=>h.earned_media), borderColor:'#0A2540', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
   ];
 
   new Chart(document.getElementById('trendChart'), {
@@ -677,10 +681,10 @@ function buildCountryGrid(countryData) {
     const score = (country.csov_score || 0).toFixed(1);
     const c     = country.components || {};
     const segs  = [
-      { w: (c.serp||0)*0.35,         color:'#00D474' },
+      { w: (c.serp||0)*0.35,         color:'#00EA80' },
       { w: (c.ai_overview||0)*0.25,  color:'#08ADE4' },
       { w: (c.llm||0)*0.25,          color:'#F59E0B' },
-      { w: (c.earned_media||0)*0.15, color:'#394FE1' },
+      { w: (c.earned_media||0)*0.15, color:'#0A2540' },
     ];
     const total = segs.reduce((s,x)=>s+x.w,0)||1;
 
