@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 send_slack.py — Sends a Slack summary message with the CSOV report link.
 """

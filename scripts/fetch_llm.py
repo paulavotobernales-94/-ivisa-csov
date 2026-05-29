@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 fetch_llm.py — Query Claude and Gemini to measure iVisa's LLM visibility.
 

@@ -1,0 +1,1350 @@
+{
+  "csov_score": 50.0,
+  "previous_csov_score": 54.2,
+  "components": {
+    "serp": {
+      "score": 50.0,
+      "weight": 0.35,
+      "weighted_contribution": 17.5,
+      "label": "SERP Score"
+    },
+    "ai_overview": {
+      "score": 50.0,
+      "weight": 0.25,
+      "weighted_contribution": 12.5,
+      "label": "AI Overview Score"
+    },
+    "llm": {
+      "score": 50.0,
+      "weight": 0.25,
+      "weighted_contribution": 12.5,
+      "label": "LLM Score"
+    },
+    "earned_media": {
+      "score": 50.0,
+      "weight": 0.15,
+      "weighted_contribution": 7.5,
+      "label": "Earned Media Score"
+    }
+  },
+  "country_data": {
+    "us": {
+      "name": "United States",
+      "flag": "🇺🇸",
+      "weight": 0.35,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "gb": {
+      "name": "United Kingdom",
+      "flag": "🇬🇧",
+      "weight": 0.14,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "au": {
+      "name": "Australia",
+      "flag": "🇦🇺",
+      "weight": 0.1,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "de": {
+      "name": "Germany",
+      "flag": "🇩🇪",
+      "weight": 0.08,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "ca": {
+      "name": "Canada",
+      "flag": "🇨🇦",
+      "weight": 0.07,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "fr": {
+      "name": "France",
+      "flag": "🇫🇷",
+      "weight": 0.07,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "jp": {
+      "name": "Japan",
+      "flag": "🇯🇵",
+      "weight": 0.04,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "nl": {
+      "name": "Netherlands",
+      "flag": "🇳🇱",
+      "weight": 0.04,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "it": {
+      "name": "Italy",
+      "flag": "🇮🇹",
+      "weight": 0.03,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    },
+    "ch": {
+      "name": "Switzerland",
+      "flag": "🇨🇭",
+      "weight": 0.03,
+      "csov_score": 50.0,
+      "components": {
+        "serp": 50.0,
+        "ai_overview": 50.0,
+        "llm": 50.0,
+        "earned_media": 50.0
+      }
+    }
+  },
+  "serp_data": {
+    "results": {
+      "us": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "gb": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "au": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "de": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "ca": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "fr": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "jp": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "nl": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "it": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "ch": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      }
+    },
+    "country_scores": {
+      "us": 50.0,
+      "gb": 50.0,
+      "au": 50.0,
+      "de": 50.0,
+      "ca": 50.0,
+      "fr": 50.0,
+      "jp": 50.0,
+      "nl": 50.0,
+      "it": 50.0,
+      "ch": 50.0
+    },
+    "global_score": 50.0
+  },
+  "ai_overview_data": {
+    "results": {
+      "us": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "gb": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "au": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "de": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "ca": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "fr": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "jp": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "nl": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "it": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      },
+      "ch": {
+        "iVisa": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa a scam": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa legit": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa reviews": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fake or real": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "is ivisa safe": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "iVisa affiliated with the gov": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        },
+        "ivisa fee": {
+          "has_ai_overview": null,
+          "ivisa_cited": null,
+          "ai_overview_text": null,
+          "sentiment_score": null,
+          "sources": [],
+          "score": 50.0
+        }
+      }
+    },
+    "country_scores": {
+      "us": 50.0,
+      "gb": 50.0,
+      "au": 50.0,
+      "de": 50.0,
+      "ca": 50.0,
+      "fr": 50.0,
+      "jp": 50.0,
+      "nl": 50.0,
+      "it": 50.0,
+      "ch": 50.0
+    },
+    "global_score": 50.0,
+    "organic_data": {
+      "us": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "gb": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "au": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "de": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "ca": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "fr": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "jp": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "nl": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "it": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      },
+      "ch": {
+        "iVisa": [],
+        "iVisa scam": [],
+        "ivisa legit": [],
+        "is ivisa a scam": [],
+        "is ivisa legit": [],
+        "ivisa reviews": [],
+        "ivisa fake or real": [],
+        "is ivisa safe": [],
+        "iVisa affiliated with the gov": [],
+        "ivisa fee": []
+      }
+    }
+  },
+  "llm_data": {
+    "part_a": {
+      "results": [],
+      "score": 50.0
+    },
+    "part_b": {
+      "results": [],
+      "mention_rate": 0.0,
+      "avg_positive_sentiment": 50.0,
+      "score": 50.0
+    },
+    "global_score": 50.0
+  },
+  "earned_media": {
+    "score": 50.0,
+    "mentions": [],
+    "counts": {
+      "total": 0,
+      "positive": 0,
+      "neutral": 0,
+      "negative": 0
+    },
+    "source_breakdown": {
+      "news": 0,
+      "blog": 0,
+      "reddit": 0,
+      "youtube": 0,
+      "instagram": 0,
+      "tiktok": 0
+    }
+  },
+  "historical": [
+    {
+      "week_label": "Week of Jan 31, 2026",
+      "csov": 54.2,
+      "serp": 63.47,
+      "ai_overview": 51.78,
+      "llm": 46.18,
+      "earned_media": 50.0
+    },
+    {
+      "week_label": "Week of Feb 28, 2026",
+      "csov": 54.2,
+      "serp": 63.47,
+      "ai_overview": 51.78,
+      "llm": 46.18,
+      "earned_media": 50.0
+    },
+    {
+      "week_label": "Week of Mar 31, 2026",
+      "csov": 54.2,
+      "serp": 63.47,
+      "ai_overview": 51.78,
+      "llm": 46.18,
+      "earned_media": 50.0
+    },
+    {
+      "week_label": "Week of Apr 30, 2026",
+      "csov": 54.2,
+      "serp": 63.47,
+      "ai_overview": 51.78,
+      "llm": 46.18,
+      "earned_media": 50.0
+    },
+    {
+      "week_label": "May 25 – May 31, 2026",
+      "csov": 55.7,
+      "serp": 63.47,
+      "ai_overview": 51.78,
+      "llm": 46.18,
+      "earned_media": 60.0
+    },
+    {
+      "week_label": "Week of May 29, 2026",
+      "csov": 54.2,
+      "serp": 63.47,
+      "ai_overview": 51.78,
+      "llm": 46.18,
+      "earned_media": 50.0
+    }
+  ],
+  "action_items": [
+    "Strengthen SERP sentiment by building more positive third-party mentions: travel blogs, review aggregators, and press coverage referencing iVisa positively.",
+    "AI Overview is mixed — add FAQ schema and HowTo schema to key trust pages to shift Google's AI summary toward iVisa's strengths.",
+    "Submit iVisa info to trusted review aggregators and travel publications to improve LLM mention rate.",
+    "Engage proactively with travel journalists and bloggers — target Forbes Travel, Skift, and TravelPulse for iVisa features."
+  ],
+  "formula": "CSOV = (SERP × 0.35) + (AI_Overview × 0.25) + (LLM × 0.25) + (Earned_Media × 0.15)",
+  "period1_baseline": {
+    "period": "P1",
+    "label": "Period 1 Baseline (Feb–May 2026)",
+    "months_used": 4,
+    "csov": 54.2,
+    "serp": 63.47,
+    "ai_overview": 51.78,
+    "llm": 46.18,
+    "earned_media": 50.0
+  },
+  "week_label": "May 25 – May 31, 2026",
+  "week_start": "May 25, 2026",
+  "week_end": "May 31, 2026",
+  "generated_at": "2026-05-29T10:24:43.142473Z"
+}
