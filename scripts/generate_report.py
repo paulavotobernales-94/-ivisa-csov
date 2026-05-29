@@ -21,34 +21,42 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iVisa Credibility Share of Voice Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --blue:    #2563EB;
-    --navy:    #1e3a5f;
-    --green:   #16a34a;
-    --yellow:  #d97706;
-    --red:     #dc2626;
-    --bg:      #f8fafc;
-    --card:    #ffffff;
-    --border:  #e2e8f0;
-    --text:    #1e293b;
-    --muted:   #64748b;
-    --radius:  12px;
-    --shadow:  0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+    /* iVisa brand palette */
+    --blue:      #394FE1;   /* electric-blue-500 — primary */
+    --blue-dark: #2538B8;   /* electric-blue-600 */
+    --navy:      #00398F;   /* blue-800 — deep navy */
+    --sky:       #08ADE4;   /* blue-500 — light accent */
+    --green:     #00D474;   /* green-500 — CTA / positive */
+    --green-dark:#0DB770;   /* green-600 */
+    --yellow:    #F59E0B;   /* amber — warning */
+    --red:       #EF4444;   /* red — negative */
+    --bg:        #F0F5F6;   /* gray-50 tint */
+    --card:      #ffffff;
+    --border:    #D5E1E2;   /* gray-100 */
+    --text:      #0D1B2A;   /* near-black */
+    --muted:     #5A7080;
+    --radius:    12px;
+    --shadow:    0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  body { font-family: 'Manrope', Arial, sans-serif;
          background: var(--bg); color: var(--text); line-height: 1.5; }
 
   /* ── Header ── */
-  .header { background: linear-gradient(135deg, var(--navy) 0%, #2d5a9e 100%);
+  .header { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
              color: #fff; padding: 20px 32px; display: flex; align-items: center;
              justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .header-brand { display: flex; align-items: center; gap: 14px; }
-  .header-logo { width: 42px; height: 42px; background: var(--blue);
+  .header-logo { width: 42px; height: 42px; background: var(--green);
                   border-radius: 10px; display: flex; align-items: center;
-                  justify-content: center; font-weight: 900; font-size: 18px; }
+                  justify-content: center; font-weight: 900; font-size: 18px;
+                  color: var(--navy); }
   .header-title h1 { font-size: 1.25rem; font-weight: 700; }
   .header-title p  { font-size: .8rem; opacity: .75; }
   .header-meta { text-align: right; font-size: .8rem; opacity: .8; }
@@ -56,9 +64,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
   /* ── Layout ── */
   .container { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
-  .section-title { font-size: 1.1rem; font-weight: 700; color: var(--navy);
+  .section-title { font-size: 1.1rem; font-weight: 800; color: var(--navy);
                    margin-bottom: 16px; padding-bottom: 8px;
-                   border-bottom: 2px solid var(--blue); }
+                   border-bottom: 3px solid var(--green); }
 
   /* ── Hero ── */
   .hero { display: flex; gap: 24px; align-items: stretch; margin-bottom: 32px; flex-wrap: wrap; }
@@ -71,10 +79,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .hero-score-label  { font-size: .9rem; color: var(--muted); text-transform: uppercase;
                         letter-spacing: .06em; }
   .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px;
-            border-radius: 20px; font-size: .82rem; font-weight: 600; }
-  .badge-up   { background: #dcfce7; color: var(--green); }
-  .badge-down { background: #fee2e2; color: var(--red); }
-  .badge-flat { background: #f1f5f9; color: var(--muted); }
+            border-radius: 20px; font-size: .82rem; font-weight: 700; }
+  .badge-up   { background: #D0FAE8; color: var(--green-dark); }
+  .badge-down { background: #FEE2E2; color: var(--red); }
+  .badge-flat { background: #EBF0F1; color: var(--muted); }
   .hero-week  { font-size: .85rem; color: var(--muted); }
 
   /* ── Gauge ── */
@@ -95,9 +103,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                        padding: 2px 8px; border-radius: 10px; }
   .comp-score { font-size: 2.2rem; font-weight: 800; color: var(--navy); line-height: 1; }
   .comp-score span { font-size: 1rem; color: var(--muted); font-weight: 400; }
-  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
-  .fill-green  { background: var(--green); }
+  .progress-bar { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+  .fill-green  { background: linear-gradient(90deg, var(--green) 0%, var(--sky) 100%); }
   .fill-yellow { background: var(--yellow); }
   .fill-red    { background: var(--red); }
   .fill-blue   { background: var(--blue); }
@@ -129,7 +137,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
   .tab-btn { padding: 7px 16px; border-radius: 8px; border: 1.5px solid var(--border);
               background: #fff; font-size: .85rem; cursor: pointer; transition: all .15s;
-              font-weight: 500; color: var(--muted); }
+              font-weight: 600; color: var(--muted); }
   .tab-btn:hover  { border-color: var(--blue); color: var(--blue); }
   .tab-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
   .tab-content { display: none; }
@@ -151,15 +159,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .pos-top3 { background: #dbeafe; color: #1e40af; }
   .pos-mid   { background: #f1f5f9; color: var(--muted); }
   .pos-bad   { background: #fee2e2; color: var(--red); }
-  .pill { padding: 2px 10px; border-radius: 10px; font-size: .75rem; font-weight: 600; }
-  .pill-pos  { background: #dcfce7; color: var(--green); }
-  .pill-neg  { background: #fee2e2; color: var(--red); }
-  .pill-neu  { background: #f1f5f9; color: var(--muted); }
-  .pill-yes  { background: #dbeafe; color: var(--blue); }
-  .pill-no   { background: #f1f5f9; color: var(--muted); }
-  .domain-link { color: var(--blue); text-decoration: none; font-size: .8rem; }
+  .pill { padding: 2px 10px; border-radius: 10px; font-size: .75rem; font-weight: 700; }
+  .pill-pos  { background: #D0FAE8; color: var(--green-dark); }
+  .pill-neg  { background: #FEE2E2; color: var(--red); }
+  .pill-neu  { background: #EBF0F1; color: var(--muted); }
+  .pill-yes  { background: #E8EBFF; color: var(--blue); }
+  .pill-no   { background: #EBF0F1; color: var(--muted); }
+  .domain-link { color: var(--blue); text-decoration: none; font-size: .8rem; font-weight: 500; }
   .domain-link:hover { text-decoration: underline; }
-  .ivisa-row td { background: #eff6ff !important; font-weight: 600; }
+  .ivisa-row td { background: #E8EBFF !important; font-weight: 700; }
 
   /* ── Methodology Panel ── */
   .method-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
@@ -176,9 +184,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .method-item h4 { font-size: .85rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
   .method-item p, .method-item li { font-size: .8rem; color: var(--muted); line-height: 1.6; }
   .method-item ul { padding-left: 16px; }
-  .method-formula { font-family: monospace; background: #1e293b; color: #7dd3fc;
+  .method-formula { font-family: monospace; background: var(--navy); color: var(--green);
                      padding: 10px 14px; border-radius: 8px; font-size: .8rem;
-                     margin-top: 10px; white-space: pre-wrap; }
+                     margin-top: 10px; white-space: pre-wrap; font-weight: 700; }
 
   /* ── LLM Section ── */
   .llm-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
@@ -197,9 +205,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .sent-counts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
   .sent-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px;
                border-radius: 12px; font-size: .74rem; font-weight: 700; }
-  .sent-chip-pos { background: #dcfce7; color: var(--green); }
-  .sent-chip-neu { background: #f1f5f9; color: var(--muted); }
-  .sent-chip-neg { background: #fee2e2; color: var(--red); }
+  .sent-chip-pos { background: #D0FAE8; color: var(--green-dark); }
+  .sent-chip-neu { background: #EBF0F1; color: var(--muted); }
+  .sent-chip-neg { background: #FEE2E2; color: var(--red); }
 
   /* ── Period Framework ── */
   .period-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
@@ -230,8 +238,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
   /* ── Action Items ── */
   .actions-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .action-item  { display: flex; gap: 12px; align-items: flex-start; background: var(--bg);
-                   border-radius: 10px; padding: 14px 16px; border-left: 4px solid var(--blue); }
+  .action-item  { display: flex; gap: 12px; align-items: flex-start; background: var(--card);
+                   border-radius: 10px; padding: 14px 16px; border-left: 4px solid var(--green);
+                   box-shadow: var(--shadow); }
   .action-icon  { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
   .action-text  { font-size: .9rem; color: var(--text); }
 
@@ -289,54 +298,71 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </button>
     <div class="method-body" id="methodBody">
       <div class="method-grid">
-        <div class="method-item">
-          <h4>🧮 Master Formula</h4>
-          <div class="method-formula">CSOV = (SERP × 35%) + (AI Overview × 25%)
-       + (LLM × 25%) + (Earned Media × 15%)</div>
-          <p style="margin-top:10px;">Each component is scored 0–100. The weighted average gives the Global CSOV Score. Country scores use the same formula but with country-specific SERP and AI Overview data.</p>
+        <div class="method-item" style="grid-column:1/-1;">
+          <h4>🧮 What does the score mean?</h4>
+          <p><strong>The CSOV score measures what % of online signals about iVisa are positive.</strong>
+          A score of 50 = perfectly neutral (equal positive and negative signals). Above 50 = more positive. Below 50 = more negative than positive.
+          So a score of 68 means: "68% of everything the internet says about iVisa — in search results, AI answers, LLM responses, and press — leans positive."</p>
+          <div class="method-formula">CSOV = (SERP × 35%) + (AI Overview × 25%) + (LLM × 25%) + (Earned Media × 15%)</div>
+          <p style="margin-top:8px;">Country scores use the same formula with country-specific SERP and AI Overview data. The global score is a weighted average across 10 countries.</p>
         </div>
+
         <div class="method-item">
-          <h4>🔍 SERP Score (35%)</h4>
-          <p>Measures whether the <strong>top-10 Google results</strong> per keyword are positive, neutral, or negative about iVisa — regardless of whether iVisa.com itself ranks.</p>
+          <h4>🔍 SERP Score (35%) — How it's calculated</h4>
+          <p>We check the <strong>top 10 Google results</strong> for each of 10 brand keywords across 10 countries (1,000 results). Each result is classified:</p>
+          <p style="margin-top:8px;">We classify each result by reading the <strong>title + preview snippet text</strong> — not by domain. Trustpilot with a 1-star review is negative. Forbes praising iVisa is positive. The content decides, not the website name.</p>
+          <p style="margin-top:8px;"><strong>🔴 Negative</strong> — text contains: "scam", "fraud", "fake", "avoid", "warning", "do not use", "beware", "rip off", "never again", "not legit", "not safe", "overcharged", "refund denied", "stay away", "suspicious" — <em>or</em> the domain is a structural complaint site (bbb.org, ripoffreport.com, scamalert.com)</p>
+          <p style="margin-top:8px;"><strong>🟢 Positive</strong> — text contains: "not a scam", "is legit", "is safe", "trusted", "recommend", "works", "my experience was good", "why use iVisa", "yes iVisa is trustworthy", "honest review", "no issues", "smooth process", "helped me", "great service"</p>
+          <p style="margin-top:8px;"><strong>⚪ Neutral (mixed)</strong> — text contains <em>both</em> positive and negative signals (e.g. "iVisa isn't a scam, it charges fees but does the work for you") — or no strong signal either way.</p>
+          <p style="margin-top:8px;">Position weighting: result #1 counts <strong>10×</strong> more than result #10. Score = (weighted positive sum ÷ total weight) × 100.</p>
+        </div>
+
+        <div class="method-item">
+          <h4>🤖 AI Overview Score (25%) — How it's calculated</h4>
+          <p>Checks what Google's AI-generated answer box says when it appears for iVisa keywords. We care about the <strong>quality and sentiment</strong> of what it says — not just whether iVisa appears.</p>
           <ul style="margin-top:8px;">
-            <li>🟢 <strong>Positive</strong> = page title/domain signals trust (review sites, "is iVisa legit", "how to use iVisa")</li>
-            <li>⚪ <strong>Neutral</strong> = no clear signal (social media, informational pages)</li>
-            <li>🔴 <strong>Negative</strong> = complaints, scam accusations, BBB, "avoid iVisa"</li>
+            <li><strong>AI Overview appears</strong> → Claude reads the full text and scores sentiment 0–100. Fully positive ("highly rated, trusted service, streamlined process") = 75–90. Mixed with a "Drawbacks" or "Criticisms" section (fees, refund policy, third-party status) = 45–60. Negative overview = below 40.</li>
+            <li><strong>No AI Overview shown</strong> → score = 50 (neutral baseline — no appearance is not a problem, just no signal)</li>
           </ul>
-          <p style="margin-top:8px;">Each result is weighted by position: pos 1 = 10× more than pos 10. Score = weighted average × 100.</p>
+          <p style="margin-top:8px;">When specific weaknesses appear in the AI Overview text (e.g. refund policy, fees), the Action Items section generates a targeted content recommendation to counter that narrative.</p>
+          <p style="margin-top:8px;">Final score = weighted average across 10 keywords × 10 countries, weighted by country traffic share.</p>
         </div>
+
         <div class="method-item">
-          <h4>🤖 AI Overview Score (25%)</h4>
-          <p>Checks whether Google's AI-generated summaries mention iVisa, using SerpAPI to scrape each keyword × country.</p>
+          <h4>💬 LLM Score (25%) — How it's calculated</h4>
+          <p>We ask Claude and Gemini 50 questions and analyse their responses. Two parts:</p>
           <ul style="margin-top:8px;">
-            <li>iVisa cited in AI overview → score = Claude sentiment (0–100)</li>
-            <li>AI overview exists but iVisa not cited → score = sentiment × 30%</li>
-            <li>No AI overview shown → neutral baseline (50)</li>
+            <li><strong>Part A (20 direct brand questions):</strong> "Is iVisa legit?", "Can I trust iVisa?", "Is iVisa a scam?" etc.
+            Claude reads each response and scores its sentiment 0–100. 100 = "strongly recommended", 0 = "avoid completely".</li>
+            <li><strong>Part B (30 general travel questions):</strong> "Best visa service?", "Safest way to apply for a visa online?" etc.
+            Score = (mention rate × 40%) + (average sentiment when mentioned × 60%).</li>
           </ul>
-          <p style="margin-top:8px;">Final score = weighted average across 10 keywords × 10 countries.</p>
+          <p style="margin-top:8px;">LLM Score = (Part A score + Part B score) ÷ 2. Both Claude and Gemini are averaged.</p>
         </div>
+
         <div class="method-item">
-          <h4>💬 LLM Score (25%)</h4>
-          <p>Asks Claude and Gemini 50 questions about iVisa and the visa industry. Two parts:</p>
+          <h4>📰 Earned Media Score (15%) — How it's calculated</h4>
+          <p>We search for iVisa mentions across 6 third-party channels (excluding iVisa's own accounts):</p>
           <ul style="margin-top:8px;">
-            <li><strong>Part A (20 queries):</strong> Direct brand questions ("Is iVisa legit?"). Scored 0–100 sentiment by each model.</li>
-            <li><strong>Part B (30 queries):</strong> General travel queries. Score = mention rate (40%) + avg sentiment when mentioned (60%).</li>
+            <li>📰 <strong>Google News</strong> — press articles mentioning iVisa</li>
+            <li>✈️ <strong>Travel blogs & press</strong> — Forbes, Lonely Planet, Skift, Nomadicmatt, The Points Guy, etc.</li>
+            <li>💬 <strong>Reddit</strong> — excluding r/ivisa (that's iVisa-owned)</li>
+            <li>▶️ <strong>YouTube</strong> — third-party video reviews</li>
+            <li>📸 <strong>Instagram &amp; 🎵 TikTok</strong> — excluding @ivisa official accounts</li>
           </ul>
-          <p style="margin-top:8px;">LLM Score = (Part A + Part B) / 2</p>
+          <p style="margin-top:8px;">Each mention is classified positive/neutral/negative using the same title + domain signal logic as SERP. Score = simple average (no position weighting — all mentions count equally).</p>
         </div>
+
         <div class="method-item">
-          <h4>📰 Earned Media Score (15%)</h4>
-          <p>Measures iVisa's coverage in press, travel media, and review sites. Currently uses a manually updated score from Brand24 exports.</p>
-          <p style="margin-top:8px;"><strong>Pending:</strong> Automated Brand24 integration will replace the manual score. Update <code>data/earned_media.json</code> with your monthly Brand24 export.</p>
-        </div>
-        <div class="method-item">
-          <h4>📊 Score Thresholds</h4>
+          <h4>📊 Score Thresholds &amp; Measurement Periods</h4>
           <ul>
             <li>🟢 <strong>75–100:</strong> Healthy — maintain strategy</li>
             <li>🟡 <strong>55–74:</strong> Needs attention — some risks present</li>
             <li>🔴 <strong>0–54:</strong> Critical — active reputation risk</li>
           </ul>
-          <p style="margin-top:8px;"><strong>Data sources:</strong> SEMrush, Ahrefs, SerpAPI (Google), Claude (Anthropic), Gemini (Google), Brand24.</p>
+          <p style="margin-top:8px;"><strong>Period 1 (Feb–May 2026):</strong> Baseline — establishes where we started.<br>
+          <strong>Period 2 (Jun–Sep 2026):</strong> Goal period — target 70+ across all components.<br>
+          <strong>Data sources:</strong> SEMrush, Ahrefs, SerpAPI (Google), Claude (Anthropic), Gemini (Google).</p>
         </div>
       </div>
     </div>
@@ -346,7 +372,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <div class="period-panel" id="periodPanel" style="display:none;">
     <div class="section-title" style="margin-bottom:4px;">📅 Measurement Periods</div>
     <p style="font-size:.82rem;color:var(--muted);margin-bottom:0;">
-      P1 = Feb–May 2026 baseline &nbsp;|&nbsp; P2 = Jun–Sep 2026 goal (tracked weekly)
+      <strong>Period 1 (P1) Feb–May 2026</strong> = baseline benchmark (where we started) &nbsp;|&nbsp;
+      <strong>Period 2 (P2) Jun–Sep 2026</strong> = goal period, target 70+ across all components
     </p>
     <div class="period-grid" id="periodGrid"></div>
   </div>
@@ -439,9 +466,9 @@ const REPORT_DATA = __REPORT_DATA_PLACEHOLDER__;
 
 // ── Utilities ──────────────────────────────────────────────────────────────
 function scoreColor(s) {
-  if (s >= 75) return 'var(--green)';
-  if (s >= 55) return 'var(--yellow)';
-  return 'var(--red)';
+  if (s >= 75) return '#00D474';
+  if (s >= 55) return '#F59E0B';
+  return '#EF4444';
 }
 function fillClass(s) {
   if (s >= 75) return 'fill-green';
@@ -473,7 +500,7 @@ function buildGauge(score) {
   const toRad = d => d * Math.PI / 180;
   const arcX  = cx + r * Math.cos(toRad(angle - 90));
   const arcY  = cy + r * Math.sin(toRad(angle - 90));
-  const color = score >= 75 ? '#16a34a' : score >= 55 ? '#d97706' : '#dc2626';
+  const color = score >= 75 ? '#00D474' : score >= 55 ? '#F59E0B' : '#EF4444';
 
   return `<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
     <path d="M20,90 A70,70 0 0,1 160,90" fill="none" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round"/>
@@ -622,11 +649,11 @@ function buildTrendChart(history) {
   if (!history || !history.length) return;
   const labels   = history.map(h => h.week_label);
   const datasets = [
-    { label: 'Overall CSOV',  data: history.map(h=>h.csov),         borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,.1)',  tension:.35, fill:false, borderWidth:3 },
-    { label: 'SERP',          data: history.map(h=>h.serp),         borderColor:'#16a34a', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
-    { label: 'AI Overview',   data: history.map(h=>h.ai_overview),  borderColor:'#d97706', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
-    { label: 'LLM',           data: history.map(h=>h.llm),          borderColor:'#7c3aed', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
-    { label: 'Earned Media',  data: history.map(h=>h.earned_media), borderColor:'#ec4899', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'Overall CSOV',  data: history.map(h=>h.csov),         borderColor:'#394FE1', backgroundColor:'rgba(57,79,225,.1)',  tension:.35, fill:true, borderWidth:3 },
+    { label: 'SERP',          data: history.map(h=>h.serp),         borderColor:'#00D474', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'AI Overview',   data: history.map(h=>h.ai_overview),  borderColor:'#08ADE4', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'LLM',           data: history.map(h=>h.llm),          borderColor:'#F59E0B', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    { label: 'Earned Media',  data: history.map(h=>h.earned_media), borderColor:'#00398F', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
   ];
 
   new Chart(document.getElementById('trendChart'), {
@@ -650,10 +677,10 @@ function buildCountryGrid(countryData) {
     const score = (country.csov_score || 0).toFixed(1);
     const c     = country.components || {};
     const segs  = [
-      { w: (c.serp||0)*0.35, color:'#2563EB' },
-      { w: (c.ai_overview||0)*0.25, color:'#d97706' },
-      { w: (c.llm||0)*0.25,  color:'#7c3aed' },
-      { w: (c.earned_media||0)*0.15, color:'#ec4899' },
+      { w: (c.serp||0)*0.35,         color:'#00D474' },
+      { w: (c.ai_overview||0)*0.25,  color:'#08ADE4' },
+      { w: (c.llm||0)*0.25,          color:'#F59E0B' },
+      { w: (c.earned_media||0)*0.15, color:'#394FE1' },
     ];
     const total = segs.reduce((s,x)=>s+x.w,0)||1;
 

@@ -168,24 +168,67 @@ def generate_action_items(components: dict[str, dict], serp_data: dict, ai_data:
         )
 
     # ── AI Overview actions ───────────────────────────────────────────────────
+    if ai_data and ai_data.get("results"):
+        # Collect all negative topics found across all keywords × countries
+        topic_occurrences: dict[str, list[str]] = {}  # topic → [keyword, ...]
+        for country_results in ai_data["results"].values():
+            for kw, result in country_results.items():
+                for topic in result.get("negative_topics", []):
+                    if topic not in topic_occurrences:
+                        topic_occurrences[topic] = []
+                    if kw not in topic_occurrences[topic]:
+                        topic_occurrences[topic].append(kw)
+
+        # Topic-specific content recommendations
+        TOPIC_RECOMMENDATIONS = {
+            "refund policy": (
+                "Google's AI Overview is citing iVisa's refund policy as a drawback. "
+                "Opportunity: publish a clear, reassuring page explaining your refund process, "
+                "what's covered, and real customer outcomes — give AI models better content to cite."
+            ),
+            "service fees": (
+                "Google's AI Overview flags iVisa's fees as higher than applying directly. "
+                "Opportunity: create content that contextualises your fee as a value-add "
+                "(expert review, 24/7 support, error prevention) — counter the 'expensive' framing."
+            ),
+            "not government / third-party": (
+                "AI Overview describes iVisa as 'not an official government agency'. "
+                "Opportunity: strengthen content explaining iVisa's government partnerships, "
+                "accreditations, and how the service complements (not replaces) official processes."
+            ),
+            "processing delays": (
+                "AI Overview mentions processing delays. "
+                "Opportunity: publish case studies and data showing iVisa's typical turnaround times "
+                "and how you handle government-side delays proactively."
+            ),
+            "customer service issues": (
+                "AI Overview surfaces customer service concerns. "
+                "Opportunity: highlight iVisa's 24/7 multi-language support across your trust pages "
+                "to give AI better positive content to pull from."
+            ),
+            "security / data privacy": (
+                "AI Overview raises data/security concerns. "
+                "Opportunity: publish a clear, plain-language security & privacy page "
+                "covering encryption, data handling, and compliance — AI models will cite it."
+            ),
+        }
+
+        # Surface the most-seen topics first
+        top_topics = sorted(topic_occurrences.items(), key=lambda x: len(x[1]), reverse=True)
+        for topic, kws in top_topics[:3]:
+            rec = TOPIC_RECOMMENDATIONS.get(topic)
+            if rec:
+                actions.append(rec)
+
     if scores["ai_overview"] < 50:
         actions.append(
-            "Create more AI-citable content — structured FAQs and authoritative pages about iVisa's legitimacy and safety."
+            "AI Overview sentiment is negative — prioritise creating structured FAQ and "
+            "schema-marked trust content so Google's AI pulls from your most positive pages."
         )
-        uncited = []
-        if ai_data and ai_data.get("results"):
-            for country_results in ai_data["results"].values():
-                for kw, result in country_results.items():
-                    if result.get("has_ai_overview") and not result.get("ivisa_cited"):
-                        uncited.append(kw)
-            if uncited:
-                top_uncited = list(set(uncited))[:3]
-                actions.append(
-                    f"Optimize content for AI citation on: {', '.join(top_uncited)}."
-                )
     elif scores["ai_overview"] < 70:
         actions.append(
-            "Add FAQ schema and HowTo schema to key trust pages to help Google pull iVisa into AI Overviews."
+            "AI Overview is mixed — add FAQ schema and HowTo schema to key trust pages "
+            "to shift Google's AI summary toward iVisa's strengths."
         )
 
     # ── LLM actions ───────────────────────────────────────────────────────────
