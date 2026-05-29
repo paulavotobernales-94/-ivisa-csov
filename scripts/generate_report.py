@@ -257,11 +257,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <header class="header">
   <div class="header-brand">
     <div class="header-logo">
-      <!-- iVisa logo: green wing/check + IVISA wordmark -->
-      <svg width="36" height="28" viewBox="0 0 36 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 6 C6 6 10 14 14 20 C18 10 24 2 34 2" stroke="#00EA80" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>
-      <span style="font-size:1.4rem;font-weight:900;color:#fff;letter-spacing:-.01em;">iVISA</span>
+      <img src="ivisa_logo.png" alt="iVisa" style="height:32px;width:auto;" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
+      <span id="logoFallback" style="display:none;align-items:center;gap:8px;"><svg width="36" height="28" viewBox="0 0 36 28" fill="none"><path d="M2 6 C6 6 10 14 14 20 C18 10 24 2 34 2" stroke="#00EA80" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span style="font-size:1.4rem;font-weight:900;color:#fff;">iVISA</span></span>
     </div>
     <div class="header-title">
       <p style="font-size:.82rem;opacity:.7;margin-top:2px;">Credibility Share of Voice Dashboard</p>
@@ -285,7 +282,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <div class="hero-week" id="heroWeek"></div>
     </div>
     <div class="hero-chart chart-card" style="flex:1;min-width:280px;">
-      <div class="section-title">CSOV Trend — Last 8 Weeks</div>
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span id="trendChartTitle">CSOV Trend</span>
+        <button onclick="downloadTrendCSV()" style="font-size:11px;padding:4px 10px;border:1px solid #00EA80;background:transparent;color:#00EA80;border-radius:6px;cursor:pointer;font-family:inherit;">⬇ Download CSV</button>
+      </div>
       <div class="chart-container"><canvas id="trendChart"></canvas></div>
     </div>
   </div>
@@ -346,15 +346,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
         <div class="method-item">
           <h4>📰 Earned Media Score (15%) — How it's calculated</h4>
-          <p>We search for iVisa mentions across 6 third-party channels (excluding iVisa's own accounts):</p>
+          <p>We search for iVisa mentions across third-party channels only (iVisa-owned accounts are excluded). <strong>Review aggregators (Trustpilot, Sitejabber, TripAdvisor, BBB) are also excluded</strong> — they reflect customer feedback, not editorial coverage, and are tracked separately in the SERP component.</p>
+          <p style="margin-top:8px;">Sources counted in Earned Media:</p>
           <ul style="margin-top:8px;">
             <li>📰 <strong>Google News</strong> — press articles mentioning iVisa</li>
-            <li>✈️ <strong>Travel blogs & press</strong> — Forbes, Lonely Planet, Skift, Nomadicmatt, The Points Guy, etc.</li>
-            <li>💬 <strong>Reddit</strong> — excluding r/ivisa (that's iVisa-owned)</li>
-            <li>▶️ <strong>YouTube</strong> — third-party video reviews</li>
+            <li>✈️ <strong>Travel editorial & press</strong> — Forbes, Lonely Planet, Skift, Nomadicmatt, The Points Guy, BBC, Guardian, etc.</li>
+            <li>💬 <strong>Reddit</strong> — excluding r/ivisa (iVisa-owned)</li>
+            <li>▶️ <strong>YouTube</strong> — third-party video reviews and travel content</li>
             <li>📸 <strong>Instagram &amp; 🎵 TikTok</strong> — excluding @ivisa official accounts</li>
           </ul>
-          <p style="margin-top:8px;">Each mention is classified positive/neutral/negative using the same title + domain signal logic as SERP. Score = simple average (no position weighting — all mentions count equally).</p>
+          <p style="margin-top:8px;">Each mention is classified positive/neutral/negative from title + snippet text signals. Score = simple average across all mentions (no position weighting).</p>
         </div>
 
         <div class="method-item">
@@ -372,7 +373,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- PERIOD FRAMEWORK -->
+  <!-- PERIOD FRAMEWORK + ANALYSIS -->
   <div class="period-panel" id="periodPanel" style="display:none;">
     <div class="section-title" style="margin-bottom:4px;">📅 Measurement Periods</div>
     <p style="font-size:.82rem;color:var(--muted);margin-bottom:0;">
@@ -380,6 +381,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <strong>Period 2 (P2) Jun–Sep 2026</strong> = goal period, target 70+ across all components
     </p>
     <div class="period-grid" id="periodGrid"></div>
+
+    <!-- SCORE ANALYSIS — sits directly below the period comparison -->
+    <div id="scoreAnalysisPanel" style="display:none;margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
+      <div style="font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:4px;">🔍 What's Driving the Score This Week</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">Auto-generated from SERP, AI Overview, LLM and country data</p>
+      <ul id="scoreAnalysisList" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;"></ul>
+    </div>
   </div>
 
   <!-- COUNTRY BREAKDOWN -->
@@ -558,6 +566,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Period Framework
   buildPeriodPanel(D);
 
+  // Score Analysis
+  buildScoreAnalysis(D);
+
   // Actions
   buildActions(D.action_items);
 
@@ -651,13 +662,61 @@ function buildComponentCards(components) {
 // ── Trend Chart ────────────────────────────────────────────────────────────
 function buildTrendChart(history) {
   if (!history || !history.length) return;
-  const labels   = history.map(h => h.week_label);
+  const labels = history.map(h => h.week_label);
+
+  // Dynamic title: show actual date range
+  if (history.length > 1) {
+    const first = history[0].week_label;
+    const last  = history[history.length - 1].week_label;
+    const el = document.getElementById('trendChartTitle');
+    if (el) el.textContent = `CSOV Trend — ${first} to ${last}`;
+  }
+
   const datasets = [
-    { label: 'Overall CSOV',  data: history.map(h=>h.csov),         borderColor:'#00EA80', backgroundColor:'rgba(0,234,128,.12)', tension:.35, fill:true,  borderWidth:3 },
-    { label: 'SERP',          data: history.map(h=>h.serp),         borderColor:'#0DB770', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
-    { label: 'AI Overview',   data: history.map(h=>h.ai_overview),  borderColor:'#08ADE4', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
-    { label: 'LLM',           data: history.map(h=>h.llm),          borderColor:'#F59E0B', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
-    { label: 'Earned Media',  data: history.map(h=>h.earned_media), borderColor:'#0A2540', backgroundColor:'transparent',          tension:.35, fill:false, borderWidth:2 },
+    {
+      label: 'Overall CSOV',
+      data: history.map(h=>h.csov),
+      borderColor: '#00EA80',
+      backgroundColor: 'rgba(0,234,128,.10)',
+      tension: .35, fill: true, borderWidth: 3,
+      pointRadius: 5, pointBackgroundColor: '#00EA80',
+    },
+    {
+      label: 'SERP',
+      data: history.map(h=>h.serp),
+      borderColor: '#0A2540',
+      backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2,
+      borderDash: [],
+      pointRadius: 4, pointBackgroundColor: '#0A2540',
+    },
+    {
+      label: 'AI Overview',
+      data: history.map(h=>h.ai_overview),
+      borderColor: '#08ADE4',
+      backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2,
+      borderDash: [6, 3],
+      pointRadius: 4, pointBackgroundColor: '#08ADE4',
+    },
+    {
+      label: 'LLM',
+      data: history.map(h=>h.llm),
+      borderColor: '#F59E0B',
+      backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2,
+      borderDash: [3, 3],
+      pointRadius: 4, pointBackgroundColor: '#F59E0B',
+    },
+    {
+      label: 'Earned Media',
+      data: history.map(h=>h.earned_media),
+      borderColor: '#E0144C',
+      backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2,
+      borderDash: [8, 4],
+      pointRadius: 4, pointBackgroundColor: '#E0144C',
+    },
   ];
 
   new Chart(document.getElementById('trendChart'), {
@@ -665,13 +724,40 @@ function buildTrendChart(history) {
     data: { labels, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16, font: { size: 11 } } } },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { boxWidth: 14, padding: 18, font: { size: 12, family: 'Manrope' }, usePointStyle: true }
+        },
+        tooltip: { mode: 'index', intersect: false },
+      },
       scales: {
         y: { min: 0, max: 100, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
-        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 11 }, maxRotation: 30 } },
       },
     },
   });
+}
+
+// ── CSV Download ────────────────────────────────────────────────────────────
+function downloadTrendCSV() {
+  const history = REPORT_DATA.history || [];
+  if (!history.length) { alert('No historical data available yet.'); return; }
+  const headers = ['Date','Overall CSOV','SERP','AI Overview','LLM','Earned Media'];
+  const rows = history.map(h => [
+    h.week_label,
+    (h.csov        || 0).toFixed(2),
+    (h.serp        || 0).toFixed(2),
+    (h.ai_overview || 0).toFixed(2),
+    (h.llm         || 0).toFixed(2),
+    (h.earned_media|| 0).toFixed(2),
+  ]);
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'ivisa_csov_history.csv'; a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ── Country Grid ───────────────────────────────────────────────────────────
@@ -784,12 +870,15 @@ function buildSerpTable(countryResults) {
       <span class="sent-chip sent-chip-neu">⚪ ${kwCounts.neutral}</span>
       <span class="sent-chip sent-chip-neg">🔴 ${kwCounts.negative}</span>`;
 
-    let rows = '';
-    (results || []).slice(0,10).forEach(r => {
-      const titleText = (r.title || '').substring(0, 70) + ((r.title||'').length > 70 ? '…' : '');
-      const urlShort  = (r.url || '').replace(/^https?:\/\//, '').substring(0, 55);
-      rows += `
-        <tr class="${r.is_ivisa ? 'ivisa-row' : ''}">
+    const allResults = (results || []).slice(0, 10);
+    const kwId = 'serp-' + kw.replace(/[^a-z0-9]/gi, '_');
+
+    function makeRows(items) {
+      if (!items.length) return '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px;">No data</td></tr>';
+      return items.map(r => {
+        const titleText = (r.title || '').substring(0, 70) + ((r.title||'').length > 70 ? '…' : '');
+        const urlShort  = (r.url || '').replace(/^https?:\/\//, '').substring(0, 55);
+        return `<tr class="${r.is_ivisa ? 'ivisa-row' : ''}">
           <td>${r.position ? posBadge(r.position) : '—'}</td>
           <td>
             <div style="font-size:.82rem;font-weight:${r.is_ivisa?'700':'400'};color:var(--text);">${titleText || '—'}</div>
@@ -798,11 +887,17 @@ function buildSerpTable(countryResults) {
           <td><a class="domain-link" href="https://${r.domain}" target="_blank">${r.domain||'—'}</a></td>
           <td style="text-align:center">${sentEmoji(r.sentiment)} ${pillSentiment(r.sentiment)}</td>
         </tr>`;
-    });
-
-    if (!rows) {
-      rows = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px;">No data</td></tr>';
+      }).join('');
     }
+
+    const page1rows = makeRows(allResults.slice(0,5));
+    const page2rows = allResults.length > 5 ? makeRows(allResults.slice(5,10)) : '';
+    const pagerHtml = page2rows ? `
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+        <button onclick="serpPage('${kwId}',1,this)" style="font-size:.78rem;padding:2px 10px;border:1px solid var(--green);background:var(--green);color:#fff;border-radius:6px;cursor:pointer;font-family:inherit;" data-active="1">1–5</button>
+        <button onclick="serpPage('${kwId}',2,this)" style="font-size:.78rem;padding:2px 10px;border:1px solid var(--green);background:transparent;color:var(--green);border-radius:6px;cursor:pointer;font-family:inherit;" data-active="0">6–10</button>
+        <span style="font-size:.75rem;color:var(--muted);">Showing results 1–5 of ${allResults.length}</span>
+      </div>` : '';
 
     container.innerHTML += `
       <div style="margin-bottom:28px;">
@@ -815,17 +910,40 @@ function buildSerpTable(countryResults) {
           <div class="sent-counts" style="margin-top:0;">${countsHtml}</div>
         </div>
         <div class="table-wrap">
-          <table style="font-size:.82rem;">
+          <table style="font-size:.82rem;" id="${kwId}">
             <thead><tr>
               <th style="width:40px;">Pos</th>
               <th>Page Title / URL</th>
               <th>Domain</th>
               <th style="text-align:center;">Sentiment</th>
             </tr></thead>
-            <tbody>${rows}</tbody>
+            <tbody id="${kwId}-body">${page1rows}</tbody>
           </table>
+          ${pagerHtml}
+          ${page2rows ? `<div id="${kwId}-p2" style="display:none"><table style="font-size:.82rem;width:100%;"><thead><tr><th style="width:40px;">Pos</th><th>Page Title / URL</th><th>Domain</th><th style="text-align:center;">Sentiment</th></tr></thead><tbody>${page2rows}</tbody></table></div>` : ''}
         </div>
       </div>`;
+  });
+}
+
+// ── SERP Pagination ────────────────────────────────────────────────────────
+function serpPage(kwId, page, btn) {
+  const p1 = document.getElementById(kwId + '-body').closest('table').parentNode;
+  const p2 = document.getElementById(kwId + '-p2');
+  const btns = btn.parentNode.querySelectorAll('button');
+  const label = btn.parentNode.querySelector('span');
+  if (page === 1) {
+    p1.querySelector('table').style.display = '';
+    if (p2) p2.style.display = 'none';
+    if (label) label.textContent = 'Showing results 1–5';
+  } else {
+    p1.querySelector('table').style.display = 'none';
+    if (p2) p2.style.display = '';
+    if (label) label.textContent = 'Showing results 6–10';
+  }
+  btns.forEach(b => {
+    b.style.background = b === btn ? 'var(--green)' : 'transparent';
+    b.style.color = b === btn ? '#fff' : 'var(--green)';
   });
 }
 
@@ -1064,6 +1182,108 @@ function buildPeriodPanel(D) {
   p2Html += `</div>`;
 
   grid.innerHTML = p1Html + p2Html;
+}
+
+// ── Score Analysis ─────────────────────────────────────────────────────────
+function buildScoreAnalysis(D) {
+  const panel = document.getElementById('scoreAnalysisPanel');
+  const list  = document.getElementById('scoreAnalysisList');
+  if (!panel || !list) return;
+
+  const insights = [];
+  const serp     = D.serp_data   || {};
+  const aio      = D.ai_overview_data || {};
+  const p1       = D.period1_baseline || null;
+  const current  = {
+    csov:         D.csov_score || 0,
+    serp:         D.components?.serp?.score || 0,
+    ai_overview:  D.components?.ai_overview?.score || 0,
+    llm:          D.components?.llm?.score || 0,
+    earned_media: D.components?.earned_media?.score || 0,
+  };
+
+  // ── Country-level SERP analysis ──────────────────────────────────────────
+  const countryScores = serp.country_scores || {};
+  const countryNames  = { us:'United States', gb:'United Kingdom', au:'Australia',
+                          de:'Germany', ca:'Canada', fr:'France',
+                          jp:'Japan', nl:'Netherlands', it:'Italy', ch:'Switzerland' };
+
+  // Lowest-scoring countries
+  const sortedCountries = Object.entries(countryScores).sort((a,b) => a[1]-b[1]);
+  if (sortedCountries.length >= 2) {
+    const bottom2 = sortedCountries.slice(0,2).map(([c,s]) => `${countryNames[c]||c} (${s.toFixed(0)})`);
+    insights.push({ icon:'🌍', text:`<strong>Countries dragging SERP scores down:</strong> ${bottom2.join(' and ')} have the lowest SERP sentiment this week — check local review sites and complaint pages ranking for your keywords in those markets.` });
+  }
+
+  // Best-performing country
+  const top = sortedCountries[sortedCountries.length - 1];
+  if (top) {
+    insights.push({ icon:'✅', text:`<strong>Strongest market:</strong> ${countryNames[top[0]]||top[0]} leads SERP sentiment at ${top[1].toFixed(0)}/100 — positive coverage is holding well here.` });
+  }
+
+  // ── Negative SERP sources ────────────────────────────────────────────────
+  const serpResults = serp.results || {};
+  let negCount = 0; let negDomains = {};
+  let posCount = 0;
+  Object.values(serpResults).forEach(countryKws => {
+    Object.values(countryKws).forEach(results => {
+      (results||[]).forEach(r => {
+        if (r.sentiment === 'negative') { negCount++; negDomains[r.domain] = (negDomains[r.domain]||0)+1; }
+        if (r.sentiment === 'positive') posCount++;
+      });
+    });
+  });
+  const topNegDomains = Object.entries(negDomains).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([d])=>d);
+  if (negCount > 0) {
+    insights.push({ icon:'⚠️', text:`<strong>${negCount} negative SERP appearances</strong> detected across all markets this week${topNegDomains.length ? ' — most frequent on: ' + topNegDomains.join(', ') : ''}. These are the pages pushing sentiment scores down.` });
+  }
+  if (posCount > 0) {
+    insights.push({ icon:'📈', text:`<strong>${posCount} positive SERP results</strong> are working in iVisa's favour — review sites, travel blogs, and editorial content ranking positively for reputation keywords.` });
+  }
+
+  // ── AI Overview topics ───────────────────────────────────────────────────
+  const aioResults = aio.results || {};
+  const topicCount = {};
+  Object.values(aioResults).forEach(countryKws => {
+    Object.values(countryKws).forEach(result => {
+      (result.negative_topics||[]).forEach(t => { topicCount[t] = (topicCount[t]||0)+1; });
+    });
+  });
+  const topTopics = Object.entries(topicCount).sort((a,b)=>b[1]-a[1]).slice(0,2);
+  if (topTopics.length) {
+    const topicStr = topTopics.map(([t,n]) => `"${t}" (${n} keyword${n>1?'s':''})`).join(' and ');
+    insights.push({ icon:'🤖', text:`<strong>Google AI Overviews are surfacing concerns about ${topicStr}</strong> — these are the specific topics being cited negatively in AI summaries. Content addressing these directly will improve the AI Overview score.` });
+  }
+
+  // ── Period comparison ────────────────────────────────────────────────────
+  if (p1) {
+    const drops = [];
+    const gains = [];
+    ['serp','ai_overview','llm','earned_media'].forEach(k => {
+      const diff = current[k] - (p1[k]||0);
+      const label = {serp:'SERP',ai_overview:'AI Overview',llm:'LLM',earned_media:'Earned Media'}[k];
+      if (diff <= -3) drops.push(`${label} (${diff.toFixed(1)})`);
+      if (diff >= 3)  gains.push(`${label} (+${diff.toFixed(1)})`);
+    });
+    if (drops.length) insights.push({ icon:'📉', text:`<strong>Below P1 baseline:</strong> ${drops.join(', ')} — these components have weakened since the Feb–May benchmark. Focus content and outreach efforts here first.` });
+    if (gains.length) insights.push({ icon:'🚀', text:`<strong>Above P1 baseline:</strong> ${gains.join(', ')} — showing positive movement vs the starting benchmark.` });
+    if (!drops.length && !gains.length) insights.push({ icon:'➡️', text:`<strong>Scores stable vs P1 baseline</strong> — no significant movement yet. This is week one of Period 2; expect trends to form over the next 4–6 weeks as new content and PR efforts take effect.` });
+  }
+
+  if (!insights.length) {
+    insights.push({ icon:'💡', text:'No significant signals detected this week — run with live API keys for full analysis.' });
+  }
+
+  panel.style.display = 'block';
+  // also ensure parent periodPanel is visible
+  const parentPanel = document.getElementById('periodPanel');
+  if (parentPanel) parentPanel.style.display = 'block';
+  insights.forEach(({ icon, text }) => {
+    list.innerHTML += `<li style="display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:var(--bg);border-radius:8px;font-size:.875rem;line-height:1.55;">
+      <span style="font-size:1.1rem;flex-shrink:0;margin-top:1px;">${icon}</span>
+      <span>${text}</span>
+    </li>`;
+  });
 }
 
 // ── Action Items ───────────────────────────────────────────────────────────

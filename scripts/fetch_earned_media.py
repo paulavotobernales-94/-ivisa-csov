@@ -104,21 +104,31 @@ NEGATIVE_SIGNALS = [
 ]
 
 POSITIVE_DOMAINS_EM = [
-    "trustpilot.com", "tripadvisor.com", "sitejabber.com",
+    # Editorial, press, and travel media only — no review aggregators
     "forbes.com", "travelpulse.com", "skift.com", "travel.state.gov",
     "nytimes.com", "theguardian.com", "bbc.com", "cnbc.com",
-    "businessinsider.com", "lonely planet.com", "lonelyplanet.com",
+    "businessinsider.com", "lonelyplanet.com",
     "nomadicmatt.com", "thepointsguy.com", "moneysavingexpert.com",
-    "consumers.co", "consumerreports.org",
+]
+
+# Review aggregators and complaint sites — excluded from earned media score
+# (Trustpilot, Sitejabber, TripAdvisor are NOT earned media — they are
+# user-review platforms that can be highly negative regardless of brand effort)
+REVIEW_AGGREGATORS = [
+    "trustpilot.com", "sitejabber.com", "tripadvisor.com",
+    "yelp.com", "consumerreports.org", "consumers.co",
 ]
 
 NEGATIVE_DOMAINS_EM = [
     "bbb.org", "scamalert.com", "ripoffreport.com",
-    "complaints.com", "pissedconsumer.com", "sitejabber.com",
+    "complaints.com", "pissedconsumer.com", "complaintsboard.com",
 ]
 
-# Note: sitejabber is both positive (trusted review site) and can surface negatives.
-# We override with title/snippet signals when sitejabber appears.
+
+def _is_review_aggregator(domain: str) -> bool:
+    """Return True if domain is a review aggregator — excluded from earned media."""
+    d = domain.lower().strip()
+    return any(r in d for r in REVIEW_AGGREGATORS)
 
 
 def _classify_mention(domain: str, title: str, snippet: str = "") -> str:
@@ -126,8 +136,12 @@ def _classify_mention(domain: str, title: str, snippet: str = "") -> str:
     domain_lower = domain.lower().strip()
     text = f"{title} {snippet}".lower()
 
+    # Review aggregators are excluded upstream — skip classification
+    if _is_review_aggregator(domain_lower):
+        return "excluded"
+
     for d in NEGATIVE_DOMAINS_EM:
-        if d != "sitejabber.com" and d in domain_lower:
+        if d in domain_lower:
             return "negative"
 
     for signal in NEGATIVE_SIGNALS:
@@ -202,7 +216,12 @@ def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
         if _is_ivisa_owned(url, domain):
             continue
 
+        if _is_review_aggregator(domain):
+            continue
+
         sentiment = _classify_mention(domain, title, snippet)
+        if sentiment == "excluded":
+            continue
         mentions.append({
             "title": title,
             "url": url,
@@ -232,7 +251,12 @@ def _parse_news_results(data: dict) -> list[dict]:
         if _is_ivisa_owned(url, domain):
             continue
 
+        if _is_review_aggregator(domain):
+            continue
+
         sentiment = _classify_mention(domain, title, snippet)
+        if sentiment == "excluded":
+            continue
         mentions.append({
             "title": title,
             "url": url,

@@ -1,6 +1,6 @@
 {
   "csov_score": 50.0,
-  "previous_csov_score": 54.2,
+  "previous_csov_score": 50.0,
   "components": {
     "serp": {
       "score": 50.0,
@@ -1318,11 +1318,11 @@
       "earned_media": 60.0
     },
     {
-      "week_label": "Week of May 29, 2026",
-      "csov": 54.2,
-      "serp": 63.47,
-      "ai_overview": 51.78,
-      "llm": 46.18,
+      "week_label": "May 25 – May 31, 2026",
+      "csov": 50.0,
+      "serp": 50.0,
+      "ai_overview": 50.0,
+      "llm": 50.0,
       "earned_media": 50.0
     }
   ],
@@ -1346,5 +1346,5 @@
   "week_label": "May 25 – May 31, 2026",
   "week_start": "May 25, 2026",
   "week_end": "May 31, 2026",
-  "generated_at": "2026-05-29T10:24:43.142473Z"
+  "generated_at": "2026-05-29T10:27:59.918378Z"
 }
