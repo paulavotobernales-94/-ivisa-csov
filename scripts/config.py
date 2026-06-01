@@ -26,6 +26,7 @@ WEIGHT_EARNED_MEDIA = 0.15
 # ── Keywords Tracked ─────────────────────────────────────────────────────────
 KEYWORDS = [
     "iVisa",
+    "what is iVisa",
     "iVisa scam",
     "ivisa legit",
     "is ivisa a scam",

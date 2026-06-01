@@ -70,20 +70,23 @@ POSITIVE_TEXT_SIGNALS = [
     "ivisa is legit", "ivisa is safe", "ivisa is real", "ivisa is reliable",
     "ivisa is trusted", "ivisa is worth it", "ivisa is approved",
     "ivisa is verified", "ivisa is not fake",
-    # Positive framing
-    "legit", "legitimate", "safe to use", "trusted", "trust", "reliable",
+    # Positive framing — specific phrases only (avoid over-broad single words)
+    "is legit", "is legitimate", "safe to use", "is trusted", "is reliable",
     "honest review", "worth it", "worth the money", "recommend", "recommended",
     "highly recommend", "would use again", "used it successfully", "worked for me",
     "worked perfectly", "it works", "great service", "excellent service",
-    "fast service", "easy to use", "convenient", "helpful", "approved",
-    "verified", "5 star", "five star", "4 star", "positive experience",
-    "my experience", "used ivisa", "tried ivisa", "helped me", "no issues",
+    "fast service", "easy to use", "convenient", "approved",
+    "5 star", "five star", "4 star", "positive experience",
+    "used ivisa", "tried ivisa", "helped me", "no issues",
     "no problems", "smooth process", "everything went well",
-    "official", "government approved", "accredited",
+    "government approved", "accredited",
+    # Editorial/press coverage framing
+    "review", "how ivisa works", "ivisa launches", "ivisa partners",
+    "ivisa expands", "ivisa raises", "ivisa announces",
     # Intent-to-recommend
     "should i use ivisa", "can i trust ivisa", "is ivisa worth",
     "best visa service", "best way to apply", "how to use ivisa",
-    "guide to ivisa", "ivisa tutorial", "ivisa review",
+    "guide to ivisa", "ivisa tutorial",
 ]
 
 # Signals that indicate NEGATIVE content about iVisa
@@ -101,6 +104,25 @@ NEGATIVE_TEXT_SIGNALS = [
     "disappointing", "disappointed", "horrible", "awful", "nightmare",
     "con ", "con man", "scammed", "got scammed", "money back",
     "not affiliated with", "not government", "not official",
+    # Questions that imply doubt or regret — should never score positive
+    "was it a mistake", "was using ivisa a mistake", "is ivisa a mistake",
+    "mistake", "regret", "regretted", "wish i hadn't", "should have avoided",
+    "fell for", "got tricked", "got fooled", "bad experience", "bad service",
+    "worse than", "not worth", "not worth it", "don't recommend",
+    "do not recommend", "would not recommend", "would not use again",
+]
+
+# Press/editorial domains — classified from content but given benefit of doubt
+# when title is neutral (no signals): treated as positive not neutral
+EDITORIAL_DOMAINS = [
+    "yahoo.com", "yahoo.finance", "finance.yahoo.com", "news.yahoo.com",
+    "forbes.com", "businessinsider.com", "cnbc.com", "reuters.com",
+    "apnews.com", "bloomberg.com", "techcrunch.com", "theguardian.com",
+    "bbc.com", "bbc.co.uk", "nytimes.com", "wsj.com", "ft.com",
+    "skift.com", "travelpulse.com", "lonelyplanet.com", "nomadicmatt.com",
+    "thepointsguy.com", "travelweekly.com", "phocuswire.com",
+    "prnewswire.com", "businesswire.com", "globenewswire.com",
+    "accesswire.com", "einpresswire.com",  # press release wires
 ]
 
 # Structural complaint site domains — always negative regardless of text
@@ -163,7 +185,14 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
     if pos_hits > 0:
         return "positive"
 
-    # 6. No signals — default neutral
+    # 6. No signals — editorial/press domains default to positive
+    # (Yahoo Finance, Reuters, Forbes, PR Newswire etc. covering iVisa
+    # without negative signals = editorial coverage, counts as positive)
+    is_editorial = any(d in domain_lower for d in EDITORIAL_DOMAINS)
+    if is_editorial:
+        return "positive"
+
+    # 7. Everything else — default neutral
     return "neutral"
 
 
