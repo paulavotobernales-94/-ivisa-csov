@@ -391,6 +391,28 @@ def calculate_global_serp_score(country_scores: dict[str, float]) -> float:
 
 # ---------------------------------------------------------------------------
 # SerpAPI organic enrichment
+# Fallback titles for social/platform domains that never appear in organic results
+# but do rank in Google's social/app panels (tracked by SEMrush as domain-level).
+_PLATFORM_TITLES: dict[str, str] = {
+    "ivisa.com":       "iVisa — Official Website",
+    "reddit.com":      "iVisa — Community Discussions on Reddit",
+    "facebook.com":    "iVisa — Facebook Page",
+    "instagram.com":   "iVisa — Instagram (@iVisaTravel)",
+    "linkedin.com":    "iVisa — Company Profile on LinkedIn",
+    "youtube.com":     "iVisa — YouTube Channel",
+    "twitter.com":     "iVisa — Twitter / X",
+    "x.com":           "iVisa — Twitter / X",
+    "trustpilot.com":  "iVisa Reviews on Trustpilot",
+    "tripadvisor.com": "iVisa Reviews on Tripadvisor",
+    "sitejabber.com":  "iVisa Reviews on Sitejabber",
+    "bbb.org":         "iVisa — Better Business Bureau Profile",
+    "yelp.com":        "iVisa — Yelp Reviews",
+    "glassdoor.com":   "iVisa — Glassdoor Company Profile",
+    "indeed.com":      "iVisa — Indeed Company Profile",
+    "apps.apple.com":  "iVisa: ETA, eVisa, ESTA, Visa — App Store",
+}
+
+
 # ---------------------------------------------------------------------------
 
 def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
@@ -434,12 +456,16 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
             else:
                 # SEMrush/Ahrefs data exists — fill in missing titles + snippets
                 url_map    = {r["url"]: r for r in organic_list if r.get("url")}
-                domain_map = {r["domain"]: r for r in organic_list if r.get("domain")}
+                # Normalize domains: strip www. for matching
+                domain_map = {
+                    r["domain"].lstrip("www.").lstrip("."): r
+                    for r in organic_list if r.get("domain")
+                }
 
                 for item in existing:
                     url = item.get("url", "")
-                    domain = item.get("domain", "")
-                    # Try URL match first, fall back to domain match
+                    domain = item.get("domain", "").lstrip("www.").lstrip(".")
+                    # Try URL match first, fall back to normalized domain match
                     organic_match = url_map.get(url) or domain_map.get(domain)
                     if organic_match:
                         if not item.get("title"):
@@ -448,6 +474,13 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                             item["snippet"] = organic_match.get("snippet", "")
                         if not item.get("url") and organic_match.get("url"):
                             item["url"] = organic_match.get("url", "")
+
+                    # Final fallback: use platform title map for known social/app domains
+                    if not item.get("title"):
+                        bare = item.get("domain", "").lstrip("www.").lstrip(".")
+                        fallback = _PLATFORM_TITLES.get(bare)
+                        if fallback:
+                            item["title"] = fallback
 
                     # Re-classify with title + snippet now that both are available
                     item["sentiment"] = _classify_result(
