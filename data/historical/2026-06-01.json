@@ -1,23 +1,23 @@
 {
-  "csov_score": 51.69,
-  "previous_csov_score": 52.77,
+  "csov_score": 52.32,
+  "previous_csov_score": 51.69,
   "components": {
     "serp": {
-      "score": 45.5,
+      "score": 47.06,
       "weight": 0.35,
-      "weighted_contribution": 15.92,
+      "weighted_contribution": 16.47,
       "label": "SERP Score"
     },
     "ai_overview": {
-      "score": 53.41,
+      "score": 53.62,
       "weight": 0.25,
-      "weighted_contribution": 13.35,
+      "weighted_contribution": 13.4,
       "label": "AI Overview Score"
     },
     "llm": {
-      "score": 46.83,
+      "score": 46.96,
       "weight": 0.25,
-      "weighted_contribution": 11.71,
+      "weighted_contribution": 11.74,
       "label": "LLM Score"
     },
     "earned_media": {
@@ -32,11 +32,11 @@
       "name": "United States",
       "flag": "🇺🇸",
       "weight": 0.35,
-      "csov_score": 50.5,
+      "csov_score": 51.25,
       "components": {
-        "serp": 40.94,
-        "ai_overview": 55.0,
-        "llm": 46.83,
+        "serp": 42.26,
+        "ai_overview": 56.0,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -44,11 +44,11 @@
       "name": "United Kingdom",
       "flag": "🇬🇧",
       "weight": 0.14,
-      "csov_score": 52.72,
+      "csov_score": 53.43,
       "components": {
-        "serp": 45.72,
-        "ai_overview": 57.18,
-        "llm": 46.83,
+        "serp": 48.11,
+        "ai_overview": 56.55,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -56,11 +56,11 @@
       "name": "Australia",
       "flag": "🇦🇺",
       "weight": 0.1,
-      "csov_score": 52.57,
+      "csov_score": 53.9,
       "components": {
-        "serp": 50.37,
-        "ai_overview": 50.09,
-        "llm": 46.83,
+        "serp": 54.25,
+        "ai_overview": 49.82,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -68,11 +68,11 @@
       "name": "Germany",
       "flag": "🇩🇪",
       "weight": 0.08,
-      "csov_score": 54.12,
+      "csov_score": 54.39,
       "components": {
-        "serp": 51.88,
+        "serp": 52.54,
         "ai_overview": 54.18,
-        "llm": 46.83,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -80,11 +80,11 @@
       "name": "Canada",
       "flag": "🇨🇦",
       "weight": 0.07,
-      "csov_score": 50.4,
+      "csov_score": 51.6,
       "components": {
-        "serp": 43.82,
-        "ai_overview": 50.55,
-        "llm": 46.83,
+        "serp": 47.04,
+        "ai_overview": 50.73,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -92,11 +92,11 @@
       "name": "France",
       "flag": "🇫🇷",
       "weight": 0.07,
-      "csov_score": 51.04,
+      "csov_score": 51.08,
       "components": {
         "serp": 46.06,
         "ai_overview": 50.0,
-        "llm": 46.83,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -104,11 +104,11 @@
       "name": "Japan",
       "flag": "🇯🇵",
       "weight": 0.04,
-      "csov_score": 51.44,
+      "csov_score": 51.47,
       "components": {
         "serp": 50.43,
         "ai_overview": 45.45,
-        "llm": 46.83,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -116,11 +116,11 @@
       "name": "Netherlands",
       "flag": "🇳🇱",
       "weight": 0.04,
-      "csov_score": 53.65,
+      "csov_score": 53.57,
       "components": {
-        "serp": 51.81,
-        "ai_overview": 52.36,
-        "llm": 46.83,
+        "serp": 52.22,
+        "ai_overview": 51.36,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -128,11 +128,11 @@
       "name": "Italy",
       "flag": "🇮🇹",
       "weight": 0.03,
-      "csov_score": 52.46,
+      "csov_score": 52.49,
       "components": {
         "serp": 47.24,
         "ai_overview": 54.0,
-        "llm": 46.83,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     },
@@ -140,11 +140,11 @@
       "name": "Switzerland",
       "flag": "🇨🇭",
       "weight": 0.03,
-      "csov_score": 53.11,
+      "csov_score": 53.15,
       "components": {
         "serp": 50.42,
         "ai_overview": 52.18,
-        "llm": 46.83,
+        "llm": 46.96,
         "earned_media": 71.43
       }
     }
@@ -165,10 +165,10 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://apps.apple.com/us/app/ivisa-eta-evisa-nzeta-visa/id1053424792",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: ETA, eVisa, NZeTA, Visa - App Store - Apple",
+            "snippet": "iVisa is your one-stop shop for visas and other travel requirements. You can apply for online electronic visas, visas on arrival, or embassy visas.",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -195,10 +195,10 @@
           },
           {
             "position": 5,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_US",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "iVisa simplifies and speeds up the visa process through a 100% secure and fully online system — helping users check what documents they need, ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -267,12 +267,12 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "iVisa is a visa facilitation service. Instead of wrestling with government portals, you pick your nationality and destination, iVisa shows your options, and you ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -297,10 +297,10 @@
           },
           {
             "position": 5,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_US",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "The iVisa app is a private platform that helps users prepare visa and travel document applications in a simple, guided way. We do not represent ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -583,22 +583,22 @@
           },
           {
             "position": 5,
-            "url": "",
+            "url": "https://lakelandcurrents.com/is-ivisa-a-scam-inside-the-refund-policy-thats-restoring-traveler-trust/",
             "domain": "lakelandcurrents.com",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa a Scam? Inside the Refund Policy That's Restoring ...",
+            "snippet": "It's a fair question for any traveler to ask, often after applying through iVisa. The answer is no. iVisa is a legitimate global visa and travel ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "negative",
             "source": "semrush"
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -665,12 +665,12 @@
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -695,12 +695,12 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://lakelandcurrents.com/is-ivisa-a-scam-inside-the-refund-policy-thats-restoring-traveler-trust/",
             "domain": "lakelandcurrents.com",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa a Scam? Inside the Refund Policy That's Restoring ...",
+            "snippet": "It's a fair question for any traveler to ask, often after applying through iVisa. The answer is no. iVisa is a legitimate global visa and travel ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "negative",
             "source": "semrush"
           },
           {
@@ -797,12 +797,12 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -1229,10 +1229,10 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_GB",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas – Apps on ...",
+            "snippet": "The iVisa app is a private platform that helps users prepare visa and travel document applications in a simple, guided way. We do not represent or act on behalf ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -1249,12 +1249,12 @@
           },
           {
             "position": 4,
-            "url": "",
+            "url": "https://uk.trustpilot.com/review/ivisa.com",
             "domain": "uk.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "Read Customer Service Reviews of ivisa.com",
+            "snippet": "iVisa is a private online travel document service with over 12 years of experience helping travelers apply for visas and other travel authorizations easily and ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -1279,10 +1279,10 @@
           },
           {
             "position": 7,
-            "url": "",
+            "url": "https://apps.apple.com/gb/app/ivisa-eta-evisa-esta-visa/id1053424792",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: ETA, eVisa, ESTA, Visa - App Store - Apple",
+            "snippet": "iVisa is your one-stop shop for visas and other travel requirements. You can apply for online electronic visas, visas on arrival, or embassy visas.",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -1719,12 +1719,12 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://uk.trustpilot.com/review/ivisa.com",
             "domain": "uk.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "Read Customer Service Reviews of ivisa.com",
+            "snippet": "Do you agree with iVisa's 4-star rating? Check out what 69755 people have written so far, and share your own experience.",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -1759,12 +1759,12 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -1799,10 +1799,10 @@
           },
           {
             "position": 10,
-            "url": "",
+            "url": "https://1883magazine.com/an-ivisa-review-that-responds-to-the-question-is-ivisa-a-scam/",
             "domain": "1883magazine.com",
-            "title": "",
-            "snippet": "",
+            "title": "An iVisa Review That Responds to the Question, “Is ...",
+            "snippet": "So, is iVisa a scam? The evidence suggests it is not. iVisa is a legitimate company that offers convenience and support for traveling with visa ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -1831,12 +1831,12 @@
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -2313,20 +2313,20 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://apps.apple.com/au/app/ivisa-eta-evisa-esta-visa/id1053424792",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: ETA, eVisa, ESTA, Visa - App Store - Apple",
+            "snippet": "iVisa is your one-stop shop for visas and other travel requirements. You can apply for online electronic visas, visas on arrival, or embassy visas.",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_AU",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas – Apps on ...",
+            "snippet": "The iVisa app is a private platform that helps users prepare visa and travel document applications in a simple, guided way. We do not represent or act on behalf ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -2353,12 +2353,12 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://au.trustpilot.com/review/ivisa.com",
             "domain": "au.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa Reviews | Read Customer Service Reviews of ivisa.com",
+            "snippet": "iVisa is a private online travel document service with over 12 years of experience helping travelers apply for visas and other travel authorizations easily and ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -2803,22 +2803,22 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://au.trustpilot.com/review/ivisa.com",
             "domain": "au.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa Reviews | Read Customer Service Reviews of ivisa.com",
+            "snippet": "Do you agree with iVisa's 4-star rating? Check out what 69759 people have written so far, and share your own experience.",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -2895,12 +2895,12 @@
         "ivisa reviews": [
           {
             "position": 1,
-            "url": "",
+            "url": "https://au.trustpilot.com/review/ivisa.com",
             "domain": "au.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa Reviews | Read Customer Service Reviews of ivisa.com",
+            "snippet": "Do you agree with iVisa's 4-star rating? Check out what 69759 people have written so far, and share your own experience.",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -2915,22 +2915,22 @@
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
             "position": 4,
-            "url": "",
+            "url": "https://apps.apple.com/au/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "‎iVisa: ETA, eVisa, ESTA, Visa - Ratings & Reviews - App Store",
+            "snippet": "The process is simple and well guided, with clear steps, document scanning, and easy uploads. It saves a lot of time compared to navigating government websites, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -3417,20 +3417,20 @@
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "iVisa is a visa facilitation service. Instead of wrestling with government portals, you pick your nationality and destination, iVisa shows your options, and you ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
             "position": 4,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "The iVisa app is a private platform that helps users prepare visa and travel document applications in a simple, guided way. We do not represent ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -4391,10 +4391,10 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://apps.apple.com/us/app/ivisa-eta-evisa-nzeta-visa/id1053424792",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: ETA, eVisa, NZeTA, Visa - App Store - Apple",
+            "snippet": "iVisa is your one-stop shop for visas and other travel requirements. You can apply for online electronic visas, visas on arrival, or embassy visas.",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -4411,20 +4411,20 @@
           },
           {
             "position": 4,
-            "url": "",
+            "url": "https://ca.trustpilot.com/review/ivisa.com",
             "domain": "ca.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "Read Customer Service Reviews of ivisa.com",
+            "snippet": "iVisa is a private online travel document service with over 12 years of experience helping travelers apply for visas and other travel authorizations easily and ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
             "position": 5,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_CA",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "iVisa simplifies and speeds up the visa process through a 100% secure and fully online system — helping users check what documents they need, ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -4861,12 +4861,12 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://ca.trustpilot.com/review/ivisa.com",
             "domain": "ca.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "Read Customer Service Reviews of ivisa.com",
+            "snippet": "Do you agree with iVisa's 4-star rating? Check out what 69761 people have written so far, and share your own experience.",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -4891,12 +4891,12 @@
           },
           {
             "position": 5,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -4953,12 +4953,12 @@
         "ivisa reviews": [
           {
             "position": 1,
-            "url": "",
+            "url": "https://ca.trustpilot.com/review/ivisa.com",
             "domain": "ca.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "Read Customer Service Reviews of ivisa.com",
+            "snippet": "Do you agree with iVisa's 4-star rating? Check out what 69761 people have written so far, and share your own experience.",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -4983,12 +4983,12 @@
           },
           {
             "position": 4,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -5465,10 +5465,10 @@
           },
           {
             "position": 5,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "The iVisa app is a private platform that helps users prepare visa and travel document applications in a simple, guided way. We do not represent ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -5495,10 +5495,10 @@
           },
           {
             "position": 8,
-            "url": "",
+            "url": "https://ivisatg.com/",
             "domain": "ivisatg.com",
-            "title": "",
-            "snippet": "",
+            "title": "L'International Visa Alliance (IVisA) – Cabinet de conseil qui a ...",
+            "snippet": "On simplifie la recherche, le choix, la candidature, et l'inscription aux écoles et universités aux États-Unis. Nous proposons aussi des conseils et ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -6409,10 +6409,10 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "The iVisa app is a private platform that helps users prepare visa and travel document applications in a simple, guided way. We do not represent ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -6429,10 +6429,10 @@
           },
           {
             "position": 4,
-            "url": "",
+            "url": "https://apps.apple.com/jp/app/ivisa-eta-evisa-esta-visa/id1053424792",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "‎iVisa: ETA, eVisa, ESTA, Visaアプリ - App Store",
+            "snippet": "iVisa を使えば、英国 ETA、ニュージーランド ビザ（ETA）、インド観光 eVisa、米国 ESTA、オーストラリア eVisitor などの申請が、数分でスマートフォンから簡単に行えます ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -6459,10 +6459,10 @@
           },
           {
             "position": 7,
-            "url": "",
+            "url": "https://jp.linkedin.com/company/ivisa",
             "domain": "jp.linkedin.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa",
+            "snippet": "iVisa is a travel-tech company that helps travelers get visas, e-Visas, travel authorizations, and travel documents online across 200+ countries.",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -7453,10 +7453,10 @@
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "The iVisa app is a private platform that helps users prepare visa and travel document applications in a simple, guided way. We do not represent ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -7483,10 +7483,10 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://apps.apple.com/nl/app/ivisa-eta-evisa-esta-visa/id1053424792?see-all=reviews&platform=iphone",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "‎iVisa: ETA, eVisa, ESTA, Visa - Beoordelingen en recensies",
+            "snippet": "iVisa: ETA, eVisa, ESTA, Visa · Was very easy · Zeer goede applicatie · Easy · Very good · Oplichting · Zeer fijne app werkt goed en snel .",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -8075,12 +8075,12 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://travelsloth.de/en/review-ivisa/",
             "domain": "travelsloth.de",
-            "title": "",
-            "snippet": "",
+            "title": "Is iVisa Legit? My Honest Review & Real Experience",
+            "snippet": "I've used iVisa multiple times and had smooth experiences each time. It's not the cheapest route, but it removes friction: clear requirements, a tidy form, ...",
             "is_ivisa": false,
-            "sentiment": "neutral",
+            "sentiment": "positive",
             "source": "semrush"
           },
           {
@@ -8537,10 +8537,10 @@
           },
           {
             "position": 2,
-            "url": "",
+            "url": "https://it.trustpilot.com/review/ivisa.com",
             "domain": "it.trustpilot.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa | Leggi le recensioni dei servizi di ivisa.com",
+            "snippet": "servizio rapido professionale e chiaro in tutte le sue parti, la messaggistica d'avanzamento pratica molto utile e apprezzata. ottimo strumento sia per ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -8557,10 +8557,10 @@
           },
           {
             "position": 4,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=it",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Visti di viaggio online - App su Google Play",
+            "snippet": "iVisa semplifica e accelera il processo di richiesta del visto attraverso un sistema completamente sicuro e online al 100% — aiutando gli utenti a verificare ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -8577,10 +8577,10 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://apps.apple.com/it/app/ivisa-eta-evisa-esta-visa/id1053424792",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: ETA, eVisa, ESTA, Visa - App Store - Apple",
+            "snippet": "Verifica se necessiti di un visto, registrazione ambasciata o certificato di salute per il tuo viaggio e ottienili facilmente! Dimentica i complessi moduli ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -9591,10 +9591,10 @@
           },
           {
             "position": 3,
-            "url": "",
+            "url": "https://apps.apple.com/ch/app/ivisa-eta-evisa-esta-visa/id1053424792?l=en-GB",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: ETA, eVisa, ESTA, Visa - App Store - Apple",
+            "snippet": "Check if you need a travel visa or an embassy registration for your next trip, and get it all in a few taps! No more confusing and long gov forms.",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -9621,20 +9621,20 @@
           },
           {
             "position": 6,
-            "url": "",
+            "url": "https://apps.apple.com/ch/app/ivisa-eta-evisa-esta-visa/id1053424792?l=en-GB",
             "domain": "apps.apple.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: ETA, eVisa, ESTA, Visa - App Store - Apple",
+            "snippet": "Check if you need a travel visa or an embassy registration for your next trip, and get it all in a few taps! No more confusing and long gov forms.",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
           },
           {
             "position": 7,
-            "url": "",
+            "url": "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en",
             "domain": "play.google.com",
-            "title": "",
-            "snippet": "",
+            "title": "iVisa: Online Travel Visas - Apps on Google Play",
+            "snippet": "iVisa simplifies and speeds up the visa process through a 100% secure and fully online system — helping users check what documents they need, ...",
             "is_ivisa": false,
             "sentiment": "neutral",
             "source": "semrush"
@@ -10623,18 +10623,18 @@
       }
     },
     "country_scores": {
-      "us": 40.94,
-      "gb": 45.72,
-      "au": 50.37,
-      "de": 51.88,
-      "ca": 43.82,
+      "us": 42.26,
+      "gb": 48.11,
+      "au": 54.25,
+      "de": 52.54,
+      "ca": 47.04,
       "fr": 46.06,
       "jp": 50.43,
-      "nl": 51.81,
+      "nl": 52.22,
       "it": 47.24,
       "ch": 50.42
     },
-    "global_score": 45.5
+    "global_score": 47.06
   },
   "ai_overview_data": {
     "results": {
@@ -10658,7 +10658,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "iVisa is a private, third-party travel document service. It is not a government agency. The platform acts as a middleman to help travelers apply for visas, e-Visas, and other travel authorizations. Trustpilot +3 How iVisa Works Cost vs. Value Note: iVisa reviews, processes, and submits applications on your behalf, but the final decision to grant a visa is always made solely by the destination country's government, not iVisa.",
-          "sentiment_score": 55.0,
+          "sentiment_score": 62.0,
           "sources": [
             "https://www.reddit.com/r/traveladvice/comments/1sn2hg1/what_does_ivisa_do_why_use_them_instead_of_just/",
             "https://www.ivisa.com/",
@@ -10666,7 +10666,7 @@
             "https://www.trustpilot.com/review/ivisa.com",
             "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_US"
           ],
-          "score": 55.0,
+          "score": 62.0,
           "negative_topics": [
             "not government / third-party"
           ]
@@ -10690,7 +10690,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "Yes, iVisa is a legitimate third-party visa and travel document processing company, but it is not a government agency. While they deliver valid visas, they charge significant service fees on top of standard government costs. Reddit·r/travel +3 The service operates with clear pros and cons: The Pros: The Cons & Risks: The Verdict:\nIf you want a guided process and don't mind paying extra for the convenience, iVisa is safe and reliable. However, if you are comfortable with basic tech and want to save money, it is highly recommended that you look up the official government immigration website for your destination. Reddit·r/travel +2",
-          "sentiment_score": 58.0,
+          "sentiment_score": 62.0,
           "sources": [
             "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
             "https://www.trustpilot.com/review/ivisa.com",
@@ -10698,7 +10698,7 @@
             "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
             "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
           ],
-          "score": 58.0,
+          "score": 62.0,
           "negative_topics": [
             "service fees",
             "not government / third-party"
@@ -10960,7 +10960,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "Yes, iVisa is a legitimate travel-tech company and generally safe for processing sensitive documents, but it operates as an expensive middleman. While your data is secured and encrypted, you will pay high service fees for services you can usually complete yourself for a fraction of the cost. Reddit·r/travel +3 The Pros The Cons & Risks Recommendation Before using iVisa, always verify if you actually need a third-party service. Check the government website of your destination country to see if you can apply directly—it is almost always cheaper and much safer to submit the application on your own. Reddit·r/travel +1",
-          "sentiment_score": 52.0,
+          "sentiment_score": 45.0,
           "sources": [
             "https://uk.trustpilot.com/review/ivisa.com",
             "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
@@ -10968,7 +10968,7 @@
             "https://www.adventuresnsunsets.com/is-ivisa-safe-my-experience/",
             "https://www.tripadvisor.co.uk/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html"
           ],
-          "score": 52.0,
+          "score": 45.0,
           "negative_topics": [
             "service fees",
             "not government / third-party",
@@ -11080,7 +11080,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "No, iVisa is not a scam, but it is a very expensive third-party middleman. Reddit·r/travel Many travelers feel \"scammed\" because iVisa appears as a top-ranked sponsored ad on Google. Users often mistake it for an official government website and end up paying massive markups (up to 300% more) for visas or travel authorizations they could have easily gotten directly from the official government portals. Reddit·r/travel +2 How iVisa Works Common Complaints & Risks How to protect yourself If you are already in the process of applying or need to check on a document, review the iVisa Terms and Conditions or reach out to their support team directly. Trustpilot",
-          "sentiment_score": 28.0,
+          "sentiment_score": 25.0,
           "sources": [
             "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
             "https://au.trustpilot.com/review/ivisa.com",
@@ -11088,7 +11088,7 @@
             "https://www.tripadvisor.com.au/ShowTopic-g304554-i4228-k14541631-Ivisa_https_www_ivisa_com_is_it_a_scam_or_geniune_visa-Mumbai_Maharashtra.html",
             "https://www.facebook.com/groups/RickStevesEurope/posts/1603767593672191/"
           ],
-          "score": 28.0,
+          "score": 25.0,
           "negative_topics": [
             "service fees",
             "not government / third-party"
@@ -11389,7 +11389,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "iVisa is a private, third-party travel documentation company that acts as a middleman between travelers and government agencies to help process visas, electronic travel authorizations (ETAs), and health declarations. While it is a legitimate service, iVisa is not an official government entity. Here is a breakdown of how it works and what you should consider: Cycloscope +2 What iVisa Does Pros and Cons Tips for Travelers For more information, visit the iVisa Official Website or read Trustpilot iVisa Reviews to see user experiences before deciding to use their service. Trustpilot",
-          "sentiment_score": 45.0,
+          "sentiment_score": 55.0,
           "sources": [
             "https://www.ivisa.com/",
             "https://www.reddit.com/r/traveladvice/comments/1sn2hg1/what_does_ivisa_do_why_use_them_instead_of_just/",
@@ -11397,7 +11397,7 @@
             "https://travelsloth.de/en/review-ivisa/",
             "https://play.google.com/store/apps/details?id=com.ivisa.services&hl=en_CA"
           ],
-          "score": 45.0,
+          "score": 55.0,
           "negative_topics": [
             "not government / third-party"
           ]
@@ -11456,7 +11456,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "Yes, iVisa is a legitimate business, but it is not a government agency. It acts as a third-party intermediary that helps travelers navigate visa applications. Trustpilot +1 Before using them, consider how their service operates: Recommendation: Always check if the destination you are visiting has an official government website or mobile app for e-Visas. To save money, apply through that official channel first. If you want to pay a premium for a third-party service to handle the paperwork, ensure you understand their fees before checking out. Trustpilot +1",
-          "sentiment_score": 52.0,
+          "sentiment_score": 48.0,
           "sources": [
             "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
             "https://ca.trustpilot.com/review/ivisa.com",
@@ -11464,7 +11464,7 @@
             "https://www.bbb.org/us/fl/sunny-isles-beach/profile/passports-and-visas/ivisa-0633-92023506/complaints",
             "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/"
           ],
-          "score": 52.0,
+          "score": 48.0,
           "negative_topics": [
             "not government / third-party"
           ]
@@ -11507,7 +11507,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "Yes, iVisa is a legitimate third-party travel document service. They are not a government agency. While they do provide valid visas, they are essentially a middleman. Reddit·r/travel +2 The main trade-off is convenience versus cost. Before using them, check the destination country’s official government immigration website. You can often apply directly for the exact same official visa or eTA for just a fraction of the cost. If you prefer a guided, stress-free process and are willing to pay a premium for it, iVisa is a safe and trusted platform; however, if you are comfortable navigating official portals, you can easily save money by applying yourself. Reddit·r/AusVisa +7",
-          "sentiment_score": 62.0,
+          "sentiment_score": 58.0,
           "sources": [
             "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
             "https://ca.trustpilot.com/review/ivisa.com",
@@ -11515,7 +11515,7 @@
             "https://www.youtube.com/watch?v=sus1uswWfoQ",
             "https://travelsloth.de/en/review-ivisa/"
           ],
-          "score": 62.0,
+          "score": 58.0,
           "negative_topics": [
             "not government / third-party"
           ]
@@ -11971,7 +11971,7 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "Yes, iVisa is a legitimate third-party service that successfully processes visas and travel documents. However, it is not a government agency and operates as a paid middleman, meaning you will pay a significant service fee on top of the standard government cost. Reddit·r/travel +4 Consider these key pros and cons before booking: The Good The Bad The Verdict While iVisa is a safe and reliable choice if you are willing to pay a premium for convenience and peace of mind, it is almost always cheaper and safer to apply directly through the official government embassy or immigration portal. Always double-check if your destination country requires an official online visa or travel authorization so you can go straight to the source. Reddit·r/travel +4",
-          "sentiment_score": 62.0,
+          "sentiment_score": 58.0,
           "sources": [
             "https://www.trustpilot.com/review/ivisa.com",
             "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
@@ -11979,7 +11979,7 @@
             "https://www.europeanbusinessreview.com/is-ivisa-legit-heres-why-travelers-around-the-world-love-the-company/",
             "https://cycloscope.net/i-visa-review/"
           ],
-          "score": 62.0,
+          "score": 58.0,
           "negative_topics": [
             "service fees",
             "not government / third-party"
@@ -11989,13 +11989,13 @@
           "has_ai_overview": true,
           "ivisa_cited": true,
           "ai_overview_text": "iVisa reviews are mixed. The platform is widely praised for its convenience, ease of use, and quick customer support. However, many users express frustration over significantly inflated fees, as the company acts as a third-party intermediary and charges a service fee on top of official government visa costs. Trustpilot +2 A breakdown of customer feedback highlights the following pros and cons: The Good: The Bad: The Bottom Line:\nWhile iVisa is a legitimate service that can save time and reduce application stress, you will pay a premium for it. To save money, it is highly recommended to search for and use the official government website for the destination country. However, if you are short on time or need assistance navigating complex visa requirements, iVisa serves as a reliable, user-friendly alternative. Reddit·r/travel +1",
-          "sentiment_score": 52.0,
+          "sentiment_score": 45.0,
           "sources": [
             "https://www.reddit.com/r/travel/comments/1ccoj48/was_using_ivisa_a_mistake/",
             "https://travelsloth.de/en/review-ivisa/",
             "https://www.ivisa.com/testimonials"
           ],
-          "score": 52.0,
+          "score": 45.0,
           "negative_topics": [
             "service fees",
             "not government / third-party"
@@ -12411,18 +12411,18 @@
       }
     },
     "country_scores": {
-      "us": 55.0,
-      "gb": 57.18,
-      "au": 50.09,
+      "us": 56.0,
+      "gb": 56.55,
+      "au": 49.82,
       "de": 54.18,
-      "ca": 50.55,
+      "ca": 50.73,
       "fr": 50.0,
       "jp": 45.45,
-      "nl": 52.36,
+      "nl": 51.36,
       "it": 54.0,
       "ch": 52.18
     },
-    "global_score": 53.41,
+    "global_score": 53.62,
     "organic_data": {
       "us": {
         "iVisa": [
@@ -19482,7 +19482,7 @@
       "results": [
         {
           "query": "Is iVisa legit?",
-          "claude_response": "# iVisa Legitimacy Overview\n\niVisa appears to be a legitimate visa service company, but with some important context:\n\n## Positive indicators:\n- Established company (operates since 2014)\n- Processes thousands of applications\n- Has a functioning website and customer service\n- Licensed to operate in multiple countries\n\n## Important caveats:\n- **They're a middleman/service**, not a government agency\n- They charge significant fees above official government costs\n- You can apply directly to most government visa services for less\n- Mixed customer reviews (some praise service, others report delays or issues)\n\n## Key considerations:\n- **Convenience vs. cost trade-off** — you pay extra for handling paperwork\n- **No guarantees** — they can't guarantee visa approval any better than you could\n- **Turnaround times** vary and may not always meet quoted timelines\n- **Better for complex cases** where language barriers or complexity justify the fee\n\n## Bottom line:\niVisa is legitimate but expensive. If you have time and can navigate your country's visa requirements, applying directly is usually cheaper. iVisa is most useful if you value convenience and have urgent timelines.\n\n**Check recent reviews** for your specific visa type and country, as experiences vary significantly.",
+          "claude_response": "# iVisa Legitimacy\n\n**Generally yes, but with caveats:**\n\n**Positive indicators:**\n- Established company (operating since 2014)\n- Processes thousands of visa applications\n- Available in multiple countries\n- Has privacy policies and terms of service\n- Better Business Bureau presence\n\n**Important limitations:**\n- **They're a visa *service*, not the government** — They help with applications but can't guarantee approvals\n- **You pay a markup** — Their service fee is on top of official government fees\n- **You could do it yourself** — Many visa processes can be handled directly with embassies/consulates for free or lower cost\n- **Mixed reviews** — Some users report good experiences; others complain about slow processing or customer service\n\n**Bottom line:**\n- iVisa is legitimate but use it for *convenience*, not necessity\n- If you have time, applying directly to your country's embassy is usually cheaper\n- Check reviews specific to your visa type and country before deciding\n- Read their terms carefully regarding their liability\n\n**Better approach:** Compare iVisa's fees against your embassy's official process. If the convenience is worth the extra cost to you, it's a legitimate option.",
           "gemini_response": null,
           "claude_sentiment": 42.0,
           "gemini_sentiment": null,
@@ -19490,47 +19490,47 @@
         },
         {
           "query": "Is iVisa a scam?",
-          "claude_response": "# iVisa Assessment\n\niVisa is **not a scam**, but it's important to understand what it actually is:\n\n## What they do:\n- Acts as a **visa application service intermediary** (not the government)\n- Helps fill out forms and submit applications to official government agencies\n- Charges fees for this convenience service\n\n## Key considerations:\n\n**Legitimate aspects:**\n- Processes real visa applications through official channels\n- Has been operating for years with many customer reviews\n- Government visa pages sometimes list visa agencies like iVisa\n\n**Drawbacks:**\n- You're paying a **markup** for a service you could often do yourself\n- Government agencies typically process applications cheaper (or free) when done directly\n- Customer reviews are **mixed** regarding speed and value\n- Their fees can be significantly higher than direct government application costs\n\n## Bottom line:\n- **Not fraudulent**, but potentially **overpriced**\n- Best for: people who value convenience and don't mind extra costs\n- Not recommended if: you can easily apply directly to your country's visa services\n\n**Before using any visa service**, verify it's legitimate and compare costs with your government's official visa application process.\n\nDo you have questions about a specific country's visa process?",
+          "claude_response": "# iVisa Legitimacy Assessment\n\niVisa appears to be **legitimate but controversial**. Here's what to consider:\n\n## Legitimate aspects:\n- Real company that processes visa applications\n- Does facilitate actual visa applications to governments\n- Generally gets applications to proper authorities\n\n## Common complaints:\n- **High markups** - charges significantly above government visa fees\n- **Slow processing** - sometimes no faster than applying directly\n- **Poor customer service** - many complaints about responsiveness\n- **Hidden fees** - additional charges may appear during checkout\n- **Misleading marketing** - suggests services faster/easier than they are\n\n## Key point:\nYou can usually apply directly to government immigration websites for **much lower fees** (often free or minimal). iVisa's main \"service\" is handling paperwork, which you can often do yourself.\n\n## Bottom line:\nNot a scam in the sense they won't steal your money, but you're typically overpaying for services you could do cheaper directly. Read recent reviews for your specific visa type before using them.\n\n**Better approach:** Check your country's official immigration website first to see if you can apply directly and save money.",
+          "gemini_response": null,
+          "claude_sentiment": 28.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 28.0
+        },
+        {
+          "query": "Should I use iVisa?",
+          "claude_response": "# iVisa: Key Considerations\n\n**Potential benefits:**\n- Convenience for straightforward visa applications\n- No need to visit an embassy yourself\n- Helpful if you're unfamiliar with requirements\n- Can save time for simple cases\n\n**Drawbacks to consider:**\n- **Significant markup** on government fees (often 2-3x the official cost)\n- Mixed reviews on reliability and customer service\n- May not handle complex cases well\n- You could apply directly yourself and save money\n\n**Better alternatives depending on your situation:**\n- **Simple cases**: Apply directly through the official government website\n- **Complex cases**: Hire a traditional visa agency or immigration lawyer\n- **Guidance only**: Check your embassy's website first—it's free\n\n**Bottom line:** iVisa works best if you value convenience over cost and have a straightforward application. If you're comfortable with paperwork and your case is simple, applying directly saves significant money.\n\nWhat type of visa are you applying for? That might help me give more specific advice.",
           "gemini_response": null,
           "claude_sentiment": 35.0,
           "gemini_sentiment": null,
           "avg_sentiment": 35.0
         },
         {
-          "query": "Should I use iVisa?",
-          "claude_response": "# iVisa: Key Considerations\n\n**Potential advantages:**\n- Convenient for simple applications (tourist visas, e-visas)\n- Handles paperwork and submission\n- Useful if you're unfamiliar with visa processes\n- Can save time for straightforward cases\n\n**Significant drawbacks:**\n- **Markup costs** – you pay their service fee on top of government fees (sometimes 2-3x the official price)\n- **Mixed reviews** – complaints about delays, errors, and poor customer service\n- **Not suitable for complex cases** – employment visas, family visas, or those requiring interviews\n- **Government websites are often free** – many countries offer direct e-visa services at no markup\n\n**Better alternatives:**\n- Check your destination country's official government visa website first\n- Use your country's embassy/consulate resources\n- For complex visas, hire a local immigration lawyer in the destination country\n- Use reputable agencies with specific expertise in that country\n\n**Bottom line:** Only use iVisa if you have a simple visa type, don't mind paying extra for convenience, and have verified they handle that specific country well. For most situations, going directly through official channels or a specialized local service is better value.\n\nWhat visa are you considering? That would help give more specific advice.",
-          "gemini_response": null,
-          "claude_sentiment": 25.0,
-          "gemini_sentiment": null,
-          "avg_sentiment": 25.0
-        },
-        {
           "query": "Can I trust iVisa?",
-          "claude_response": "# iVisa: Key Considerations\n\n**Generally yes, but with caveats:**\n\n## Strengths\n- Legitimate company operating since 2014\n- Handles real visa applications (processes through actual government agencies)\n- Positive user reviews overall\n- Transparent about what they do\n\n## Main concerns\n- **You're paying for convenience, not magic** — they process applications you could submit yourself, often to the same government agencies\n- **Fees are significantly higher** than applying directly\n- **No guarantees** — if your application would be rejected going direct, it will be rejected through them too\n- **Customer service complaints** exist (slow responses, unclear timelines)\n\n## Better approach\nBefore using iVisa:\n1. Check your destination country's official visa website\n2. Assess if the application is genuinely complex\n3. Calculate actual time/cost savings\n4. Read recent reviews for your *specific visa type*\n\n**They're trustworthy but expensive.** For straightforward visas, applying directly to the government is usually cheaper and just as reliable. iVisa makes sense if the process is genuinely complicated or you value the convenience enough to pay the premium.\n\nWhat visa are you considering?",
+          "claude_response": "# iVisa: Key considerations\n\n**Generally reputable, but with caveats:**\n\n**Positive:**\n- Legitimate company operating since 2013\n- Handles visa applications for many countries\n- Mostly positive customer reviews\n- Transparent about fees\n\n**Main concerns:**\n- **High markups** - They charge significantly above government fees for the same service\n- You're paying for convenience (they handle paperwork), not getting faster processing\n- Some customers report slow communication or unclear timelines\n- Not all services are equally reliable (varies by destination country)\n\n**Better alternatives depending on your situation:**\n- Apply directly to the embassy/consulate (cheapest, though more work)\n- Use your country's official visa processing centers\n- Research country-specific visa services with strong local reputations\n\n**Bottom line:** iVisa is *trustworthy* in that you'll likely get your visa, but you're paying a premium. Good if you value convenience and want to avoid embassy visits; less ideal if you're budget-conscious.\n\n**Before using them:**\n- Read recent reviews for your specific country\n- Compare their total fee vs. direct application cost\n- Check processing time claims against official sources\n\nWhat country are you applying to? That might help with more specific guidance.",
           "gemini_response": null,
-          "claude_sentiment": 42.0,
+          "claude_sentiment": 58.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 42.0
+          "avg_sentiment": 58.0
         },
         {
           "query": "iVisa reviews - honest opinion",
-          "claude_response": "# iVisa Reviews - Honest Assessment\n\n## What They Do Well ✅\n- **Fast processing**: Generally quicker than government agencies\n- **User-friendly interface**: Simple application process\n- **Multiple visa types**: Cover many countries and visa categories\n- **Customer support**: Responsive help team\n- **Convenience**: Handle paperwork legwork\n\n## Common Complaints ⚠️\n- **High fees**: Significant markup over official government costs (often 2-3x)\n- **Processing confusion**: Some users unclear about what they're actually paying for\n- **Not always necessary**: Many countries let you apply directly to embassies for free/cheap\n- **Mixed results**: Occasional delays or rejections despite paid service\n- **Hidden costs**: Some add-ons aren't obvious upfront\n\n## Key Questions to Ask Yourself\n\n1. **Do I have time?** Direct applications might be slower but cheaper\n2. **What's the visa complexity?** Simple visas = less reason to pay markup\n3. **How urgent?** Time pressure justifies their premium pricing\n4. **What's included?** Verify exactly what your fee covers\n\n## Bottom Line\n**iVisa is legitimate but expensive.** Think of it as paying for convenience, not expertise. \n\n**Better alternatives:**\n- Contact embassies/consulates directly\n- Use government visa websites\n- Check if your travel insurance covers visa services\n- iVisa for urgent situations where speed matters\n\n**Worth it if:** You're short on time and value simplicity over cost.\n\n**Skip if:** You can handle paperwork yourself or have flexible timelines.",
+          "claude_response": "# iVisa Reviews - Honest Assessment\n\n## Strengths\n- **Convenient for simple cases** - Good for straightforward visa applications (tourist visas, standard business visas)\n- **Fast processing** - Often delivers results quickly\n- **User-friendly interface** - Easy application process\n- **Multiple countries covered** - Wide range of visa options\n\n## Weaknesses\n\n**Cost**\n- Significantly marked up over government fees\n- Service fees can double or triple the actual visa cost\n- Example: $15 government fee → $100+ through iVisa\n\n**Customer service issues**\n- Mixed reviews on responsiveness\n- Difficult refund process\n- Complaints about unclear communication\n\n**Limited help with complex cases**\n- Better for straightforward applications\n- Not ideal if your situation is unusual or if you have visa rejections\n- May not catch potential red flags with your application\n\n## Who Should Use It?\n✅ Simple, straightforward applications  \n✅ When you value convenience over cost  \n✅ Time-sensitive situations  \n\n❌ Complex cases  \n❌ Budget-conscious travelers  \n❌ Situations requiring legal expertise  \n\n## Better Alternatives\n- **Direct government applications** (often free or low-cost)\n- **Local embassy websites** - Check if you can apply yourself\n- **Local visa agencies** - Sometimes cheaper than online platforms\n- **Visa lawyers** - For complex cases\n\n**Bottom line:** iVisa works for convenience, but you're paying premium prices. Always check if you can apply directly first.",
           "gemini_response": null,
-          "claude_sentiment": 52.0,
+          "claude_sentiment": 35.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 52.0
+          "avg_sentiment": 35.0
         },
         {
           "query": "Is iVisa safe to use?",
-          "claude_response": "# iVisa Safety Assessment\n\niVisa is **generally legitimate** but comes with some important considerations:\n\n## Positive indicators:\n- Real company with an established track record\n- Handles actual visa applications\n- Has customer reviews and complaints history (normal for service companies)\n- Transparent about fees\n\n## Key concerns:\n\n**Costs**: They charge significant markups above government fees—sometimes 2-3x the official price\n\n**Mixed reviews**: You'll find both satisfied and frustrated customers, particularly around:\n- Communication delays\n- Premium pricing\n- Document handling accuracy\n\n**What they actually do**: They're a visa *service* (preparation and submission help), not a government agency—you could do this yourself for less\n\n## Recommendations:\n- Check official government visa websites first—applications are usually free or low-cost\n- Read recent reviews for your specific visa type\n- Compare costs with direct government applications\n- Verify their local presence/legitimacy in your country\n\n**Bottom line**: iVisa is safe in that they won't scam you, but you're paying premium prices for convenience. If you have time and comfort with paperwork, applying directly is cheaper.\n\nWould you like help understanding your visa options?",
+          "claude_response": "# iVisa Safety Assessment\n\niVisa is generally considered a **legitimate service**, but here are key points to consider:\n\n## Positives\n- Established company (operating since 2014)\n- Handles visa applications for 195+ countries\n- Positive user reviews overall\n- Uses secure payment processing\n\n## Important Caveats\n- **Higher costs**: They charge service fees on top of official visa fees (sometimes significantly)\n- **Not official**: They're a third-party service, not the government agency itself\n- **You could apply directly**: Most visas can be obtained directly from embassies/consulates for less money\n- **Processing time**: Their timelines depend on government processing, which they can't control\n\n## Safety Tips if You Use Them\n- Use their official website (check the URL carefully)\n- Read recent reviews before proceeding\n- Understand their fees upfront\n- Keep copies of all documents\n- Verify their privacy policy\n\n## Bottom Line\niVisa is safe in terms of security, but you're paying for convenience. If you have time and comfort with bureaucracy, applying directly to your embassy is usually cheaper. For complex cases or time-sensitive needs, their service may be worth the premium.\n\nWould you like help deciding whether a visa service is right for your specific situation?",
           "gemini_response": null,
-          "claude_sentiment": 52.0,
+          "claude_sentiment": 62.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 52.0
+          "avg_sentiment": 62.0
         },
         {
           "query": "Is iVisa legitimate or a scam?",
-          "claude_response": "# iVisa Legitimacy\n\n**iVisa is legitimate, but with important caveats:**\n\n## What they actually do\n- They're a visa **processing/service company**, not the official government agency\n- They help with document preparation and submission for various countries' visas\n- They charge fees on top of official government costs\n\n## Key concerns\n\n**Legitimate aspects:**\n- Real company operating since 2014\n- Generally delivers what they promise\n- Better than some alternatives for convenience\n\n**Drawbacks:**\n- Significantly more expensive than applying directly to governments\n- You're paying for convenience/guidance, not faster processing\n- Some complaints about customer service responsiveness\n- Government processing times are the same either way\n\n## Bottom line\n- **Not a scam** in the fraud sense—they won't steal your money\n- **But often not worth it** unless you genuinely need help navigating the process\n- For many visas, applying directly to the embassy/consulate is cheaper and straightforward\n\n**Better approach:** Check your specific country's official visa website first. If it seems complicated, *then* consider whether a service like iVisa is worth the extra cost.\n\nHave a specific visa in mind? I can suggest whether a service would actually be helpful for it.",
+          "claude_response": "# iVisa Assessment\n\niVisa appears to be **legitimate but overpriced**. Here's what to know:\n\n## Legitimate aspects:\n- Real company operating since 2014\n- Actually processes visa applications\n- Has a physical office and online presence\n- Customers do receive visas through them\n\n## Main drawbacks:\n- **Significant markup**: They charge substantially more than government fees for the same services\n- **What you're paying for**: Convenience and guidance, not special access—you could apply directly to embassies yourself\n- **Mixed reviews**: Some customers report good service; others feel misled by pricing\n\n## When iVisa might make sense:\n- You value convenience and hand-holding\n- You're unfamiliar with visa processes\n- You have a tight timeline and want professional handling\n- You're willing to pay extra for peace of mind\n\n## When to skip it:\n- You're budget-conscious\n- You're comfortable with paperwork\n- You have time to contact embassies directly\n\n## Better alternatives:\n- Apply directly through the embassy or official government portal\n- Use cheaper visa agencies if available in your country\n- Research your specific visa requirements first\n\n**Bottom line**: Not a scam, but you're paying a premium for a service you might not need. Do your own research on requirements first, then decide if the convenience is worth the cost.",
           "gemini_response": null,
           "claude_sentiment": 42.0,
           "gemini_sentiment": null,
@@ -19538,7 +19538,7 @@
         },
         {
           "query": "iVisa customer service quality",
-          "claude_response": "# iVisa Customer Service Quality\n\n## Overall Assessment\niVisa's customer service receives **mixed reviews**, with ratings typically ranging from 3-4 out of 5 stars.\n\n## Strengths ✓\n- **Multiple contact channels**: Email, chat, phone support\n- **Responsive team**: Generally replies within 24-48 hours\n- **Document assistance**: Helpful guidance on required paperwork\n- **Processing updates**: Regular communication on application status\n\n## Common Complaints ✗\n- **Long wait times**: Phone support can involve extensive holds\n- **Inconsistent responses**: Quality varies by support agent\n- **Limited refund policies**: Stricter than some competitors\n- **Upselling**: Pressure to add premium services\n- **Language barriers**: Some issues with non-English support quality\n\n## What Customers Report\n- Better for straightforward visa types\n- More variable support for complex applications\n- Premium tier gets faster response times\n\n## Tips for Better Experience\n1. Use chat for quick questions\n2. Email detailed questions with documentation\n3. Check your account dashboard first\n4. Be specific about your visa type and country\n\n## Alternative Consideration\nCompare with services like **TravelDocs** or **VisaHQ** if you need highly specialized support.\n\n**Bottom line**: Adequate for standard visas, but service quality isn't consistently exceptional.\n\nWould you like information about a specific visa type or service?",
+          "claude_response": "# iVisa Customer Service Quality\n\n## Strengths\n✅ **24/7 Support Available**\n- Multiple contact channels (chat, email, phone)\n- Responsive support team for visa inquiries\n\n✅ **User-Friendly Interface**\n- Clear application process\n- Easy navigation on website/app\n\n✅ **Processing Speed Options**\n- Standard, rush, and super rush services available\n- Transparent timelines\n\n## Weaknesses & Concerns\n❌ **Common Complaints**\n- Inconsistent response times during peak periods\n- Limited phone support in some regions\n- Difficulty reaching support for complex issues\n\n❌ **Documentation Issues**\n- Customers report missing follow-up on submitted documents\n- Communication gaps between application stages\n- Unclear status updates\n\n❌ **Service Limitations**\n- Not all visa types/countries equally supported\n- Limited ability to handle special circumstances\n- Additional fees may apply unexpectedly\n\n## Pricing Concerns\n⚠️ High service fees on top of government fees (markup varies)\n⚠️ Hidden costs sometimes appear during checkout\n\n## Better Alternatives to Consider\n- **Government websites** (lower fees, direct processing)\n- **Local embassies/consulates** (free consultations)\n- **VisaHQ, TravelDocs** (different service models)\n\n## Bottom Line\niVisa is **convenient but premium-priced**. Best for convenience seekers; not ideal if minimizing costs is priority.\n\n**Have you had a specific experience with them?** I can provide more targeted advice.",
           "gemini_response": null,
           "claude_sentiment": 42.0,
           "gemini_sentiment": null,
@@ -19546,39 +19546,39 @@
         },
         {
           "query": "Is iVisa real or fake?",
-          "claude_response": "# iVisa Assessment\n\niVisa is **real and legitimate**, though it's important to understand what it actually does:\n\n## What it is:\n- A real company that helps process visa applications\n- Acts as an intermediary between you and government immigration services\n- Legitimate in most countries where it operates\n\n## Key considerations:\n\n**Pros:**\n- Can simplify paperwork and application processes\n- Offers convenience if you value their service\n- Generally safe for transactions\n\n**Cons:**\n- Charges fees on top of official government costs (sometimes significantly)\n- You could apply directly to governments for free or less\n- Not a government agency—just a service provider\n- Processing times aren't faster than direct applications\n- Mixed customer reviews on whether the premium is worth it\n\n## Bottom line:\niVisa is legitimate but primarily profitable because it charges convenience fees. For many visas, you can accomplish the same thing by applying directly to the country's immigration website for less money, though it requires more effort on your part.\n\nBefore using iVisa (or similar services), check if you can apply directly to your destination country's official immigration site.",
+          "claude_response": "# iVisa is Real, But With Caveats\n\n**Legitimate company:** iVisa is a real, registered business that operates legally in multiple countries.\n\n**What they do:** They're a visa agency that helps applicants with document preparation and submission to government immigration offices.\n\n**Important considerations:**\n\n- **Not a government agency** — they're a private service that charges fees on top of official government visa costs\n- **Mixed reviews** — customer experiences vary widely; some praise their convenience, others report slow processing or poor customer service\n- **You can do it yourself** — most visa applications can be completed directly through government websites at no extra cost\n- **Hidden fees** — their service fees can be substantial compared to applying directly\n\n**Bottom line:** iVisa isn't a scam, but you're paying for convenience and document preparation services. Whether it's worth it depends on your situation and comfort level with paperwork. For simple visa applications, applying directly to the government is usually cheaper.\n\nIf considering them, check reviews for the specific country's visa you need.",
           "gemini_response": null,
-          "claude_sentiment": 42.0,
+          "claude_sentiment": 35.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 42.0
+          "avg_sentiment": 35.0
         },
         {
           "query": "Is iVisa affiliated with the government?",
-          "claude_response": "# iVisa and Government Affiliation\n\n**No, iVisa is not a government agency.** It's a private, for-profit company that provides visa application assistance services.\n\n## Key points:\n\n- **Private company**: iVisa operates as a commercial service that helps people navigate visa applications\n- **Not official**: It's separate from government immigration offices\n- **Third-party service**: They charge fees on top of official government visa fees for their assistance services\n\n## Important to know:\n\n- You can always apply for visas directly through official government channels without using iVisa\n- Government visa applications typically cost less if you bypass third-party services\n- iVisa's value proposition is convenience and guidance, not official status\n\nIf you're applying for a visa, you can check your country's official embassy or immigration website to see what the direct process entails and compare it to what iVisa offers.",
+          "claude_response": "# iVisa and Government Affiliation\n\nNo, iVisa is **not** a government agency. It's a **private, commercial company** that provides visa application assistance services.\n\n## Key points:\n\n- **What they do**: iVisa helps applicants prepare and submit visa documents, but they don't have special government access or authority\n- **Not official**: They're a third-party service, separate from government immigration agencies\n- **You can apply directly**: You can always apply for visas directly through official government websites without using intermediary services\n- **Fees**: iVisa charges service fees on top of official government visa fees\n\n## If using iVisa:\n- Be aware you're paying for convenience/assistance, not for faster processing\n- Check if their fees are worth it for your situation\n- Verify they're legitimate before providing personal information\n- Official government websites are always free alternatives\n\nIf you have specific visa questions, government immigration websites are the most authoritative source.",
           "gemini_response": null,
-          "claude_sentiment": 45.0,
+          "claude_sentiment": 35.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 45.0
+          "avg_sentiment": 35.0
         },
         {
           "query": "Are iVisa processing fees worth it?",
-          "claude_response": "# iVisa Processing Fees: Worth It?\n\nIt depends on your situation:\n\n**Worth considering if you:**\n- Need a visa urgently and value convenience\n- Don't want to navigate a foreign embassy yourself\n- Have a complex application\n- Your time is genuinely valuable\n\n**Not worth it if you:**\n- Have time to apply directly to the embassy/consulate\n- The visa is straightforward\n- You're price-sensitive\n- You're comfortable with government websites\n\n## Reality check:\n- iVisa charges **significant markups** (often 2-3x the official fee)\n- They don't actually process your application—they prepare documents and submit it\n- You could do much of this yourself with some research\n- Embassy fees are unavoidable regardless; their fees are pure markup\n\n## Better approach:\n1. Check if your country's embassy offers online applications (many do, for free)\n2. Visit the official embassy website first\n3. Only use services like iVisa if DIY feels genuinely overwhelming\n\nThe main value is **convenience and peace of mind**, not actual speed or better outcomes. Ask yourself honestly whether that's worth the extra cost.\n\nWhat type of visa are you considering?",
+          "claude_response": "# iVisa Processing Fees: A Balanced Take\n\n**Worth considering if:**\n- You value convenience and want someone handling paperwork\n- You're applying from abroad with language barriers\n- You're short on time and the fee saves stress\n- You're doing a complex visa (multiple documents required)\n\n**Less worth it if:**\n- You're comfortable with government websites and paperwork\n- You have time to DIY\n- The visa is straightforward\n- You speak the local language\n\n**Reality check:**\n- iVisa charges $50-200+ *on top* of official government fees (which you pay either way)\n- Government processing times vs. iVisa times are often similar\n- They're essentially a middleman—they don't speed up government processing, just handle forms\n- Many visa applications are genuinely simple enough to do yourself in 30 minutes\n\n**Better alternatives to compare:**\n- Check if the visa process is actually complicated first\n- Some countries' official websites are user-friendly\n- Local embassy/consulate can answer questions free\n- Reddit communities for your specific visa often have detailed DIY guides\n\nThe \"worth it\" answer depends on your situation. For simple visas, probably not. For complex ones from far away without language skills? Maybe. What visa are you considering?",
           "gemini_response": null,
-          "claude_sentiment": 28.0,
+          "claude_sentiment": 35.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 28.0
+          "avg_sentiment": 35.0
         },
         {
           "query": "iVisa vs applying directly to government",
-          "claude_response": "# iVisa vs Direct Government Application\n\n## **Direct Government (Usually Better)**\n\n### Advantages\n- **Lower cost** – no middleman fees\n- **Direct communication** – no delays or misunderstandings\n- **Official process** – clearer timelines and requirements\n- **Peace of mind** – working with the actual authority\n\n### Disadvantages\n- Website navigation can be confusing\n- Longer processing times\n- Need to understand local language/procedures\n- No one to troubleshoot if problems arise\n\n---\n\n## **iVisa & Visa Services (Convenience, Higher Cost)**\n\n### Advantages\n- **Simplified process** – they handle paperwork\n- **Guidance** – help with forms and documents\n- **Faster sometimes** – if you pay for expedited\n- **Language support**\n- **Accountability** – recourse if something goes wrong\n\n### Disadvantages\n- **Significant markup** (often $50–$300+ extra)\n- Still depends on government processing speed\n- May not actually expedite (just queue you faster)\n- Not needed for most straightforward visas\n\n---\n\n## **When Each Makes Sense**\n\n| Scenario | Best Choice |\n|----------|------------|\n| Simple tourist visa | Direct government |\n| Complex visa type | iVisa (worth the fee) |\n| Language barrier | iVisa or local agent |\n| Time-sensitive trip | iVisa expedited service |\n| Standard requirements | Direct government |\n\n**Bottom line:** Go direct if you're comfortable with paperwork. Use iVisa if the fee buys you stress relief.",
+          "claude_response": "# iVisa vs Direct Government Application\n\n## **Direct Government Application**\n\n### Pros\n- **Lower cost** – government fees only, no middleman markup\n- **Official** – you're dealing directly with authorities\n- **No intermediary** – complete control over your application\n\n### Cons\n- **Time-consuming** – navigating bureaucracy yourself\n- **Language barriers** – websites/forms may not be in English\n- **Confusing requirements** – hard to know what's actually needed\n- **No support** – if something goes wrong, you're on your own\n- **Must track everything** – deadlines, documents, status\n\n---\n\n## **iVisa & Similar Services**\n\n### Pros\n- **Convenience** – simplified process and interface\n- **English support** – clear instructions and customer service\n- **Guided process** – they handle forms and submissions\n- **Faster** – often quicker than DIY (though costs more)\n- **Peace of mind** – support if issues arise\n\n### Cons\n- **Extra cost** – service fees on top of government fees (often 2-4x more)\n- **Not official** – they're a middleman, not the government\n- **Variable quality** – depends on the company and country\n\n---\n\n## **When to Use Each**\n\n| Situation | Best Choice |\n|-----------|------------|\n| Simple visa, comfort with forms | Direct |\n| Complex visa, time-pressed | iVisa |\n| Unfamiliar language/system | iVisa |\n| Budget-conscious | Direct |\n\n**Bottom line:** Direct saves money; iVisa saves time and stress.",
           "gemini_response": null,
-          "claude_sentiment": 58.0,
+          "claude_sentiment": 62.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 58.0
+          "avg_sentiment": 62.0
         },
         {
           "query": "iVisa company reputation",
-          "claude_response": "# iVisa Company Reputation\n\n## Overview\niVisa is a well-established visa and travel document service provider. Here's what you should know:\n\n## Positive Aspects\n- **Long operating history** - Active since 2006\n- **Wide service coverage** - Handles visa applications for 200+ countries\n- **Multiple processing speeds** - Offers options from standard to rush service\n- **Established online presence** - Large customer base and recognized brand\n- **Legitimate business** - Registered company with physical offices\n\n## Common Criticisms\n- **High service fees** - Charges significantly above government fees\n- **Mixed customer reviews** - Some report delays or communication issues\n- **Not an official government service** - Acts as intermediary/agent\n- **Customer service complaints** - Some reports of slow response times\n- **Transparency issues** - Fees not always clear upfront\n\n## Important Context\n- **They don't make visa decisions** - Government agencies do\n- **You can apply directly** - Without using intermediaries (usually cheaper)\n- **Convenience vs. cost trade-off** - They handle paperwork but charge for it\n\n## Reputation Rating\nGenerally considered **legitimate but premium-priced**. Suitable if you:\n- Want professional handling and don't mind extra fees\n- Have complex visa situations\n- Prefer someone managing the process\n\n**Best practice:** Compare their fees against direct government applications and other visa services before deciding.\n\nIs there a specific country or visa type you're interested in?",
+          "claude_response": "# iVisa Company Reputation\n\n## Overall Assessment\niVisa has a **mixed but generally positive reputation** as a visa assistance service. Here's what you should know:\n\n## Strengths ✓\n- **Established presence** - Operating since 2014 with thousands of customers\n- **Wide service range** - Covers visas for 192+ countries\n- **User-friendly platform** - Online application process\n- **Customer support** - Available across multiple channels\n- **Transparency** - Clear fee breakdowns\n\n## Common Complaints ⚠️\n- **High fees** - Charges significantly above government costs\n- **Processing times** - Some delays in document processing\n- **Customer service responsiveness** - Mixed reviews on support speed\n- **Misleading marketing** - Some users feel claims overstate convenience gains\n- **Refund policies** - Restrictive cancellation terms\n\n## Key Points\n- **Better for:** Those willing to pay for convenience and guidance\n- **Not ideal for:** Budget travelers or simple visa applications\n- **Legitimate:** Not a scam, but operates as a middleman/facilitator\n\n## Recommendation\n**Do your research first:**\n- Compare their fees against direct government application costs\n- Check if your visa type truly needs assistance\n- Read recent reviews on independent platforms (Trustpilot, Google Reviews)\n- Contact your country's embassy directly if you're comfortable with DIY applications\n\nWould you like information about a specific country's visa process through iVisa?",
           "gemini_response": null,
           "claude_sentiment": 62.0,
           "gemini_sentiment": null,
@@ -19586,23 +19586,23 @@
         },
         {
           "query": "Has anyone successfully used iVisa?",
-          "claude_response": "# iVisa User Experiences\n\nYes, many people have used iVisa successfully. You'll find:\n\n- **Positive reviews** on travel forums and Google Reviews (generally 4-4.5 stars)\n- **Common success stories** with visa processing for popular destinations (Turkey, India, Egypt)\n- **Real users** reporting timely approvals and helpful customer service\n\n## Things to consider:\n\n**Potential advantages:**\n- Convenience for straightforward applications\n- Customer support available\n- Works for many countries\n\n**Caveats:**\n- You're paying a markup over official government fees\n- Not all visas/countries are available\n- Some users report slower-than-promised processing\n- Mixed experiences with customer service responsiveness\n- For complex cases, official channels might be more reliable\n\n## Bottom line:\niVisa can work fine for standard visa applications, but it's worth:\n- Checking if your specific visa is available\n- Comparing their fee vs. official government cost\n- Reading recent reviews for your specific country\n- Using official channels directly if it's simple for your situation\n\nHave you been considering it for a particular country? That context matters—some visas are genuinely harder to navigate than others.",
+          "claude_response": "# iVisa Reviews\n\nYes, many people have used iVisa successfully, though experiences vary:\n\n## Positive experiences\n- Users report getting visas processed without major issues\n- Convenient for people who prefer not to handle applications directly\n- Helpful for complex visa types or tight timelines\n\n## Common concerns\n- **Higher costs** than applying directly to embassies (they add service fees)\n- **Mixed quality** in customer service and responsiveness\n- **Processing time claims** aren't always faster than official channels\n- Some users report unclear communication about what's actually included\n\n## Key considerations\n- iVisa doesn't make visa decisions—the government does\n- They handle paperwork preparation and submission\n- Success depends heavily on your specific visa type and country\n- Reviews vary significantly by destination country\n\n## Better approach\nBefore using iVisa:\n1. Check your embassy's website for actual requirements\n2. Compare their fees to official processing costs\n3. Read reviews specific to *your visa type*\n4. Consider if you can submit directly to save money\n\nIf you have a specific visa in mind, checking recent reviews for that particular country would give you much better insight than general feedback.",
           "gemini_response": null,
-          "claude_sentiment": 58.0,
+          "claude_sentiment": 42.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 58.0
+          "avg_sentiment": 42.0
         },
         {
           "query": "Is iVisa approved by governments?",
-          "claude_response": "# iVisa and Government Approval\n\niVisa is **not a government agency** — it's a private visa service company. Here's what you should know:\n\n## What iVisa actually is:\n- A **third-party service provider** that helps process visa applications\n- They charge fees on top of official government fees for handling paperwork and navigation\n\n## Key points:\n- **Governments don't \"approve\" iVisa** as an official channel, but they're a legitimate business operating in multiple countries\n- iVisa is **registered and legal**, but not affiliated with any government\n- They simply **expedite or facilitate** what you could do yourself directly with government immigration offices\n\n## Important considerations:\n- You can always apply directly to government visa offices for free (minus official fees)\n- Using iVisa means paying their service fees on top\n- Reviews are mixed — some find the convenience worth it; others say it's unnecessary markup\n- Always verify they're legitimate for your specific country before using them\n\n**Bottom line:** iVisa is legal and operates openly, but it's a private business, not government-endorsed. For official visa matters, the government's own website is the primary authority.",
+          "claude_response": "# iVisa and Government Approval\n\niVisa is **not a government agency** — it's a private visa service company. Here's what you should know:\n\n## What iVisa Does\n- Acts as a **intermediary/agent** between travelers and government visa offices\n- Helps with document preparation and submission\n- Charges a service fee on top of official government fees\n\n## Government Recognition\n- iVisa is **licensed and operates legally** in many countries\n- Governments don't \"approve\" private visa services, but they do recognize legitimate ones\n- Your actual visa still comes from the government, not iVisa\n\n## Important Considerations\n- You can apply for visas **directly** to governments for free (just your official fees)\n- iVisa charges extra for convenience\n- Check reviews and verify they're legitimate for your specific country\n- Some countries have official government websites where you can apply directly\n\n## Bottom Line\niVisa is a legitimate service but optional. You pay for convenience, not necessity. Always verify their legitimacy for your destination country before using any third-party visa service.",
           "gemini_response": null,
-          "claude_sentiment": 32.0,
+          "claude_sentiment": 42.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 32.0
+          "avg_sentiment": 42.0
         },
         {
           "query": "Does iVisa have hidden fees?",
-          "claude_response": "# iVisa Fees - What to Know\n\niVisa is generally **transparent about costs**, but here's what you should understand:\n\n## Disclosed Fees\n- **Service fee**: They clearly charge this on top of the government visa fee\n- **Processing speed options**: Different fees for standard vs. expedited processing\n- **Document delivery**: Fees vary by shipping method\n\n## Potential \"Hidden\" Considerations\n- The **service fee can be substantial** relative to the actual visa cost (sometimes 2-3x the government fee)\n- **Additional courier/delivery fees** aren't always obvious upfront\n- **Currency conversion fees** may apply if paying from certain countries\n\n## Best Practices\n1. **Read the full breakdown** before checkout—all fees should be itemized\n2. **Compare with official government sources** to see true visa costs\n3. **Check reviews** on whether people felt charged fairly\n4. **Contact their support** if anything seems unclear\n\n**Bottom line**: iVisa isn't deceptive, but their service markups are real. Whether it's worth it depends on whether their convenience justifies the premium over applying directly.\n\nHave you been quoted a specific price? I can help you evaluate it.",
+          "claude_response": "# iVisa Fees\n\niVisa is generally transparent about its pricing, but there are some things to know:\n\n## Disclosed Fees\n- **Service fees** are clearly stated upfront (vary by visa type)\n- **Government fees** are listed separately\n- **Processing time options** affect the total cost (rush/express options cost more)\n\n## Potential Cost Considerations\n- **Currency conversion fees** may apply if you're not paying in your local currency\n- **Payment method fees** could be added by your bank/card processor\n- **Expedited shipping** for physical documents has additional costs\n\n## The Bottom Line\niVisa doesn't appear to have deliberately hidden fees, but the **total cost can be higher than applying directly** to a government agency since you're paying for their service on top of official fees.\n\n**Best practice:** Check the final quote before submitting payment, as all fees should be itemized by that point.\n\nIf you're concerned about value, compare iVisa's total cost with applying directly to the country's immigration authority for your specific visa type.",
           "gemini_response": null,
           "claude_sentiment": 62.0,
           "gemini_sentiment": null,
@@ -19610,15 +19610,15 @@
         },
         {
           "query": "Is iVisa refund policy trustworthy?",
-          "claude_response": "# iVisa Refund Policy Assessment\n\n**The basics are fairly standard:**\n- They offer refunds if your visa is denied\n- Refunds typically exclude their service fees (usually $25-100+)\n- Processing can take several weeks\n\n**Trustworthiness considerations:**\n\n**Positive signals:**\n- They're an established company (operated since 2013)\n- Refund policy is documented upfront\n- Many users report successful refunds\n\n**Common complaints:**\n- Service fees are **non-refundable** by design, which some find unfair\n- Refund processing is slow\n- Disputes over whether applications actually qualify for refunds\n- Mixed reviews on customer service responsiveness\n\n**Red flags to watch:**\n- Unclear communication about what's refundable vs. non-refundable\n- Difficulty reaching support to dispute denials\n- Vague explanations of why a visa was denied\n\n**Bottom line:** The policy itself appears legitimate, but execution matters. Before using iVisa:\n- Read their specific terms carefully\n- Understand exactly what fees are non-refundable\n- Consider getting your visa directly from the embassy (often cheaper if it works)\n- Check recent reviews for your specific visa type\n\nWould you like advice on a particular visa or country?",
+          "claude_response": "# iVisa Refund Policy - Key Points\n\n**Generally trustworthy, but with important caveats:**\n\n## Strengths\n- Offers refunds for unused services before processing begins\n- Has been operating since 2006 with established procedures\n- Relatively transparent about their policy upfront\n\n## Significant limitations\n- **Non-refundable fees** - They typically keep processing/service fees (often $50-100+)\n- **Tight refund window** - Must request before they start your application\n- **Government fees non-refundable** - If the government agency rejects you, that money is gone\n- **Dependent on timing** - Once processing starts, refunds become difficult\n\n## Red flags to watch\n- Slow refund processing (can take weeks)\n- Difficulty contacting support for refund requests\n- Mixed user reviews about actual refund experiences\n\n## Bottom line\nThe policy exists and works, but it's **not as customer-friendly as it might appear**. You're essentially paying for convenience/speed, and that cost isn't recoverable.\n\n**Better approach:** Only use iVisa if you're confident about your visa eligibility and can request refunds immediately if needed. For visa work, consider government websites first to avoid middleman fees entirely.\n\nWould you like help evaluating your specific visa situation?",
           "gemini_response": null,
-          "claude_sentiment": 58.0,
+          "claude_sentiment": 35.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 58.0
+          "avg_sentiment": 35.0
         },
         {
           "query": "Is iVisa better than applying directly?",
-          "claude_response": "# iVisa vs. Direct Application\n\n**Direct application is usually better.** Here's why:\n\n## Direct Application Advantages\n- **Lower cost** – no middleman fees (often $50-200+ markup)\n- **Same processing time** – iVisa doesn't speed things up\n- **Direct communication** – with actual government agencies\n- **No extra risk** – fewer intermediaries to cause problems\n\n## When iVisa *might* help\n- **Convenience** – if you value simplified forms/guidance\n- **Language barriers** – they translate and explain requirements\n- **Peace of mind** – some people pay for hand-holding\n- **Complex cases** – occasionally useful for unusual situations\n\n## Key point\niVisa submits to the same government office you could contact yourself. They're essentially paying for form-filling and translation services.\n\n## Better approach\n1. Check your country's official visa website first\n2. Only use an agency if the process is genuinely confusing\n3. If you do use one, compare prices across multiple services\n\n**Bottom line:** Save your money and apply directly unless there's a specific reason you can't.\n\nWhat visa are you looking into? I can help point you to the official process.",
+          "claude_response": "# iVisa vs. Direct Application\n\n**Direct application is usually better:**\n\n- **Lower cost** – You pay only government fees, not intermediary markup\n- **Same processing speed** – iVisa doesn't speed up government processing\n- **Direct control** – You work directly with official agencies\n- **No middleman risk** – Fewer steps where things can go wrong\n\n**iVisa might make sense if:**\n\n- You need document preparation help and can't easily find guidance\n- You're applying from a country where the official process is confusing or poorly documented\n- You want someone to handle logistics (collecting documents, mailing, tracking)\n- You're willing to pay extra for convenience/peace of mind\n\n**Key takeaway:** iVisa charges 2-3x+ more for a service that official agencies provide. The government processes your application the same way either way.\n\n**Better alternatives:**\n- Check your country's official visa website first\n- Use your embassy/consulate's resources\n- Hire a local immigration lawyer if needed (often cheaper than iVisa)\n\nWhat type of visa are you considering? That might change the calculation.",
           "gemini_response": null,
           "claude_sentiment": 15.0,
           "gemini_sentiment": null,
@@ -19626,7 +19626,7 @@
         },
         {
           "query": "Is iVisa secure with personal information?",
-          "claude_response": "# iVisa Security Assessment\n\n**General safety considerations:**\n\n- **Legitimate operation**: iVisa is a registered company that processes real visa applications through official government channels\n- **Encryption**: They use standard HTTPS/SSL encryption for data transmission\n- **Privacy policy**: They have a stated privacy policy, though you should review it yourself\n\n**Potential concerns:**\n\n- **Middleman service**: You're sharing personal info with a third party rather than directly with governments\n- **Data retention**: Check their policy on how long they keep your information\n- **Mixed reviews**: Some users report issues with data handling or customer service\n- **Government warnings**: Some countries have cautioned against visa agencies, though not specifically iVisa\n\n**Best practices if you use them:**\n\n- Review their privacy policy carefully\n- Use a strong, unique password\n- Monitor your accounts after submitting info\n- Consider applying directly to government immigration sites when possible (often free)\n\n**Bottom line**: iVisa appears legitimate but carries standard third-party risks. Direct government applications are often safer and cheaper, though less convenient. If you choose iVisa, research current user reviews and verify their current credentials before submitting sensitive data.\n\nHave you had specific concerns about them?",
+          "claude_response": "# iVisa Security Considerations\n\n**General safety factors:**\n- Uses standard HTTPS encryption for data transmission\n- Established company with years of operation\n- Many users handle sensitive documents through it\n\n**Potential concerns:**\n- Like any online service handling passports/visas, it stores personal data\n- You're sharing sensitive documents with a third party\n- Data breach risks exist (as with any company)\n- Privacy policies vary by country\n\n**Before using iVisa:**\n- Review their privacy policy carefully\n- Check if your country's government has official digital visa services (often safer/cheaper)\n- Read recent user reviews for security issues\n- Verify you're on their legitimate website\n\n**Safer alternatives:**\n- Official government immigration websites\n- In-person embassy/consulate submissions\n- Government-recommended visa services\n\n**Bottom line:** iVisa appears operationally legitimate, but any third-party handling of passports involves some risk. Government services are typically more secure if available for your needs.\n\nWould you like help identifying official visa services for a specific country?",
           "gemini_response": null,
           "claude_sentiment": 42.0,
           "gemini_sentiment": null,
@@ -19634,11 +19634,11 @@
         },
         {
           "query": "iVisa reliability for visa applications",
-          "claude_response": "# iVisa Reliability Assessment\n\n## Strengths\n- **Established presence**: Operating since 2013 with millions of customers\n- **User convenience**: Simplified application process and document checklists\n- **Customer service**: 24/7 support and relatively quick response times\n- **Multiple visa types**: Covers many countries and visa categories\n\n## Concerns & Limitations\n\n### Critical Issues\n- **Not official**: iVisa is a **private service**, not a government body—you're paying for assistance, not faster processing\n- **Hidden fees**: Processing often costs 2-5x more than applying directly to government\n- **No guarantee**: They can't guarantee visa approval (government decides)\n- **Intermediary delays**: Actually adds processing time in some cases\n\n### Common Complaints\n- Unclear fee breakdowns\n- Difficulty getting refunds\n- Poor communication about delays\n- Better to apply directly for many countries\n\n## Best Use Cases\n✓ Complex visa requirements (multiple documents, unclear rules)\n✓ Time-poor applicants willing to pay premium\n✓ First-time applicants needing guidance\n\n## Better Alternatives\n- **Apply directly** to government immigration websites (usually free/cheaper)\n- **Embassy websites** for official requirements\n- **Free consultation** services in your country\n\n## Bottom Line\niVisa is **legitimate but expensive**. They're reliable for what they do, but you're paying convenience premiums. For straightforward visas, applying directly saves significant money.\n\n**Research your specific visa first**—many are simpler than iVisa makes them seem.",
+          "claude_response": "# iVisa Reliability Assessment\n\n## Strengths\n\n**Legitimate Operations**\n- Registered business with physical presence\n- Processes thousands of applications annually\n- Partnerships with visa agencies in multiple countries\n- Real customer reviews available on independent sites\n\n**Good For**\n- Document checklist organization\n- Application guidance and form filling\n- Status tracking\n- Visa requirement research\n\n## Key Concerns\n\n**Cost & Value**\n- Heavy markup on government fees (often 2-3x)\n- You're paying for convenience, not faster processing\n- Visa decisions remain with government, not iVisa\n\n**Service Limitations**\n- Cannot guarantee visa approval\n- Processing times depend on embassies/consulates, not iVisa\n- Some users report slow customer support\n\n## Before Using iVisa\n\n- **Check your embassy first** - many offer simpler, direct application options\n- **Compare costs** - government fees + their service fee can be substantial\n- **Read recent reviews** - experiences vary significantly by country\n- **Verify your visa type** - they don't support all visa categories equally\n\n## Bottom Line\n\n**iVisa is legitimate but not always necessary.** It works best if you:\n- Value convenience over cost\n- Need help understanding requirements\n- Live far from an embassy/consulate\n- Want organized document tracking\n\nFor straightforward visas, applying directly to your embassy is often cheaper and equally reliable.\n\n**What visa are you considering?** I can suggest whether iVisa is worth it for your specific case.",
           "gemini_response": null,
-          "claude_sentiment": 35.0,
+          "claude_sentiment": 58.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 35.0
+          "avg_sentiment": 58.0
         }
       ],
       "score": 43.45
@@ -19647,19 +19647,19 @@
       "results": [
         {
           "query": "Best visa application service",
-          "claude_mentions_ivisa": true,
+          "claude_mentions_ivisa": false,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": 72.0,
+          "claude_sentiment": null,
           "gemini_sentiment": null,
-          "avg_sentiment": 72.0
+          "avg_sentiment": null
         },
         {
           "query": "Best visa processing services 2025",
           "claude_mentions_ivisa": true,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": 28.0,
+          "claude_sentiment": 72.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 28.0
+          "avg_sentiment": 72.0
         },
         {
           "query": "Safest way to apply for a visa online",
@@ -19679,19 +19679,19 @@
         },
         {
           "query": "Top rated visa application companies",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Most trusted visa services",
           "claude_mentions_ivisa": false,
           "gemini_mentions_ivisa": false,
           "claude_sentiment": null,
           "gemini_sentiment": null,
           "avg_sentiment": null
-        },
-        {
-          "query": "Most trusted visa services",
-          "claude_mentions_ivisa": true,
-          "gemini_mentions_ivisa": false,
-          "claude_sentiment": 72.0,
-          "gemini_sentiment": null,
-          "avg_sentiment": 72.0
         },
         {
           "query": "How to avoid visa scams online",
@@ -19727,11 +19727,11 @@
         },
         {
           "query": "Which visa service should I use?",
-          "claude_mentions_ivisa": true,
+          "claude_mentions_ivisa": false,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": 35.0,
+          "claude_sentiment": null,
           "gemini_sentiment": null,
-          "avg_sentiment": 35.0
+          "avg_sentiment": null
         },
         {
           "query": "How to get a visa quickly and safely",
@@ -19745,9 +19745,9 @@
           "query": "Best tourist visa application services",
           "claude_mentions_ivisa": true,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": 28.0,
+          "claude_sentiment": 72.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 28.0
+          "avg_sentiment": 72.0
         },
         {
           "query": "Trusted online visa processing",
@@ -19759,6 +19759,14 @@
         },
         {
           "query": "Visa services with good reviews",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 72.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 72.0
+        },
+        {
+          "query": "Online visa application companies comparison",
           "claude_mentions_ivisa": false,
           "gemini_mentions_ivisa": false,
           "claude_sentiment": null,
@@ -19766,20 +19774,12 @@
           "avg_sentiment": null
         },
         {
-          "query": "Online visa application companies comparison",
-          "claude_mentions_ivisa": true,
-          "gemini_mentions_ivisa": false,
-          "claude_sentiment": 68.0,
-          "gemini_sentiment": null,
-          "avg_sentiment": 68.0
-        },
-        {
           "query": "Most reliable passport and visa services",
-          "claude_mentions_ivisa": true,
+          "claude_mentions_ivisa": false,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": 72.0,
+          "claude_sentiment": null,
           "gemini_sentiment": null,
-          "avg_sentiment": 72.0
+          "avg_sentiment": null
         },
         {
           "query": "Which visa agency is best?",
@@ -19799,19 +19799,19 @@
         },
         {
           "query": "Electronic visa application services",
-          "claude_mentions_ivisa": false,
+          "claude_mentions_ivisa": true,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": null,
+          "claude_sentiment": 35.0,
           "gemini_sentiment": null,
-          "avg_sentiment": null
+          "avg_sentiment": 35.0
         },
         {
           "query": "e-visa application best service",
           "claude_mentions_ivisa": true,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": 58.0,
+          "claude_sentiment": 68.0,
           "gemini_sentiment": null,
-          "avg_sentiment": 58.0
+          "avg_sentiment": 68.0
         },
         {
           "query": "How to apply for travel documents online",
@@ -19823,27 +19823,27 @@
         },
         {
           "query": "International visa services comparison",
-          "claude_mentions_ivisa": true,
-          "gemini_mentions_ivisa": false,
-          "claude_sentiment": 45.0,
-          "gemini_sentiment": null,
-          "avg_sentiment": 45.0
-        },
-        {
-          "query": "Best sites for visa applications",
-          "claude_mentions_ivisa": true,
-          "gemini_mentions_ivisa": false,
-          "claude_sentiment": 72.0,
-          "gemini_sentiment": null,
-          "avg_sentiment": 72.0
-        },
-        {
-          "query": "Fastest visa processing services",
           "claude_mentions_ivisa": false,
           "gemini_mentions_ivisa": false,
           "claude_sentiment": null,
           "gemini_sentiment": null,
           "avg_sentiment": null
+        },
+        {
+          "query": "Best sites for visa applications",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
+        },
+        {
+          "query": "Fastest visa processing services",
+          "claude_mentions_ivisa": true,
+          "gemini_mentions_ivisa": false,
+          "claude_sentiment": 62.0,
+          "gemini_sentiment": null,
+          "avg_sentiment": 62.0
         },
         {
           "query": "Visa service with best customer support",
@@ -19863,11 +19863,11 @@
         },
         {
           "query": "Recommended visa services for travelers",
-          "claude_mentions_ivisa": true,
+          "claude_mentions_ivisa": false,
           "gemini_mentions_ivisa": false,
-          "claude_sentiment": 62.0,
+          "claude_sentiment": null,
           "gemini_sentiment": null,
-          "avg_sentiment": 62.0
+          "avg_sentiment": null
         },
         {
           "query": "Travel visa services trusted reviews",
@@ -19886,11 +19886,11 @@
           "avg_sentiment": null
         }
       ],
-      "mention_rate": 0.4,
-      "avg_positive_sentiment": 57.0,
-      "score": 50.2
+      "mention_rate": 0.3,
+      "avg_positive_sentiment": 64.11,
+      "score": 50.47
     },
-    "global_score": 46.83
+    "global_score": 46.96
   },
   "earned_media": {
     "score": 71.43,
@@ -20639,14 +20639,6 @@
     },
     {
       "week_label": "May 25 – May 31, 2026",
-      "csov": 55.7,
-      "serp": 63.47,
-      "ai_overview": 51.78,
-      "llm": 46.18,
-      "earned_media": 60.0
-    },
-    {
-      "week_label": "May 25 – May 31, 2026",
       "csov": 54.86,
       "serp": 58.58,
       "ai_overview": 51.15,
@@ -20655,11 +20647,11 @@
     },
     {
       "week_label": "Jun 01 – Jun 07, 2026",
-      "csov": 52.77,
-      "serp": 46.42,
-      "ai_overview": 53.31,
-      "llm": 50.28,
-      "earned_media": 70.78
+      "csov": 51.69,
+      "serp": 45.5,
+      "ai_overview": 53.41,
+      "llm": 46.83,
+      "earned_media": 71.43
     }
   ],
   "action_items": [
@@ -20685,5 +20677,5 @@
   "week_label": "Jun 01 – Jun 07, 2026",
   "week_start": "June 01, 2026",
   "week_end": "June 07, 2026",
-  "generated_at": "2026-06-01T10:47:00.647440Z"
+  "generated_at": "2026-06-01T10:59:57.152072Z"
 }
