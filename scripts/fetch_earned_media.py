@@ -95,12 +95,13 @@ POSITIVE_SIGNALS = [
 ]
 
 NEGATIVE_SIGNALS = [
-    "scam", "fraud", "fake", "avoid", "danger", "problem", "complaint",
+    "scam", "fraud", "fake", "danger", "problem", "complaint",
     "steal", "stolen", "worst", "terrible", "rip off", "ripoff", "warning",
     "cheat", "mislead", "suspicious", "beware", "do not use", "don't use",
     "stay away", "con ", "overcharged", "refund denied", "lost money",
     "never again", "waste of", "disappointed", "not legit", "not safe",
     "not legitimate", "not trusted", "shady", "unresponsive", "scammed",
+    "avoid ivisa", "avoid using ivisa", "avoid this service",
 ]
 
 POSITIVE_DOMAINS_EM = [
@@ -109,6 +110,8 @@ POSITIVE_DOMAINS_EM = [
     "nytimes.com", "theguardian.com", "bbc.com", "cnbc.com",
     "businessinsider.com", "lonelyplanet.com",
     "nomadicmatt.com", "thepointsguy.com", "moneysavingexpert.com",
+    "globenewswire.com", "prnewswire.com", "businesswire.com",
+    "accesswire.com", "einpresswire.com",
 ]
 
 # Review aggregators and complaint sites — excluded from earned media score

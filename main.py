@@ -59,6 +59,7 @@ def _build_report_payload(
     earned_media_data: dict,
     csov_result: dict,
     action_items: list[str],
+    action_items_by_tab: dict,
     previous_csov: float | None,
     country_configs: dict,
 ) -> dict:
@@ -136,6 +137,7 @@ def _build_report_payload(
         "earned_media":        earned_media_data,
         "historical":          history,
         "action_items":        action_items,
+        "action_items_by_tab": action_items_by_tab,
         "formula":             csov_result.get("formula", ""),
         "period1_baseline":    period1_baseline,
     }
@@ -225,7 +227,7 @@ def run(dry_run: bool = False) -> None:
         # 4. Earned Media + CSOV calculation
         logger.info("[4/6] Fetching earned media (SerpAPI) & calculating CSOV...")
         try:
-            from scripts.calculate_csov import calculate_csov, generate_action_items
+            from scripts.calculate_csov import calculate_csov, generate_action_items, generate_action_items_by_tab
             from scripts.fetch_earned_media import fetch_earned_media_data
             earned_media_data = fetch_earned_media_data()
             csov_result       = calculate_csov(
@@ -234,12 +236,14 @@ def run(dry_run: bool = False) -> None:
                 llm_score           = llm_data["global_score"],
                 earned_media_score  = earned_media_data["score"],
             )
-            action_items = generate_action_items(csov_result["components"], serp_data, ai_overview_data)
+            action_items          = generate_action_items(csov_result["components"], serp_data, ai_overview_data)
+            action_items_by_tab   = generate_action_items_by_tab(csov_result["components"], serp_data, ai_overview_data)
         except Exception as exc:
             logger.error("CSOV calculation failed: %s", exc)
-            earned_media_data = {"score": 60, "mentions": []}
-            csov_result       = {"csov_score": 0.0, "components": {}, "formula": ""}
-            action_items      = ["Recalculation required — see logs for errors."]
+            earned_media_data    = {"score": 60, "mentions": []}
+            csov_result          = {"csov_score": 0.0, "components": {}, "formula": ""}
+            action_items         = ["Recalculation required — see logs for errors."]
+            action_items_by_tab  = {}
 
         logger.info("[5/6] Generating HTML report...")
         report_payload = _build_report_payload(
@@ -248,8 +252,9 @@ def run(dry_run: bool = False) -> None:
             llm_data          = llm_data,
             earned_media_data = {**earned_media_data, **{"score": earned_media_data.get("score", 60)}},
             csov_result       = csov_result,
-            action_items      = action_items,
-            previous_csov     = prev_csov,
+            action_items         = action_items,
+            action_items_by_tab  = action_items_by_tab,
+            previous_csov        = prev_csov,
             country_configs   = COUNTRIES,
         )
         report_payload["previous_csov_score"] = prev_csov

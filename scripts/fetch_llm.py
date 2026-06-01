@@ -74,13 +74,16 @@ def _get_claude_client():
         return None
 
 
-def _get_gemini_model():
+def _get_gemini_client():
+    """Return a google.genai Client, or None if unavailable."""
     if not GEMINI_API_KEY:
         return None
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=GEMINI_API_KEY)
-        return genai.GenerativeModel(GEMINI_MODEL)
+        from google import genai as google_genai
+        return google_genai.Client(api_key=GEMINI_API_KEY)
+    except ImportError:
+        logger.error("google-genai not installed. Run: pip3 install google-genai")
+        return None
     except Exception as exc:
         logger.error("Failed to init Gemini client: %s", exc)
         return None
@@ -106,12 +109,15 @@ def _ask_claude(client, prompt: str, max_tokens: int = 500) -> str | None:
         return None
 
 
-def _ask_gemini(model, prompt: str) -> str | None:
-    """Send a prompt to Gemini. Returns text or None on failure."""
-    if model is None:
+def _ask_gemini(client, prompt: str) -> str | None:
+    """Send a prompt to Gemini via google.genai Client. Returns text or None."""
+    if client is None:
         return None
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=prompt,
+        )
         return response.text.strip()
     except Exception as exc:
         logger.warning("Gemini query failed: %s", exc)
@@ -303,7 +309,7 @@ def fetch_llm_data() -> dict[str, Any]:
     Gracefully handles missing API keys.
     """
     claude_client = _get_claude_client()
-    gemini_model = _get_gemini_model()
+    gemini_model = _get_gemini_client()
 
     if not claude_client and not gemini_model:
         logger.warning("No LLM API keys set — returning default LLM score of 50.")

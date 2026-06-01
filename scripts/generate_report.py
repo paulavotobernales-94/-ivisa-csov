@@ -416,14 +416,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="tab-content" id="tab-aio">
       <h3 style="font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:4px;">Google AI Overview Results</h3>
       <p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">
-        Score logic: iVisa cited → Claude sentiment score &nbsp;|&nbsp;
-        iVisa not cited → sentiment × 30% &nbsp;|&nbsp;
-        No AI overview → 50 (neutral baseline). Click AI Overview text to expand.
+        Score logic: AI Overview appears → Claude sentiment score (0–100) &nbsp;|&nbsp;
+        No AI overview → not counted. Click AI Overview text to expand.
       </p>
       <div class="table-wrap"><table id="aioTable">
         <thead><tr>
           <th>Keyword</th><th>AI Overview?</th><th>iVisa Cited?</th>
-          <th>AI Overview Text</th><th>Sources</th><th style="text-align:right;">Score</th>
+          <th>AI Overview Text</th><th>What to fix</th><th>Sources</th><th style="text-align:right;">Score</th>
         </tr></thead>
         <tbody id="aioTableBody"></tbody>
       </table></div>
@@ -462,7 +461,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
   <!-- ACTION ITEMS -->
   <div class="chart-card" style="margin-bottom:32px;">
-    <div class="section-title">Action Items</div>
+    <div class="section-title" id="actionItemsTitle">Action Items — SERP</div>
     <ul class="actions-list" id="actionsList"></ul>
   </div>
 
@@ -824,6 +823,11 @@ function showTab(id, btn) {
   document.querySelectorAll('#countryTabs .tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
+  // Swap action items to match active tab
+  const tabLabels = {serp:'SERP', aio:'AI Overview', llm:'LLM', em:'Earned Media'};
+  const actionKey = {serp:'serp', aio:'ai_overview', llm:'llm', em:'earned_media'}[id] || 'serp';
+  document.getElementById('actionItemsTitle').textContent = 'Action Items — ' + (tabLabels[id] || 'SERP');
+  buildActions((REPORT_DATA.action_items_by_tab || {})[actionKey] || REPORT_DATA.action_items || []);
 }
 function showLlmTab(part, btn) {
   document.getElementById('llm-parta').style.display = part==='parta'?'block':'none';
@@ -969,6 +973,31 @@ function toggleMethod(btn) {
 
 // ── AIO Table ──────────────────────────────────────────────────────────────
 let aioExpandCount = 0;
+// Extract 2–3 negative talking points from AIO text for the "What to fix" column
+function aioWhatToFix(aioText) {
+  if (!aioText) return '<span style="color:var(--muted);font-size:.75rem;">—</span>';
+  const t = aioText.toLowerCase();
+  const issues = [];
+  if (/fee|markup|overpriced|expensive|cost|charge|pricey/.test(t))
+    issues.push('💸 High fees vs. applying directly');
+  if (/not.*government|not.*official|third.?party|middleman|not.*agency/.test(t))
+    issues.push('🏛️ Perceived as non-official service');
+  if (/processing time|slow|delay|takes.*long|longer than/.test(t))
+    issues.push('⏱️ Processing time concerns');
+  if (/refund|cancel|non.?refund/.test(t))
+    issues.push('↩️ Refund policy concerns');
+  if (/customer service|support|unresponsive|difficult to reach/.test(t))
+    issues.push('📞 Customer service complaints');
+  if (/hidden fee|extra charge|additional fee/.test(t))
+    issues.push('🔍 Hidden/unclear fees');
+  if (/data|privacy|personal information|security/.test(t))
+    issues.push('🔒 Data security concerns');
+  if (/scam|fraud|not legit|avoid/.test(t))
+    issues.push('⚠️ Scam/legitimacy doubts');
+  if (!issues.length) return '<span style="color:var(--green);font-size:.75rem;">✅ No major issues detected</span>';
+  return issues.slice(0,3).map(i => `<div style="font-size:.73rem;color:var(--red);margin-bottom:3px;">${i}</div>`).join('');
+}
+
 function buildAioTable(countryResults) {
   const tbody = document.getElementById('aioTableBody');
   tbody.innerHTML = '';
@@ -986,24 +1015,25 @@ function buildAioTable(countryResults) {
          <div class="progress-bar" style="width:60px;margin-top:4px">
            <div class="progress-fill ${fillClass(scoreVal)}" style="width:${scoreVal}%"></div>
          </div>`
-      : '—';
+      : '<span style="color:var(--muted);font-size:.75rem;">Not counted</span>';
 
     tbody.innerHTML += `
       <tr>
         <td style="font-weight:600;min-width:140px">${kw}</td>
         <td>${r.has_ai_overview == null ? '<span class="pill pill-neu">No data</span>' : pillBool(r.has_ai_overview)}</td>
         <td>${r.ivisa_cited == null ? '<span class="pill pill-neu">—</span>' : pillBool(r.ivisa_cited, '✅ Cited', '❌ Not cited')}</td>
-        <td style="max-width:280px">
+        <td style="max-width:240px">
           ${aioText
             ? `<div class="aio-text-cell" id="${textId}" onclick="this.classList.toggle('expanded')">${aioText}</div>
                <div class="llm-expand-hint" onclick="document.getElementById('${textId}').classList.toggle('expanded')">▼ tap to expand</div>`
             : '<span style="color:var(--muted);font-size:.75rem;">No AI overview found</span>'}
         </td>
+        <td style="min-width:160px;vertical-align:top;padding-top:10px;">${aioWhatToFix(aioText)}</td>
         <td style="min-width:180px">${sourcesHtml}</td>
         <td style="text-align:right">${scoreHtml}</td>
       </tr>`;
   });
-  if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No AI Overview data available</td></tr>';
+  if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No AI Overview data available</td></tr>';
 }
 
 // ── LLM Tables ─────────────────────────────────────────────────────────────

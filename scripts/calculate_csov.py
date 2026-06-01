@@ -255,3 +255,93 @@ def generate_action_items(components: dict[str, dict], serp_data: dict, ai_data:
         actions.append("All scores are healthy — maintain current SEO, PR, and content strategy.")
 
     return actions
+
+
+def generate_action_items_by_tab(components: dict[str, dict], serp_data: dict, ai_data: dict) -> dict[str, list[str]]:
+    """
+    Return action items split by component tab: serp, ai_overview, llm, earned_media.
+    """
+    scores = {k: v["score"] for k, v in components.items()}
+
+    # ── SERP ──────────────────────────────────────────────────────────────────
+    serp_actions: list[str] = []
+    if serp_data and serp_data.get("results"):
+        negative_kw: dict[str, int] = {}
+        high_risk_kw: list[str] = []
+        for country_results in serp_data["results"].values():
+            for kw, results in country_results.items():
+                for r in results:
+                    if r.get("sentiment") == "negative":
+                        negative_kw[kw] = negative_kw.get(kw, 0) + 1
+                        if r.get("position", 99) <= 3 and kw not in high_risk_kw:
+                            high_risk_kw.append(kw)
+        if high_risk_kw:
+            serp_actions.append(f"🚨 Negative results in top 3 for: {', '.join(high_risk_kw[:3])} — publish authoritative positive content to displace them.")
+        total_neg = sum(negative_kw.values())
+        if total_neg > 5:
+            top_kw = sorted(negative_kw, key=lambda k: negative_kw[k], reverse=True)[:3]
+            serp_actions.append(f"📉 {total_neg} negative SERP appearances — most frequent for: {', '.join(top_kw)}. Respond on review sites and strengthen owned content.")
+    if scores["serp"] < 50:
+        serp_actions.append("📝 SERP is mostly negative — create content targeting 'is iVisa legit', 'iVisa reviews', 'is iVisa safe' with strong positive signals.")
+    elif scores["serp"] < 70:
+        serp_actions.append("🔗 Build more positive third-party mentions via travel blogs, press coverage, and review sites to improve SERP sentiment.")
+    if not serp_actions:
+        serp_actions.append("✅ SERP landscape is healthy — maintain current content and backlink strategy.")
+
+    # ── AI Overview ───────────────────────────────────────────────────────────
+    aio_actions: list[str] = []
+    if ai_data and ai_data.get("results"):
+        topic_occurrences: dict[str, list[str]] = {}
+        for country_results in ai_data["results"].values():
+            for kw, result in country_results.items():
+                for topic in result.get("negative_topics", []):
+                    topic_occurrences.setdefault(topic, [])
+                    if kw not in topic_occurrences[topic]:
+                        topic_occurrences[topic].append(kw)
+        TOPIC_RECS = {
+            "refund policy": "↩️ AI Overview cites refund policy negatively — publish a clear, reassuring refund explainer page for AI to cite.",
+            "service fees": "💸 AI Overview flags fees as high — create content framing your fee as value (expert review, error prevention, 24/7 support).",
+            "not government / third-party": "🏛️ AI Overview describes iVisa as non-official — strengthen content on government partnerships and accreditations.",
+            "processing delays": "⏱️ AI Overview mentions delays — publish case studies with actual turnaround data and how you handle government-side delays.",
+            "customer service issues": "📞 AI Overview surfaces service concerns — highlight 24/7 multilingual support across trust pages.",
+            "security / data privacy": "🔒 AI Overview raises security concerns — publish a clear data security & privacy page covering encryption and compliance.",
+        }
+        for topic, kws in sorted(topic_occurrences.items(), key=lambda x: len(x[1]), reverse=True)[:3]:
+            if topic in TOPIC_RECS:
+                aio_actions.append(TOPIC_RECS[topic])
+    if scores["ai_overview"] < 50:
+        aio_actions.append("🤖 AI Overview sentiment is negative — create FAQ schema and structured trust content for Google's AI to pull from.")
+    elif scores["ai_overview"] < 70:
+        aio_actions.append("📋 Add FAQ schema and HowTo schema to key trust pages to shift AI Overview summaries toward iVisa's strengths.")
+    if not aio_actions:
+        aio_actions.append("✅ AI Overview sentiment is healthy — keep publishing authoritative travel content for Google to cite.")
+
+    # ── LLM ───────────────────────────────────────────────────────────────────
+    llm_actions: list[str] = []
+    if scores["llm"] < 50:
+        llm_actions.append("🧠 LLM responses are mostly negative — increase brand signals in training data: more press, expert quotes, and third-party reviews.")
+        llm_actions.append("📰 Target high-authority publications (Forbes Travel, Skift, TravelPulse) for iVisa features — LLMs pull heavily from these sources.")
+        llm_actions.append("⭐ Encourage verified customer reviews on platforms LLMs index (Google, Trustpilot, Reddit) to improve overall sentiment signals.")
+    elif scores["llm"] < 70:
+        llm_actions.append("📣 Submit iVisa info to trusted travel publications and review aggregators to improve LLM mention rate and sentiment.")
+        llm_actions.append("🔍 Monitor what specific negatives Claude/Gemini cite (fees, non-official) and create content that directly addresses those concerns.")
+    if not llm_actions:
+        llm_actions.append("✅ LLM sentiment is healthy — maintain press coverage and positive review volume to keep training signals strong.")
+
+    # ── Earned Media ──────────────────────────────────────────────────────────
+    em_actions: list[str] = []
+    if scores["earned_media"] < 50:
+        em_actions.append("📢 Launch a proactive PR campaign targeting travel media and review platforms to build earned media volume.")
+        em_actions.append("✍️ Pitch iVisa story angles to travel journalists: 99% approval rate, new country launches, traveler success stories.")
+    elif scores["earned_media"] < 70:
+        em_actions.append("🌐 Engage travel journalists and bloggers — target Forbes Travel, Skift, and TravelPulse for iVisa features and expert quotes.")
+        em_actions.append("📹 Activate YouTube and TikTok creators in the travel niche to produce honest iVisa review content.")
+    if not em_actions:
+        em_actions.append("✅ Earned media is strong — continue PR outreach and keep seeding positive coverage across travel channels.")
+
+    return {
+        "serp":          serp_actions,
+        "ai_overview":   aio_actions,
+        "llm":           llm_actions,
+        "earned_media":  em_actions,
+    }

@@ -272,8 +272,8 @@ def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
     # content quality is what drives the score.
     # ───────────────────────────────────────────────────────────────────────
     if not has_ai_overview:
-        # No overview shown — neutral, not a problem
-        score = 50.0
+        # No overview shown — exclude from score entirely (None = not counted)
+        score = None
     else:
         # Overview present — score is purely the sentiment of what it says
         score = sentiment_score if sentiment_score is not None else 55.0
