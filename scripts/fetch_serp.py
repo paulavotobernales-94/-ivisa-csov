@@ -433,16 +433,21 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                 ]
             else:
                 # SEMrush/Ahrefs data exists — fill in missing titles + snippets
-                url_map = {r["url"]: r for r in organic_list if r.get("url")}
+                url_map    = {r["url"]: r for r in organic_list if r.get("url")}
+                domain_map = {r["domain"]: r for r in organic_list if r.get("domain")}
 
                 for item in existing:
                     url = item.get("url", "")
-                    organic_match = url_map.get(url)
+                    domain = item.get("domain", "")
+                    # Try URL match first, fall back to domain match
+                    organic_match = url_map.get(url) or domain_map.get(domain)
                     if organic_match:
                         if not item.get("title"):
                             item["title"] = organic_match.get("title", "")
                         if not item.get("snippet"):
                             item["snippet"] = organic_match.get("snippet", "")
+                        if not item.get("url") and organic_match.get("url"):
+                            item["url"] = organic_match.get("url", "")
 
                     # Re-classify with title + snippet now that both are available
                     item["sentiment"] = _classify_result(

@@ -96,17 +96,21 @@ def _build_report_payload(
     history = []
     try:
         hfiles = sorted(HISTORICAL_DIR.glob("*.json"))
-        for hf in hfiles[-8:]:
+        # Deduplicate by week_label — keep latest file per week
+        seen_labels: dict = {}
+        for hf in hfiles:
             with open(hf, "r", encoding="utf-8") as f:
                 hd = json.load(f)
-            history.append({
-                "week_label":   hd.get("week_label", hf.stem),
+            label = hd.get("week_label", hf.stem)
+            seen_labels[label] = {
+                "week_label":   label,
                 "csov":         hd.get("csov_score", 0),
                 "serp":         hd.get("components", {}).get("serp", {}).get("score", 0),
                 "ai_overview":  hd.get("components", {}).get("ai_overview", {}).get("score", 0),
                 "llm":          hd.get("components", {}).get("llm", {}).get("score", 0),
                 "earned_media": hd.get("components", {}).get("earned_media", {}).get("score", 0),
-            })
+            }
+        history = list(seen_labels.values())[-8:]
     except Exception as exc:
         logger.warning("Could not load historical series: %s", exc)
 
