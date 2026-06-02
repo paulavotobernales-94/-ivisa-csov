@@ -283,9 +283,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <div class="hero-week" id="heroWeek"></div>
     </div>
     <div class="hero-chart chart-card" style="flex:1;min-width:280px;">
-      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
         <span id="trendChartTitle">CSOV Trend</span>
-        <button onclick="downloadTrendCSV()" style="font-size:11px;padding:4px 10px;border:1px solid #00EA80;background:transparent;color:#00EA80;border-radius:6px;cursor:pointer;font-family:inherit;">⬇ Download CSV</button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div id="viewToggle" style="display:flex;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;font-size:11px;">
+            <button onclick="setChartView('weekly')"  id="btn-weekly"  style="padding:4px 10px;border:none;cursor:pointer;font-family:inherit;background:#00EA80;color:#0A2540;font-weight:600;">Weekly</button>
+            <button onclick="setChartView('monthly')" id="btn-monthly" style="padding:4px 10px;border:none;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;">Monthly</button>
+            <button onclick="setChartView('period')"  id="btn-period"  style="padding:4px 10px;border:none;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;">Period</button>
+          </div>
+          <button onclick="downloadTrendCSV()" style="font-size:11px;padding:4px 10px;border:1px solid #00EA80;background:transparent;color:#00EA80;border-radius:6px;cursor:pointer;font-family:inherit;">⬇ Download CSV</button>
+        </div>
       </div>
       <div class="chart-container"><canvas id="trendChart"></canvas></div>
     </div>
@@ -663,66 +670,184 @@ function buildComponentCards(components) {
 }
 
 // ── Trend Chart ────────────────────────────────────────────────────────────
+
+// Periods: Oct–Jan, Feb–May, Jun–Sep
+const PERIODS = [
+  { label: 'Oct – Jan', months: [10, 11, 12, 1] },
+  { label: 'Feb – May', months: [2, 3, 4, 5] },
+  { label: 'Jun – Sep', months: [6, 7, 8, 9] },
+];
+
+// Parse "Jun 01 – Jun 07, 2026" or "May 2026" → { year, month } of the END date
+function parseWeekLabel(label) {
+  // Monthly label e.g. "May 2026"
+  const mono = label.match(/^(\w+)\s+(\d{4})$/);
+  if (mono) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return { year: +mono[2], month: months.indexOf(mono[1]) + 1 };
+  }
+  // Weekly label e.g. "Jun 01 – Jun 07, 2026" — use the end date
+  const weekly = label.match(/(\w+)\s+\d+\s*[–-]\s*(\w+)\s+\d+,\s*(\d{4})/);
+  if (weekly) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return { year: +weekly[3], month: months.indexOf(weekly[2]) + 1 };
+  }
+  return null;
+}
+
+function avgLast2(items, field) {
+  const vals = items.slice(-2).map(x => x[field] || 0);
+  return vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : 0;
+}
+
+// Aggregate weekly history → monthly points (avg of last 2 weeks of each month)
+function toMonthly(history) {
+  const byMonth = {};
+  history.forEach(h => {
+    const p = parseWeekLabel(h.week_label);
+    if (!p) return;
+    const key = `${p.year}-${String(p.month).padStart(2,'0')}`;
+    if (!byMonth[key]) byMonth[key] = { items: [], year: p.year, month: p.month };
+    byMonth[key].items.push(h);
+  });
+  const monthNames = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return Object.keys(byMonth).sort().map(key => {
+    const g = byMonth[key];
+    return {
+      week_label:   `${monthNames[g.month]} ${g.year}`,
+      csov:         avgLast2(g.items, 'csov'),
+      serp:         avgLast2(g.items, 'serp'),
+      ai_overview:  avgLast2(g.items, 'ai_overview'),
+      llm:          avgLast2(g.items, 'llm'),
+      earned_media: avgLast2(g.items, 'earned_media'),
+    };
+  });
+}
+
+// Aggregate monthly → period points (avg of last 2 weeks of last month of period)
+function toPeriod(history) {
+  // First get monthly groups
+  const byMonth = {};
+  history.forEach(h => {
+    const p = parseWeekLabel(h.week_label);
+    if (!p) return;
+    const key = `${p.year}-${String(p.month).padStart(2,'0')}`;
+    if (!byMonth[key]) byMonth[key] = { items: [], year: p.year, month: p.month };
+    byMonth[key].items.push(h);
+  });
+
+  // Group months into periods, identify which period+year each month belongs to
+  const byPeriod = {};
+  Object.keys(byMonth).sort().forEach(key => {
+    const { year, month, items } = byMonth[key];
+    const period = PERIODS.find(p => p.months.includes(month));
+    if (!period) return;
+    // Period year = year of the last month in the period
+    // For Oct-Jan, Jan belongs to the following year's period
+    let periodYear = year;
+    if (period.label === 'Oct – Jan' && month === 10) periodYear = year; // Oct starts it
+    const pKey = `${periodYear}-${period.label}`;
+    if (!byPeriod[pKey]) byPeriod[pKey] = { label: period.label, year: periodYear, months: period.months, monthData: {} };
+    byPeriod[pKey].monthData[month] = items;
+  });
+
+  return Object.keys(byPeriod).sort().map(key => {
+    const g = byPeriod[key];
+    // Find the last month of this period that has data
+    const lastMonth = g.months.slice().reverse().find(m => g.monthData[m]);
+    if (!lastMonth) return null;
+    const items = g.monthData[lastMonth];
+    return {
+      week_label:   `${g.label} ${g.year}`,
+      csov:         avgLast2(items, 'csov'),
+      serp:         avgLast2(items, 'serp'),
+      ai_overview:  avgLast2(items, 'ai_overview'),
+      llm:          avgLast2(items, 'llm'),
+      earned_media: avgLast2(items, 'earned_media'),
+    };
+  }).filter(Boolean);
+}
+
+let _trendChart = null;
+let _currentView = 'weekly';
+
+function setChartView(view) {
+  _currentView = view;
+  // Update toggle button styles
+  ['weekly','monthly','period'].forEach(v => {
+    const btn = document.getElementById('btn-' + v);
+    if (!btn) return;
+    if (v === view) {
+      btn.style.background = '#00EA80'; btn.style.color = '#0A2540'; btn.style.fontWeight = '600';
+    } else {
+      btn.style.background = 'transparent'; btn.style.color = '#64748b'; btn.style.fontWeight = 'normal';
+    }
+  });
+  const raw = REPORT_DATA.historical || REPORT_DATA.history || [];
+  const history = view === 'monthly' ? toMonthly(raw) : view === 'period' ? toPeriod(raw) : raw;
+  _renderTrendChart(history, view);
+}
+
 function buildTrendChart(history) {
+  if (!history || !history.length) return;
+  _renderTrendChart(history, 'weekly');
+}
+
+function _renderTrendChart(history, view) {
   if (!history || !history.length) return;
   const labels = history.map(h => h.week_label);
 
-  // Dynamic title: show actual date range
-  if (history.length > 1) {
-    const first = history[0].week_label;
-    const last  = history[history.length - 1].week_label;
-    const el = document.getElementById('trendChartTitle');
-    if (el) el.textContent = `CSOV Trend — ${first} to ${last}`;
+  // Dynamic title
+  const viewLabel = view === 'monthly' ? 'Monthly' : view === 'period' ? 'Period' : 'Weekly';
+  const titleEl = document.getElementById('trendChartTitle');
+  if (titleEl) {
+    if (history.length > 1) {
+      titleEl.textContent = `CSOV Trend (${viewLabel}) — ${history[0].week_label} to ${history[history.length-1].week_label}`;
+    } else {
+      titleEl.textContent = `CSOV Trend (${viewLabel}) — ${history[0].week_label}`;
+    }
   }
 
   const datasets = [
     {
       label: 'Overall CSOV',
       data: history.map(h=>h.csov),
-      borderColor: '#00EA80',
-      backgroundColor: 'rgba(0,234,128,.10)',
+      borderColor: '#00EA80', backgroundColor: 'rgba(0,234,128,.10)',
       tension: .35, fill: true, borderWidth: 3,
       pointRadius: 5, pointBackgroundColor: '#00EA80',
     },
     {
       label: 'SERP',
       data: history.map(h=>h.serp),
-      borderColor: '#0A2540',
-      backgroundColor: 'transparent',
-      tension: .35, fill: false, borderWidth: 2,
-      borderDash: [],
+      borderColor: '#0A2540', backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2, borderDash: [],
       pointRadius: 4, pointBackgroundColor: '#0A2540',
     },
     {
       label: 'AI Overview',
       data: history.map(h=>h.ai_overview),
-      borderColor: '#08ADE4',
-      backgroundColor: 'transparent',
-      tension: .35, fill: false, borderWidth: 2,
-      borderDash: [6, 3],
+      borderColor: '#08ADE4', backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2, borderDash: [6, 3],
       pointRadius: 4, pointBackgroundColor: '#08ADE4',
     },
     {
       label: 'LLM',
       data: history.map(h=>h.llm),
-      borderColor: '#F59E0B',
-      backgroundColor: 'transparent',
-      tension: .35, fill: false, borderWidth: 2,
-      borderDash: [3, 3],
+      borderColor: '#F59E0B', backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2, borderDash: [3, 3],
       pointRadius: 4, pointBackgroundColor: '#F59E0B',
     },
     {
       label: 'Earned Media',
       data: history.map(h=>h.earned_media),
-      borderColor: '#E0144C',
-      backgroundColor: 'transparent',
-      tension: .35, fill: false, borderWidth: 2,
-      borderDash: [8, 4],
+      borderColor: '#E0144C', backgroundColor: 'transparent',
+      tension: .35, fill: false, borderWidth: 2, borderDash: [8, 4],
       pointRadius: 4, pointBackgroundColor: '#E0144C',
     },
   ];
 
-  new Chart(document.getElementById('trendChart'), {
+  if (_trendChart) { _trendChart.destroy(); }
+  _trendChart = new Chart(document.getElementById('trendChart'), {
     type: 'line',
     data: { labels, datasets },
     options: {
@@ -744,8 +869,9 @@ function buildTrendChart(history) {
 
 // ── CSV Download ────────────────────────────────────────────────────────────
 function downloadTrendCSV() {
-  const history = REPORT_DATA.historical || REPORT_DATA.history || [];
-  if (!history.length) { alert('No historical data available yet.'); return; }
+  const raw = REPORT_DATA.historical || REPORT_DATA.history || [];
+  if (!raw.length) { alert('No historical data available yet.'); return; }
+  const history = _currentView === 'monthly' ? toMonthly(raw) : _currentView === 'period' ? toPeriod(raw) : raw;
   const headers = ['Date','Overall CSOV','SERP','AI Overview','LLM','Earned Media'];
   const rows = history.map(h => [
     h.week_label,
@@ -778,6 +904,12 @@ function buildCountryGrid(countryData) {
     ];
     const total = segs.reduce((s,x)=>s+x.w,0)||1;
 
+    const compRows = [
+      { label: 'SERP',     val: (c.serp||0).toFixed(1),         color: '#00EA80' },
+      { label: 'AI Ovw',   val: (c.ai_overview||0).toFixed(1),  color: '#08ADE4' },
+      { label: 'LLM',      val: (c.llm||0).toFixed(1),          color: '#F59E0B' },
+      { label: 'Earned',   val: (c.earned_media||0).toFixed(1),  color: '#0A2540' },
+    ];
     grid.innerHTML += `
       <div class="country-card" id="cc-${code}" onclick="selectCountry('${code}', REPORT_DATA)">
         <div class="country-flag">${country.flag||''}</div>
@@ -785,6 +917,14 @@ function buildCountryGrid(countryData) {
         <div class="country-score" style="color:${scoreColor(country.csov_score||0)}">${score}</div>
         <div class="mini-bar-wrap">
           ${segs.map(s=>`<div class="mini-seg" style="width:${(s.w/total*100).toFixed(1)}%;background:${s.color}"></div>`).join('')}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-top:7px;">
+          ${compRows.map(r=>`
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="width:8px;height:8px;border-radius:50%;background:${r.color};flex-shrink:0;display:inline-block;"></span>
+              <span style="font-size:10px;color:#666;">${r.label}</span>
+              <span style="font-size:10px;font-weight:600;color:#333;margin-left:auto;">${r.val}</span>
+            </div>`).join('')}
         </div>
       </div>`;
   });
