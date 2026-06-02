@@ -5,7 +5,8 @@ main.py — iVisa CSOV Weekly Reputation Dashboard
 Entry point for the weekly report pipeline.
 
 Usage:
-  python main.py            # Live run (requires all API keys)
+  python main.py            # Live run (requires all API keys) — no Slack
+  python main.py --slack    # Live run + send Slack notification
   python main.py --dry-run  # Load sample data, skip all API calls
 """
 
@@ -163,7 +164,7 @@ def _build_report_payload(
 
 # ── Main Pipeline ─────────────────────────────────────────────────────────────
 
-def run(dry_run: bool = False) -> None:
+def run(dry_run: bool = False, send_slack: bool = False) -> None:
     from scripts.config import (
         COUNTRIES,
         DATA_DIR,
@@ -299,18 +300,22 @@ def run(dry_run: bool = False) -> None:
 
     # ── Save Historical Data ───────────────────────────────────────────────────
     if not dry_run:
-        logger.info("[6/6] Saving historical snapshot & sending Slack notification...")
+        slack_label = "sending Slack notification" if send_slack else "skipping Slack (use --slack to send)"
+        logger.info("[6/6] Saving historical snapshot... (%s)", slack_label)
         _save_historical(report_payload, HISTORICAL_DIR, run_date)
 
-        # Slack
-        try:
-            from scripts.send_slack import send_slack_notification
-            send_slack_notification({
-                **report_payload,
-                "week_label": report_payload.get("week_label", date_str),
-            })
-        except Exception as exc:
-            logger.error("Slack notification failed: %s", exc)
+        # Slack — only when explicitly requested (--slack flag or Monday automation)
+        if send_slack:
+            try:
+                from scripts.send_slack import send_slack_notification
+                send_slack_notification({
+                    **report_payload,
+                    "week_label": report_payload.get("week_label", date_str),
+                })
+            except Exception as exc:
+                logger.error("Slack notification failed: %s", exc)
+        else:
+            logger.info("  Slack skipped. Run with --slack to send.")
     else:
         logger.info("[6/6] Skipping historical save & Slack (dry-run).")
 
@@ -340,5 +345,10 @@ Examples:
         action="store_true",
         help="Load sample data instead of calling APIs. No API keys required.",
     )
+    parser.add_argument(
+        "--slack",
+        action="store_true",
+        help="Send Slack notification after the run. Omit to skip Slack (for manual/test runs).",
+    )
     args = parser.parse_args()
-    run(dry_run=args.dry_run)
+    run(dry_run=args.dry_run, send_slack=args.slack)
