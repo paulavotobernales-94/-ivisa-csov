@@ -30,6 +30,7 @@ Returns a dict shaped:
 import csv
 import io
 import logging
+import re
 import time
 from typing import Any
 
@@ -110,6 +111,18 @@ NEGATIVE_TEXT_SIGNALS = [
     "fell for", "got tricked", "got fooled", "bad experience", "bad service",
     "worse than", "not worth", "not worth it", "don't recommend",
     "do not recommend", "would not recommend", "would not use again",
+    # Implied negatives — "looks good BUT..." complaint structure
+    "however they are not", "but they are not", "they are not what",
+    "looks professional but", "looks clean but", "looks legit but",
+    "however they", "however it is not", "but it is not",
+    "i have applied", "i applied for", "still waiting", "no response",
+    "they took my money", "took my money", "no visa", "never received",
+    "do not trust", "cannot trust", "don't trust",
+    "poor quality", "low quality", "very poor", "very bad",
+    "very disappointed", "extremely disappointed", "totally disappointed",
+    "unprofessional", "incompetent", "useless", "pathetic",
+    "i want my money back", "demanding refund", "filed a complaint",
+    "reported to", "legal action", "reported them",
 ]
 
 # Press/editorial domains — classified from content but given benefit of doubt
@@ -413,6 +426,54 @@ _PLATFORM_TITLES: dict[str, str] = {
 }
 
 
+_BAD_TITLES = {
+    "just a moment", "just a moment...", "attention required",
+    "403 forbidden", "404 not found", "502 bad gateway", "503 service unavailable",
+    "500 internal server error", "access denied", "error", "cloudflare",
+    "please wait", "checking your browser", "ray id", "enable javascript",
+    "site not found", "page not found",
+}
+
+
+def _fetch_page_title(url: str, timeout: int = 4) -> tuple[str, str]:
+    """
+    Last-resort: fetch a page and extract its <title> tag and a short body snippet.
+    Returns (title, body_snippet) — empty strings on any error or bad page.
+    Filters out Cloudflare challenge pages, error pages, etc.
+    """
+    if not url:
+        return "", ""
+    try:
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; iVisaBot/1.0)"}
+        resp = requests.get(url, headers=headers, timeout=timeout, allow_redirects=True)
+        html = resp.text
+
+        # Extract title
+        match = re.search(r"<title[^>]*>([^<]{1,200})</title>", html, re.IGNORECASE)
+        title = match.group(1).strip() if match else ""
+
+        # Reject bot-protection / error page titles
+        if title.lower() in _BAD_TITLES:
+            return "", ""
+
+        # Reject error responses entirely — don't save body either
+        if resp.status_code >= 400 or title.lower() in _BAD_TITLES:
+            return "", ""
+
+        # Extract a short plain-text body snippet (strip tags, collapse whitespace)
+        body = re.sub(r"<[^>]+>", " ", html)
+        body = re.sub(r"\s+", " ", body).strip()[:1000]
+
+        # Reject body that looks like an error/challenge page
+        body_check = body.lower()
+        if any(bad in body_check for bad in ("502 bad gateway", "503 service", "just a moment", "checking your browser", "enable javascript and cookies")):
+            return title, ""
+
+        return title, body
+    except Exception:
+        return "", ""
+
+
 # ---------------------------------------------------------------------------
 
 def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
@@ -475,12 +536,26 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                         if not item.get("url") and organic_match.get("url"):
                             item["url"] = organic_match.get("url", "")
 
-                    # Final fallback: use platform title map for known social/app domains
+                    # Fallback 1: platform title map for known social/app domains
                     if not item.get("title"):
                         bare = item.get("domain", "").lstrip("www.").lstrip(".")
                         fallback = _PLATFORM_TITLES.get(bare)
                         if fallback:
                             item["title"] = fallback
+
+                    # Fallback 2: fetch the page directly to grab its <title> tag + body
+                    # If URL is missing, construct one from the domain
+                    if not item.get("title"):
+                        fetch_url = item.get("url") or f"https://{item.get('domain', '').lstrip('www.').lstrip('.')}"
+                        if fetch_url and fetch_url != "https://":
+                            fetched_title, fetched_body = _fetch_page_title(fetch_url)
+                            if fetched_title:
+                                item["title"] = fetched_title
+                                if not item.get("url"):
+                                    item["url"] = fetch_url
+                            # Use body snippet for sentiment even if title was already known
+                            if fetched_body and not item.get("snippet"):
+                                item["snippet"] = fetched_body[:300]
 
                     # Re-classify with title + snippet now that both are available
                     item["sentiment"] = _classify_result(

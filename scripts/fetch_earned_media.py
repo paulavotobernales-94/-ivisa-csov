@@ -53,8 +53,9 @@ Returns a dict shaped:
 """
 
 import logging
+import re
 import time
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 from urllib.parse import urlparse
 
@@ -204,6 +205,24 @@ def _extract_domain(url: str) -> str:
         return ""
 
 
+def _mentions_ivisa(text: str) -> bool:
+    """Return True if text mentions iVisa as a brand."""
+    return bool(re.search(r'\bivisa\b', text, re.IGNORECASE))
+
+
+def _fetch_article_body(url: str, timeout: int = 4) -> str:
+    """Best-effort fetch of article body text. Returns '' on failure."""
+    try:
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; iVisaBot/1.0)"}
+        resp = requests.get(url, headers=headers, timeout=timeout)
+        # Strip tags, return plain text
+        text = re.sub(r'<[^>]+>', ' ', resp.text)
+        text = re.sub(r'\s+', ' ', text)
+        return text[:5000]  # cap at 5000 chars
+    except Exception:
+        return ""
+
+
 def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
     """Parse organic_results from SerpAPI response into mention dicts."""
     mentions = []
@@ -218,8 +237,11 @@ def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
 
         if _is_ivisa_owned(url, domain):
             continue
-
         if _is_review_aggregator(domain):
+            continue
+
+        # Must mention iVisa in title or snippet
+        if not _mentions_ivisa(title) and not _mentions_ivisa(snippet):
             continue
 
         sentiment = _classify_mention(domain, title, snippet)
@@ -237,10 +259,13 @@ def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
     return mentions
 
 
-def _parse_news_results(data: dict) -> list[dict]:
-    """Parse news_results from SerpAPI Google News response."""
+def _parse_news_results(data: dict, require_ivisa_mention: bool = True) -> list[dict]:
+    """Parse news_results from SerpAPI Google News response.
+
+    If require_ivisa_mention=True, only include articles where iVisa appears
+    in the title, snippet, or article body (best-effort fetch).
+    """
     mentions = []
-    # SerpAPI news results can appear under 'news_results' or 'organic_results'
     items = data.get("news_results", data.get("organic_results", []))
     for item in items:
         url = item.get("link", "")
@@ -253,11 +278,18 @@ def _parse_news_results(data: dict) -> list[dict]:
 
         if _is_ivisa_owned(url, domain):
             continue
-
         if _is_review_aggregator(domain):
             continue
 
-        sentiment = _classify_mention(domain, title, snippet)
+        # Check if iVisa is mentioned in title or snippet
+        body_text = ""
+        if require_ivisa_mention and not _mentions_ivisa(title) and not _mentions_ivisa(snippet):
+            # Not in title/snippet — try fetching article body
+            body_text = _fetch_article_body(url)
+            if not _mentions_ivisa(body_text):
+                continue  # iVisa not mentioned anywhere — skip
+
+        sentiment = _classify_mention(domain, title, snippet + " " + body_text[:500])
         if sentiment == "excluded":
             continue
         mentions.append({
@@ -480,8 +512,13 @@ def fetch_earned_media_data(date_range: tuple[str, str] | None = None) -> dict[s
             "source_breakdown": {"news": 0, "blog": 0, "reddit": 0, "youtube": 0, "instagram": 0, "tiktok": 0},
         }
 
+    # Default: last 90 days
+    if date_range is None:
+        today = date.today()
+        date_range = ((today - timedelta(days=90)).isoformat(), today.isoformat())
+
     all_mentions: list[dict] = []
-    date_str = f" [{date_range[0]} → {date_range[1]}]" if date_range else " [recent]"
+    date_str = f" [{date_range[0]} → {date_range[1]}]"
     logger.info("  Fetching earned media%s...", date_str)
 
     # 1. Google News — query each EM search term
@@ -528,13 +565,12 @@ def fetch_earned_media_data(date_range: tuple[str, str] | None = None) -> dict[s
             seen_urls.add(m["url"])
             unique_mentions.append(m)
 
-    # Sort: negative first (so dashboard surfaces risks immediately), then by source
+    # Sort: newest first (date desc), then by source type
     SOURCE_ORDER = {"news": 0, "blog": 1, "reddit": 2, "youtube": 3, "instagram": 4, "tiktok": 5}
-    SENTIMENT_ORDER = {"negative": 0, "neutral": 1, "positive": 2}
     unique_mentions.sort(key=lambda m: (
-        SENTIMENT_ORDER.get(m.get("sentiment", "neutral"), 1),
+        m.get("date") or "0000",  # date desc (lexicographic works for most formats)
         SOURCE_ORDER.get(m.get("source", "blog"), 9),
-    ))
+    ), reverse=True)
 
     # Counts
     counts = {"total": len(unique_mentions), "positive": 0, "neutral": 0, "negative": 0}

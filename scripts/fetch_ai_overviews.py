@@ -119,25 +119,56 @@ def _extract_sources(data: dict) -> list[str]:
 def _extract_organic_results(data: dict) -> list[dict]:
     """
     Extract top-10 organic results from SerpAPI response.
+    Pulls from organic_results first, then backfills from video_results
+    and inline_videos if fewer than 10 organic results were returned.
     Reused by fetch_serp to fill in page titles and fix keywords with no
     SEMrush/Ahrefs coverage — zero extra API calls, same request.
     """
     from urllib.parse import urlparse
 
-    results = []
-    for item in data.get("organic_results", [])[:10]:
+    def parse_item(item: dict, pos_override: int = 0) -> dict:
         link = item.get("link", "")
         domain = item.get("domain", "")
         if not domain and link:
             domain = urlparse(link).netloc.replace("www.", "")
-        results.append({
-            "position": item.get("position", 0),
+        return {
+            "position": item.get("position", 0) or pos_override,
             "url": link,
             "domain": domain,
             "title": item.get("title", ""),
             "snippet": item.get("snippet", ""),
-        })
-    return results
+        }
+
+    results = []
+    seen_urls: set = set()
+
+    for item in data.get("organic_results", [])[:20]:
+        r = parse_item(item)
+        if r["url"] and r["url"] not in seen_urls:
+            results.append(r)
+            seen_urls.add(r["url"])
+
+    # Backfill from video results if we have fewer than 10
+    if len(results) < 10:
+        next_pos = max((r["position"] for r in results), default=0) + 1
+        for item in data.get("video_results", []):
+            if len(results) >= 10:
+                break
+            r = parse_item(item, pos_override=next_pos)
+            if r["url"] and r["url"] not in seen_urls:
+                results.append(r)
+                seen_urls.add(r["url"])
+                next_pos += 1
+        for item in data.get("inline_videos", []):
+            if len(results) >= 10:
+                break
+            r = parse_item(item, pos_override=next_pos)
+            if r["url"] and r["url"] not in seen_urls:
+                results.append(r)
+                seen_urls.add(r["url"])
+                next_pos += 1
+
+    return results[:10]
 
 
 # ---------------------------------------------------------------------------
@@ -226,7 +257,7 @@ def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
         "q": keyword,
         "gl": country_code,
         "hl": "en",
-        "num": 10,
+        "num": 20,
         "api_key": SERPAPI_KEY,
     }
 
@@ -287,7 +318,7 @@ def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
         "ai_overview_text": ai_text if ai_text else None,
         "sentiment_score": sentiment_score,
         "sources": sources,
-        "score": round(score, 2),
+        "score": round(score, 2) if score is not None else None,
         "organic_results": organic_results,
         "negative_topics": negative_topics,
     }

@@ -120,7 +120,7 @@ def send_slack_notification(report_data: dict) -> bool:
                     {
                         "type": "mrkdwn",
                         "text": (
-                            f"Auto-generated every Friday at 10 AM UTC  •  iVisa Brand Team  •  "
+                            f"Auto-generated every Monday at 9 AM Madrid time  •  iVisa Brand Team  •  "
                             f"<{report_url}|Full CSOV Dashboard>"
                         ),
                     }

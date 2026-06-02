@@ -96,6 +96,12 @@ def _build_report_payload(
     from scripts.config import HISTORICAL_DIR
     history = []
     try:
+        from datetime import timedelta
+        _today = date.today()
+        monday = _today - timedelta(days=_today.weekday())
+        sunday = monday + timedelta(days=6)
+        current_week_label = f"{monday.strftime('%b %d')} – {sunday.strftime('%b %d, %Y')}"
+
         hfiles = sorted(HISTORICAL_DIR.glob("*.json"))
         # Deduplicate by week_label — keep latest file per week
         seen_labels: dict = {}
@@ -111,6 +117,18 @@ def _build_report_payload(
                 "llm":          hd.get("components", {}).get("llm", {}).get("score", 0),
                 "earned_media": hd.get("components", {}).get("earned_media", {}).get("score", 0),
             }
+
+        # Always overwrite the current week with live scores so a prior broken run
+        # can never poison the chart for this week.
+        seen_labels[current_week_label] = {
+            "week_label":   current_week_label,
+            "csov":         csov_result.get("csov_score", 0),
+            "serp":         csov_result.get("components", {}).get("serp", {}).get("score", 0),
+            "ai_overview":  csov_result.get("components", {}).get("ai_overview", {}).get("score", 0),
+            "llm":          csov_result.get("components", {}).get("llm", {}).get("score", 0),
+            "earned_media": csov_result.get("components", {}).get("earned_media", {}).get("score", 0),
+        }
+
         history = list(seen_labels.values())[-8:]
     except Exception as exc:
         logger.warning("Could not load historical series: %s", exc)

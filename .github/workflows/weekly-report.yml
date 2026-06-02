@@ -2,8 +2,9 @@ name: Weekly CSOV Report
 
 on:
   schedule:
-    # Every Friday at 10:00 AM UTC
-    - cron: '0 10 * * 5'
+    # Every Monday at 07:00 UTC = 09:00 Madrid (CEST, summer)
+    # In winter (CET) this runs at 08:00 Madrid — 1hr early, acceptable
+    - cron: '0 7 * * 1'
   workflow_dispatch:
     inputs:
       dry_run:

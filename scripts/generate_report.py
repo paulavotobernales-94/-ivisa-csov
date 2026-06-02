@@ -267,7 +267,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
   <div class="header-meta">
     <strong id="weekRange">Loading...</strong>
-    Updated every Friday
+    Updated every Monday
   </div>
 </header>
 
@@ -430,10 +430,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <!-- LLM Tab -->
     <div class="tab-content" id="tab-llm">
-      <p style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:6px;">
         <strong>Part A:</strong> 20 direct brand queries asked to Claude + Gemini, scored 0–100 sentiment. &nbsp;
         <strong>Part B:</strong> 30 general travel queries — score = mention rate (40%) + sentiment when cited (60%). &nbsp;
         LLM Score = (A + B) / 2. Click any response to expand.
+      </p>
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">
+        🌐 <strong>Global score</strong> — LLM responses are the same regardless of country (AI models don't have location-specific knowledge).
       </p>
       <div class="llm-tabs">
         <button class="tab-btn active" onclick="showLlmTab('parta',this)">Part A — Brand Queries (20)</button>
@@ -752,7 +755,8 @@ function downloadTrendCSV() {
     (h.llm         || 0).toFixed(2),
     (h.earned_media|| 0).toFixed(2),
   ]);
-  const csv = [headers, ...rows].map(r => r.join(',')).join('\\n');
+  const escape = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const csv = [headers, ...rows].map(r => r.map(escape).join(',')).join('\\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
@@ -1096,74 +1100,100 @@ function buildLlmTables(llmData) {
 }
 
 // ── Earned Media ───────────────────────────────────────────────────────────
+// ── Earned Media active filter state ─────────────────────────────────────
+let _emActiveFilter = 'all';
+let _emMentions = [];
+
+function _renderEmCards(filter) {
+  _emActiveFilter = filter;
+  const grid = document.getElementById('mentionsGrid');
+  const filtered = filter === 'all' ? _emMentions : _emMentions.filter(m => m.source === filter);
+  const SOURCE_ICONS = { news:'📰', blog:'✈️', reddit:'💬', youtube:'▶️', instagram:'📸', tiktok:'🎵' };
+  const SENT_LABEL   = { positive:'🟢 positive', neutral:'⚪ neutral', negative:'🔴 negative' };
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:24px;text-align:center;color:var(--muted);">No mentions for this filter.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(m => {
+    const sentCls = m.sentiment === 'positive' ? 'pill-pos' : m.sentiment === 'negative' ? 'pill-neg' : 'pill-neu';
+    const icon = SOURCE_ICONS[m.source] || '🔗';
+    const snippetText = m.snippet ? m.snippet.substring(0, 160) + (m.snippet.length > 160 ? '…' : '') : '';
+    return `
+      <div class="mention-card" data-source="${m.source}" data-sentiment="${m.sentiment}">
+        <div class="mention-source">${icon} ${(m.source||'').toUpperCase()} · <span style="color:var(--muted);font-size:.72rem;">${m.domain||''}</span></div>
+        <div class="mention-title" style="margin:6px 0;">
+          ${m.url
+            ? `<a href="${m.url}" target="_blank" style="color:var(--navy);text-decoration:none;font-size:.88rem;line-height:1.4;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${m.title || 'View article →'}</a>`
+            : `<span style="font-size:.88rem;">${m.title || 'Untitled'}</span>`}
+        </div>
+        ${snippetText ? `<div style="font-size:.76rem;color:#555;line-height:1.45;margin-bottom:8px;">${snippetText}</div>` : ''}
+        <div class="mention-footer">
+          <span class="pill ${sentCls}">${SENT_LABEL[m.sentiment]||m.sentiment}</span>
+          ${m.date ? `<span style="font-size:.72rem;color:var(--muted);">📅 ${m.date}</span>` : ''}
+          ${m.url ? `<a class="domain-link" href="${m.url}" target="_blank">View →</a>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  // Update filter button states
+  document.querySelectorAll('.em-filter-btn').forEach(btn => {
+    btn.style.background = btn.dataset.filter === filter ? 'var(--green)' : 'transparent';
+    btn.style.color      = btn.dataset.filter === filter ? '#fff' : 'var(--navy)';
+  });
+  // Update count label
+  const countEl = document.getElementById('emFilterCount');
+  if (countEl) countEl.textContent = `Showing ${filtered.length} of ${_emMentions.length}`;
+}
+
 function buildEarnedMedia(earnedMedia) {
   const container = document.getElementById('tab-em');
   const grid      = document.getElementById('mentionsGrid');
-  const mentions  = earnedMedia?.mentions || [];
+  _emMentions     = earnedMedia?.mentions || [];
   const counts    = earnedMedia?.counts || {};
   const srcBreak  = earnedMedia?.source_breakdown || {};
   const score     = earnedMedia?.score || 0;
 
-  // Summary bar (always shown)
-  const summaryHtml = `
-    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
-      <span style="font-size:.88rem;font-weight:700;color:var(--navy);">
-        ${counts.total || 0} mentions total
-      </span>
-      <div class="sent-counts">
+  // Scope note + summary bar
+  const existing = container.querySelector('.em-summary');
+  if (!existing) {
+    const sources = Object.entries(srcBreak).filter(([,v])=>v>0);
+    const filterBtns = [['all','All'],...sources.map(([s])=>[s,s.charAt(0).toUpperCase()+s.slice(1)])];
+    const summaryEl = document.createElement('div');
+    summaryEl.className = 'em-summary';
+    summaryEl.innerHTML = `
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">
+        🌐 <strong>Global score</strong> — third-party coverage mentioning iVisa across news, blogs, Reddit, YouTube, and social media (last 90 days).
+        LLM scores are also global. SERP and AI Overview are per-country.
+      </p>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+        <span style="font-size:.88rem;font-weight:700;color:var(--navy);">${counts.total||0} mentions total</span>
         <span class="sent-chip sent-chip-pos">🟢 ${counts.positive||0} positive</span>
         <span class="sent-chip sent-chip-neu">⚪ ${counts.neutral||0} neutral</span>
         <span class="sent-chip sent-chip-neg">🔴 ${counts.negative||0} negative</span>
       </div>
-      ${Object.entries(srcBreak).filter(([,v])=>v>0).map(([src,n])=>
-        `<span style="font-size:.75rem;color:var(--muted);background:var(--bg);padding:2px 8px;
-                      border-radius:8px;border:1px solid var(--border);">${src}: ${n}</span>`
-      ).join('')}
-    </div>`;
-
-  // Insert summary before grid
-  const existing = container.querySelector('.em-summary');
-  if (!existing) {
-    const summaryEl = document.createElement('div');
-    summaryEl.className = 'em-summary';
-    summaryEl.innerHTML = summaryHtml;
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center;">
+        ${filterBtns.map(([f,label])=>`
+          <button class="em-filter-btn tab-btn${f==='all'?' active':''}"
+            data-filter="${f}"
+            onclick="_renderEmCards('${f}')"
+            style="font-size:.75rem;padding:3px 12px;border:1px solid var(--green);border-radius:20px;cursor:pointer;font-family:inherit;${f==='all'?'background:var(--green);color:#fff;':'background:transparent;color:var(--navy);'}">
+            ${label}${f!=='all'?' ('+srcBreak[f]+')':''}
+          </button>`).join('')}
+        <span id="emFilterCount" style="font-size:.72rem;color:var(--muted);margin-left:8px;"></span>
+      </div>`;
     container.insertBefore(summaryEl, grid);
   }
 
-  if (!mentions.length) {
-    grid.innerHTML = `
-      <div style="grid-column:1/-1;background:var(--bg);border-radius:10px;padding:20px;border:1px solid var(--border);">
-        <p style="font-weight:700;color:var(--navy);margin-bottom:8px;">📰 Earned Media — Score: ${score}/100</p>
-        <p style="font-size:.85rem;color:var(--muted);line-height:1.6;">
-          No individual mentions loaded — either SERPAPI_KEY is not set or no results were found.<br>
-          Score shown is the default neutral baseline.
-        </p>
-      </div>`;
+  if (!_emMentions.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;background:var(--bg);border-radius:10px;padding:20px;border:1px solid var(--border);">
+      <p style="font-weight:700;color:var(--navy);margin-bottom:8px;">📰 Earned Media — Score: ${score}/100</p>
+      <p style="font-size:.85rem;color:var(--muted);line-height:1.6;">No mentions found for the last 90 days, or SERPAPI_KEY not set.</p>
+    </div>`;
     return;
   }
-
-  const SOURCE_ICONS = { news:'📰', blog:'✈️', reddit:'💬', youtube:'▶️', instagram:'📸', tiktok:'🎵' };
-
-  mentions.forEach(m => {
-    const sentCls = m.sentiment === 'positive' ? 'pill-pos' : m.sentiment === 'negative' ? 'pill-neg' : 'pill-neu';
-    const icon    = SOURCE_ICONS[m.source] || '🔗';
-    const domain  = m.domain || '';
-    grid.innerHTML += `
-      <div class="mention-card">
-        <div class="mention-source">${icon} ${m.source || 'Unknown'} ${domain ? '· ' + domain : ''}</div>
-        <div class="mention-title">
-          ${m.url
-            ? `<a href="${m.url}" target="_blank" style="color:var(--navy);text-decoration:none;">${m.title || 'View mention →'}</a>`
-            : (m.title || 'Untitled mention')}
-        </div>
-        ${m.snippet ? `<div style="font-size:.76rem;color:var(--muted);margin:6px 0;line-height:1.4;">${m.snippet.substring(0,140)}…</div>` : ''}
-        <div class="mention-footer">
-          <span class="pill ${sentCls}">${m.sentiment || 'neutral'}</span>
-          ${m.date ? `<span>${m.date}</span>` : ''}
-          ${m.url ? `<a class="domain-link" href="${m.url}" target="_blank">View →</a>` : ''}
-        </div>
-      </div>`;
-  });
+  _renderEmCards('all');
 }
 
 // ── Period Framework ───────────────────────────────────────────────────────
