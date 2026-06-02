@@ -26,6 +26,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+SCORING_VERSION = "1.0"
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _load_previous_csov(historical_dir: pathlib.Path) -> float | None:
@@ -159,6 +161,7 @@ def _build_report_payload(
         "action_items_by_tab": action_items_by_tab,
         "formula":             csov_result.get("formula", ""),
         "period1_baseline":    period1_baseline,
+        "scoring_version":     SCORING_VERSION,
     }
 
 
