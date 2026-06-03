@@ -62,6 +62,33 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .header-meta { text-align: right; font-size: .8rem; color: var(--muted); }
   .header-meta strong { display: block; font-size: 1rem; opacity: 1; }
 
+  /* ── Past Reports Dropdown ── */
+  .past-reports-wrap { position: relative; display: inline-block; }
+  .past-reports-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--navy); color: #fff;
+    border: none; border-radius: 8px; padding: 8px 14px;
+    font-size: .82rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; white-space: nowrap;
+    transition: background .15s;
+  }
+  .past-reports-btn:hover { background: var(--navy-light); }
+  .past-reports-btn svg { flex-shrink: 0; }
+  .past-reports-menu {
+    display: none; position: absolute; right: 0; top: calc(100% + 6px);
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(10,37,64,.12);
+    min-width: 200px; z-index: 999; overflow: hidden;
+  }
+  .past-reports-menu.open { display: block; }
+  .past-reports-menu a {
+    display: block; padding: 10px 16px; font-size: .82rem; color: var(--navy);
+    text-decoration: none; border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  .past-reports-menu a:last-child { border-bottom: none; }
+  .past-reports-menu a:hover { background: var(--bg); color: var(--blue); }
+
   /* ── Layout ── */
   .container { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
   .section-title { font-size: 1.1rem; font-weight: 800; color: var(--navy);
@@ -265,9 +292,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <p style="font-size:.82rem;opacity:.7;margin-top:2px;">Credibility Share of Voice Dashboard</p>
     </div>
   </div>
-  <div class="header-meta">
-    <strong id="weekRange">Loading...</strong>
-    Updated every Monday
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:flex-end;">
+    <div class="past-reports-wrap">
+      <button class="past-reports-btn" onclick="toggleArchiveMenu()" id="archiveBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+        Past Reports
+      </button>
+      <div class="past-reports-menu" id="archiveMenu">
+        __ARCHIVE_LINKS_PLACEHOLDER__
+      </div>
+    </div>
+    <div class="header-meta">
+      <strong id="weekRange">Loading...</strong>
+      Updated every Monday
+    </div>
   </div>
 </header>
 
@@ -489,6 +527,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <script>
 // ── Embedded Data ──────────────────────────────────────────────────────────
 const REPORT_DATA = __REPORT_DATA_PLACEHOLDER__;
+
+// ── Past Reports Dropdown ───────────────────────────────────────────────────
+function toggleArchiveMenu() {
+  const menu = document.getElementById('archiveMenu');
+  menu.classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  const wrap = document.querySelector('.past-reports-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('archiveMenu').classList.remove('open');
+  }
+});
 
 // ── Utilities ──────────────────────────────────────────────────────────────
 function scoreColor(s) {
@@ -1696,6 +1746,26 @@ def generate_report(report_data: dict[str, Any], output_path: str) -> None:
     # Embed JSON safely
     json_str = json.dumps(report_data, ensure_ascii=False, default=str)
     html = HTML_TEMPLATE.replace("__REPORT_DATA_PLACEHOLDER__", json_str)
+
+    # Build past-reports dropdown links from docs/reports/
+    from scripts.config import DOCS_DIR
+    reports_dir = DOCS_DIR / "reports"
+    archive_links = ""
+    try:
+        archive_files = sorted(reports_dir.glob("*.html"), reverse=True)
+        for af in archive_files:
+            stem = af.stem  # e.g. "2026-06-02"
+            try:
+                d = date.fromisoformat(stem)
+                label = d.strftime("%b %d, %Y")
+            except ValueError:
+                label = stem
+            archive_links += f'<a href="reports/{af.name}">{label}</a>\n'
+    except Exception:
+        pass
+    if not archive_links:
+        archive_links = '<span style="padding:10px 16px;display:block;color:var(--muted);font-size:.82rem;">No archived reports yet</span>'
+    html = html.replace("__ARCHIVE_LINKS_PLACEHOLDER__", archive_links)
 
     out = pathlib.Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
