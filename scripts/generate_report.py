@@ -445,13 +445,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <p style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">
         🌐 <strong>Global score</strong> — LLM responses are the same regardless of country (AI models don't have location-specific knowledge).
       </p>
+      <div id="llmCountryNote" style="display:none;font-size:.78rem;color:#64748b;background:#f8fafc;border-left:3px solid #08ADE4;padding:6px 10px;margin-bottom:10px;border-radius:4px;"></div>
+      <div id="llmCountrySection" style="display:none;"></div>
       <div class="llm-tabs">
         <button class="tab-btn active" onclick="showLlmTab('parta',this)">Part A — Brand Queries (20)</button>
         <button class="tab-btn"        onclick="showLlmTab('partb',this)">Part B — General Queries (30)</button>
       </div>
       <div id="llm-parta">
         <div class="table-wrap"><table>
-          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th>Gemini Response &amp; Score</th><th>Avg</th></tr></thead>
+          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th>Gemini Response, Score &amp; Sources</th><th>Avg</th></tr></thead>
           <tbody id="llmPartABody"></tbody>
         </table></div>
       </div>
@@ -465,6 +467,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
     <!-- Earned Media Tab -->
     <div class="tab-content" id="tab-em">
+      <div id="emCountryNote" style="display:none;font-size:.78rem;color:#64748b;background:#f8fafc;border-left:3px solid #00EA80;padding:6px 10px;margin-bottom:10px;border-radius:4px;"></div>
+      <div id="emCountrySection" style="display:none;"></div>
       <div class="mentions-grid" id="mentionsGrid"></div>
     </div>
   </div>
@@ -940,10 +944,137 @@ function selectCountry(code, D) {
   const country = D.country_data[code];
   document.getElementById('detailTitle').textContent = `${country.flag} ${country.name} — Detail`;
 
-  // SERP Table
+  // SERP Table — per country
   buildSerpTable(D.serp_data?.results?.[code] || {});
-  // AIO Table
+
+  // AI Overview Table — per country
   buildAioTable(D.ai_overview_data?.results?.[code] || {});
+
+  // LLM — show per-country queries if available, else show global note
+  const llmNote = document.getElementById('llmCountryNote');
+  const llmCountrySection = document.getElementById('llmCountrySection');
+
+  const llmCountryData = D.llm_by_country?.[code];
+  if (llmCountryData && llmCountryData.queries && llmCountryData.queries.length) {
+    // Hide fallback note
+    if (llmNote) llmNote.style.display = 'none';
+    // Build or update the per-country queries table
+    _buildLlmCountrySection(country.name, country.flag || '', llmCountryData);
+  } else {
+    // No per-country data — show fallback note, hide country section
+    if (llmNote) {
+      llmNote.textContent = `Showing global LLM data — queries run across all markets, not per country.`;
+      llmNote.style.display = 'block';
+    }
+    if (llmCountrySection) llmCountrySection.style.display = 'none';
+  }
+
+  // Earned Media — show per-country mentions if available, else show global note
+  const emNote = document.getElementById('emCountryNote');
+  const emCountrySection = document.getElementById('emCountrySection');
+
+  const emCountryData = D.earned_media_by_country?.[code];
+  if (emCountryData && emCountryData.mentions && emCountryData.mentions.length) {
+    // Hide fallback note
+    if (emNote) emNote.style.display = 'none';
+    // Render country-specific mentions
+    _renderEmCountrySection(country.name, country.flag || '', emCountryData);
+  } else {
+    if (emNote) {
+      emNote.textContent = `Showing global Earned Media — mentions tracked across all platforms, not per country.`;
+      emNote.style.display = 'block';
+    }
+    if (emCountrySection) emCountrySection.style.display = 'none';
+  }
+}
+
+// ── Per-country LLM section ────────────────────────────────────────────────
+function _buildLlmCountrySection(countryName, flag, data) {
+  const container = document.getElementById('llmCountrySection');
+  if (!container) return;
+  container.style.display = 'block';
+
+  const rows = (data.queries || []).map(q => {
+    const claudeScore = q.claude_sentiment != null ? q.claude_sentiment.toFixed(1) : '—';
+    const geminiScore = q.gemini_sentiment != null ? q.gemini_sentiment.toFixed(1) : '—';
+    const avgScore    = q.avg_sentiment   != null ? q.avg_sentiment.toFixed(1)    : '—';
+    const avgNum      = parseFloat(avgScore);
+    const scoreColor  = isNaN(avgNum) ? 'var(--muted)' : avgNum >= 65 ? 'var(--green-dark)' : avgNum >= 45 ? 'var(--yellow)' : 'var(--red)';
+    return `<tr>
+      <td style="padding:6px 8px;font-size:.78rem;line-height:1.4;">${q.query}</td>
+      <td style="padding:6px 8px;text-align:center;font-size:.8rem;">${claudeScore}</td>
+      <td style="padding:6px 8px;text-align:center;font-size:.8rem;">${geminiScore}</td>
+      <td style="padding:6px 8px;text-align:center;font-weight:700;font-size:.8rem;color:${scoreColor};">${avgScore}</td>
+    </tr>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;">
+      <p style="font-weight:700;font-size:.88rem;color:var(--navy);margin-bottom:10px;">
+        🌍 ${flag} ${countryName} — Brand Perception (5 queries)
+        <span style="font-weight:400;font-size:.78rem;color:var(--muted);margin-left:6px;">avg sentiment: ${data.avg_sentiment?.toFixed(1) ?? '—'}/100</span>
+      </p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-family:inherit;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border);">
+              <th style="padding:6px 8px;text-align:left;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Query</th>
+              <th style="padding:6px 8px;text-align:center;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Claude</th>
+              <th style="padding:6px 8px;text-align:center;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Gemini</th>
+              <th style="padding:6px 8px;text-align:center;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Avg</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ── Per-country EM section ──────────────────────────────────────────────────
+function _renderEmCountrySection(countryName, flag, data) {
+  const container = document.getElementById('emCountrySection');
+  if (!container) return;
+  container.style.display = 'block';
+
+  const mentions = data.mentions || [];
+  const counts   = data.counts   || {};
+  const score    = data.score    || 0;
+
+  const SOURCE_ICONS = { news:'📰', blog:'✈️', reddit:'💬', youtube:'▶️', instagram:'📸', tiktok:'🎵' };
+  const SENT_LABEL   = { positive:'🟢 positive', neutral:'⚪ neutral', negative:'🔴 negative' };
+
+  const cards = mentions.map(m => {
+    const sentCls = m.sentiment === 'positive' ? 'pill-pos' : m.sentiment === 'negative' ? 'pill-neg' : 'pill-neu';
+    const icon = SOURCE_ICONS[m.source] || '🔗';
+    const snippet = m.snippet ? m.snippet.substring(0, 160) + (m.snippet.length > 160 ? '…' : '') : '';
+    return `<div class="mention-card" data-source="${m.source}" data-sentiment="${m.sentiment}">
+      <div class="mention-source">${icon} ${(m.source||'').toUpperCase()} · <span style="color:var(--muted);font-size:.72rem;">${m.domain||''}</span></div>
+      <div class="mention-title" style="margin:6px 0;">
+        ${m.url
+          ? `<a href="${m.url}" target="_blank" style="color:var(--navy);text-decoration:none;font-size:.88rem;line-height:1.4;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${m.title || 'View article →'}</a>`
+          : `<span style="font-size:.88rem;">${m.title || 'Untitled'}</span>`}
+      </div>
+      ${snippet ? `<div style="font-size:.76rem;color:#555;line-height:1.45;margin-bottom:8px;">${snippet}</div>` : ''}
+      <div class="mention-footer">
+        <span class="pill ${sentCls}">${SENT_LABEL[m.sentiment]||m.sentiment}</span>
+        ${m.date ? `<span style="font-size:.72rem;color:var(--muted);">📅 ${m.date}</span>` : ''}
+        ${m.url  ? `<a class="domain-link" href="${m.url}" target="_blank">View →</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;">
+      <p style="font-weight:700;font-size:.88rem;color:var(--navy);margin-bottom:8px;">
+        🌍 ${flag} ${countryName} — Earned Media (${counts.total||0} mentions · score: ${score.toFixed ? score.toFixed(1) : score}/100)
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <span class="sent-chip sent-chip-pos">🟢 ${counts.positive||0} positive</span>
+        <span class="sent-chip sent-chip-neu">⚪ ${counts.neutral||0} neutral</span>
+        <span class="sent-chip sent-chip-neg">🔴 ${counts.negative||0} negative</span>
+      </div>
+      <div class="mentions-grid">${cards}</div>
+    </div>`;
 }
 
 // ── Country Tabs ───────────────────────────────────────────────────────────
@@ -1039,11 +1170,15 @@ function buildSerpTable(countryResults) {
              </div>`
           : '';
         const domainDisplay = r.domain || '';
+        // When URL is missing, construct a best-guess link from the domain
+        const linkUrl = r.url || (r.domain ? 'https://' + r.domain : '#');
+        // When title is missing, use domain as display text
+        const displayTitle = title !== '—' ? title : (r.domain || '—');
         return `<tr class="${r.is_ivisa ? 'ivisa-row' : ''}">
           <td style="vertical-align:top;padding-top:10px;">${r.position ? posBadge(r.position) : '—'}</td>
           <td style="vertical-align:top;">
             <div style="font-size:.72rem;color:var(--muted);margin-bottom:2px;">${domainDisplay}</div>
-            <a href="${r.url||'#'}" target="_blank" style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:#1a0dab;text-decoration:none;line-height:1.3;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${title}</a>
+            <a href="${linkUrl}" target="_blank" style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:#1a0dab;text-decoration:none;line-height:1.3;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${displayTitle}</a>
             ${snippetHtml}
           </td>
           <td style="text-align:center;vertical-align:top;padding-top:10px;">${sentEmoji(r.sentiment)} ${pillSentiment(r.sentiment)}</td>
@@ -1183,7 +1318,9 @@ function buildAioTable(countryResults) {
 // ── LLM Tables ─────────────────────────────────────────────────────────────
 let llmExpandCount = 0;
 function llmResponseCell(text, score) {
-  if (!text) return '<span style="color:var(--muted);font-size:.75rem;">No response</span>';
+  // Guard against Python None serialized as the string "None" or "null"
+  if (!text || text === 'None' || text === 'null' || text === 'undefined')
+    return '<span style="color:var(--muted);font-size:.75rem;">No response</span>';
   const id = 'llm-r-' + (++llmExpandCount);
   const scoreHtml = score != null
     ? `<span style="font-weight:700;color:${scoreColor(score)};margin-right:6px;">${fmtScore(score)}/100</span>`
@@ -1204,7 +1341,10 @@ function buildLlmTables(llmData) {
       <tr>
         <td style="max-width:200px;font-weight:600;">${r.query}</td>
         <td style="max-width:280px">${llmResponseCell(r.claude_response, r.claude_sentiment)}</td>
-        <td style="max-width:280px">${llmResponseCell(r.gemini_response, r.gemini_sentiment)}</td>
+        <td style="max-width:280px">
+          ${llmResponseCell(r.gemini_response, r.gemini_sentiment)}
+          ${(r.gemini_sources||[]).length ? `<div style="margin-top:5px;">${(r.gemini_sources||[]).slice(0,3).map(u=>`<a href="${u}" target="_blank" style="display:block;font-size:.7rem;color:#08ADE4;word-break:break-all;margin-bottom:2px;">${u.replace(/^https?:\/\//,'').substring(0,55)}…</a>`).join('')}</div>` : ''}
+        </td>
         <td style="text-align:center">
           <span style="font-weight:800;font-size:1.1rem;color:${scoreColor(r.avg_sentiment||0)}">${fmtScore(r.avg_sentiment)}</span>
           <div class="progress-bar" style="width:60px;margin:4px auto 0">

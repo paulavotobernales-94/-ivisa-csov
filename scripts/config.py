@@ -136,8 +136,14 @@ CLAUDE_MODEL = "claude-haiku-4-5-20251001"
 GEMINI_MODEL = "gemini-2.0-flash"
 
 SENTIMENT_PROMPT_TEMPLATE = (
-    "Rate how positive this response is about iVisa as a trustworthy visa service, "
-    "from 0 (very negative/scam warning) to 100 (very positive/recommended). "
+    "Rate the overall sentiment of this response about iVisa from 0 to 100. "
+    "Use this scale strictly: "
+    "0-20 = active scam warning or strong negative recommendation (do not use, fraud, dangerous); "
+    "21-40 = mostly negative but acknowledges some value; "
+    "41-60 = balanced/neutral, lists both pros and cons or gives factual description without strong stance; "
+    "61-80 = mostly positive with minor caveats; "
+    "81-100 = strongly positive, recommended, trusted. "
+    "A response that says iVisa is convenient but expensive with pros and cons should score 41-55. "
     "Respond with a number only:\n\n{text}"
 )
 

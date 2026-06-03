@@ -104,7 +104,10 @@ NEGATIVE_TEXT_SIGNALS = [
     "worst experience", "never again", "waste of money", "waste of time",
     "disappointing", "disappointed", "horrible", "awful", "nightmare",
     "con ", "con man", "scammed", "got scammed", "money back",
-    "not affiliated with", "not government", "not official",
+    # NOTE: "not affiliated with", "not government", "not official" are intentionally
+    # NOT here — they are standard legal disclaimers on all third-party visa services.
+    # They only become negative signals when combined with actual complaint language
+    # (handled separately in _classify_result via _is_disclaimer_complaint).
     # Questions that imply doubt or regret — should never score positive
     "was it a mistake", "was using ivisa a mistake", "is ivisa a mistake",
     "mistake", "regret", "regretted", "wish i hadn't", "should have avoided",
@@ -123,6 +126,51 @@ NEGATIVE_TEXT_SIGNALS = [
     "unprofessional", "incompetent", "useless", "pathetic",
     "i want my money back", "demanding refund", "filed a complaint",
     "reported to", "legal action", "reported them",
+]
+
+# Disclaimer phrases that are only negative when paired with real complaint signals
+# e.g. "not affiliated with any government" alone = compliance copy, not a complaint
+# but "not affiliated with any government — misleading customers" = negative
+DISCLAIMER_PHRASES = [
+    "not affiliated with", "not government", "not official",
+    "not affiliated", "not endorsed by", "independent service",
+    "not a government", "third-party service", "not the government",
+]
+
+# When a disclaimer phrase appears, these must ALSO appear to classify as negative
+COMPLAINT_SIGNALS = [
+    "scam", "fraud", "mislead", "misleading", "complaint", "complaints",
+    "warning", "beware", "avoid", "fake", "suspicious", "shady",
+    "rip off", "ripoff", "cheat", "cheated", "stolen", "took my money",
+]
+
+def _is_disclaimer_complaint(text: str) -> bool:
+    """Return True only if a disclaimer phrase is paired with real complaint language."""
+    has_disclaimer = any(d in text for d in DISCLAIMER_PHRASES)
+    if not has_disclaimer:
+        return False
+    return any(c in text for c in COMPLAINT_SIGNALS)
+
+# iVisa-owned and official branded properties — positive by default unless
+# the title/snippet contains explicit complaint language
+IVISA_OWNED_DOMAINS = [
+    "ivisa.com",
+    "play.google.com",   # iVisa app on Google Play
+    "apps.apple.com",    # iVisa app on App Store
+    "linkedin.com",      # iVisa company page
+    "facebook.com",      # iVisa Facebook page
+    "instagram.com",     # iVisa Instagram
+    "twitter.com",
+    "x.com",
+    "youtube.com",       # iVisa YouTube channel
+]
+
+# Debunking article signals — when these appear in the snippet alongside
+# a "scam?" style title, the "scam" in the title is the question not the claim
+DEBUNKING_SIGNALS = [
+    "the answer is no", "not a scam", "isn't a scam", "is not a scam",
+    "legitimate", "legit", "restoring trust", "restoring traveler trust",
+    "the truth is", "verdict:", "conclusion:", "in short,",
 ]
 
 # Press/editorial domains — classified from content but given benefit of doubt
@@ -163,49 +211,92 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
 
     Classification logic (in order of priority):
     1. Structural complaint domains → always negative
-    2. Count positive and negative signals in (title + snippet) combined
-    3. If BOTH positive and negative signals present → neutral (mixed/balanced)
-    4. If only negative signals → negative
-    5. If only positive signals → positive
-    6. No signals → neutral (default)
-
-    This means a Trustpilot page with "iVisa — terrible service, took my money"
-    is correctly classified as negative. And "iVisa isn't a scam, it's pricey but
-    delivers" is correctly classified as neutral.
+    2. iVisa-owned/branded domains → positive unless explicit complaint language present
+    3. Debunking articles ("Is iVisa a scam? No.") → strip title "scam" as question,
+       re-evaluate snippet alone → positive if snippet is clean, neutral if mixed
+    4. Disclaimer-only "not affiliated/not government" → negative ONLY if also
+       paired with real complaint language (scam, fraud, misleading, etc.)
+    5. Count positive and negative signals in combined text
+    6. Mixed signals → neutral; only negative → negative; only positive → positive
+    7. Editorial/press domains with no signals → positive
+    8. Everything else → neutral
     """
     domain_lower = domain.lower().strip()
-    # Combine title + snippet for full text analysis
-    full_text = f"{title} {snippet}".lower()
+    title_lower  = title.lower().strip()
+    snippet_lower = snippet.lower().strip()
+    full_text = f"{title_lower} {snippet_lower}"
 
     # 1. Structural complaint domains — always negative
     for d in ALWAYS_NEGATIVE_DOMAINS:
         if d in domain_lower:
             return "negative"
 
-    # 2. Count signals in the combined text
-    pos_hits = sum(1 for s in POSITIVE_TEXT_SIGNALS if s in full_text)
-    neg_hits = sum(1 for s in NEGATIVE_TEXT_SIGNALS if s in full_text)
-
-    # 3. Mixed signals = neutral (e.g. "not a scam but expensive" has both)
-    if pos_hits > 0 and neg_hits > 0:
-        return "neutral"
-
-    # 4. Clear negative
-    if neg_hits > 0:
+    # 2. iVisa-owned / branded official channels — positive by default
+    # unless snippet/title contains explicit complaint language
+    is_ivisa_owned = any(d in domain_lower for d in IVISA_OWNED_DOMAINS)
+    if is_ivisa_owned:
+        has_complaint = any(c in full_text for c in COMPLAINT_SIGNALS)
+        # Also check hard negative signals (stolen, scammed, etc.)
+        hard_neg = sum(1 for s in NEGATIVE_TEXT_SIGNALS if s in full_text)
+        if not has_complaint and hard_neg == 0:
+            return "positive"
+        # If complaint/hard negative present even on owned domain → negative
         return "negative"
 
-    # 5. Clear positive
+    # 3. Debunking articles — title asks "is ivisa a scam?" but snippet answers "no"
+    title_has_scam_question = (
+        "scam" in title_lower and
+        any(q in title_lower for q in ["is ivisa", "is it a", "is this a", "a scam?", "scam?"])
+    )
+    if title_has_scam_question:
+        snippet_debunks = (
+            any(d in snippet_lower for d in DEBUNKING_SIGNALS) or
+            snippet_lower.startswith("no,") or
+            snippet_lower.startswith("no.") or
+            snippet_lower.startswith("no ")
+        )
+        if snippet_debunks:
+            # Evaluate snippet alone (not title) for remaining signals
+            pos_hits_snip = sum(1 for s in POSITIVE_TEXT_SIGNALS if s in snippet_lower)
+            neg_hits_snip = sum(1 for s in NEGATIVE_TEXT_SIGNALS if s in snippet_lower)
+            # Also check if snippet discusses real issues (mixed) vs pure defence
+            has_concern = any(c in snippet_lower for c in [
+                "refund", "fee", "expensive", "cost", "complaint", "issue",
+                "however", "but ", "although", "drawback", "downside",
+            ])
+            if has_concern:
+                return "neutral"   # debunking but acknowledges real concerns
+            if neg_hits_snip == 0:
+                return "positive"  # clean debunking with no remaining negatives
+            return "neutral"
+
+    # 4. Disclaimer phrases ("not affiliated with", "not government") —
+    # only negative if paired with actual complaint language
+    if _is_disclaimer_complaint(full_text):
+        return "negative"
+    # Strip disclaimer phrases from signal counting so they don't bias the score
+    cleaned_text = full_text
+    for d in DISCLAIMER_PHRASES:
+        cleaned_text = cleaned_text.replace(d, "")
+
+    # 5. Count signals in cleaned text
+    pos_hits = sum(1 for s in POSITIVE_TEXT_SIGNALS if s in cleaned_text)
+    neg_hits = sum(1 for s in NEGATIVE_TEXT_SIGNALS if s in cleaned_text)
+
+    # 6. Mixed signals = neutral; only negative = negative; only positive = positive
+    if pos_hits > 0 and neg_hits > 0:
+        return "neutral"
+    if neg_hits > 0:
+        return "negative"
     if pos_hits > 0:
         return "positive"
 
-    # 6. No signals — editorial/press domains default to positive
-    # (Yahoo Finance, Reuters, Forbes, PR Newswire etc. covering iVisa
-    # without negative signals = editorial coverage, counts as positive)
+    # 7. Editorial/press domains with no signals → positive
     is_editorial = any(d in domain_lower for d in EDITORIAL_DOMAINS)
     if is_editorial:
         return "positive"
 
-    # 7. Everything else — default neutral
+    # 8. Everything else → neutral
     return "neutral"
 
 

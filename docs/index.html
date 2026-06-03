@@ -428,13 +428,14 @@
       <p style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">
         🌐 <strong>Global score</strong> — LLM responses are the same regardless of country (AI models don't have location-specific knowledge).
       </p>
+      <div id="llmCountryNote" style="display:none;font-size:.78rem;color:#64748b;background:#f8fafc;border-left:3px solid #08ADE4;padding:6px 10px;margin-bottom:10px;border-radius:4px;"></div>
       <div class="llm-tabs">
         <button class="tab-btn active" onclick="showLlmTab('parta',this)">Part A — Brand Queries (20)</button>
         <button class="tab-btn"        onclick="showLlmTab('partb',this)">Part B — General Queries (30)</button>
       </div>
       <div id="llm-parta">
         <div class="table-wrap"><table>
-          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th>Gemini Response &amp; Score</th><th>Avg</th></tr></thead>
+          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th>Gemini Response, Score &amp; Sources</th><th>Avg</th></tr></thead>
           <tbody id="llmPartABody"></tbody>
         </table></div>
       </div>
@@ -448,6 +449,7 @@
 
     <!-- Earned Media Tab -->
     <div class="tab-content" id="tab-em">
+      <div id="emCountryNote" style="display:none;font-size:.78rem;color:#64748b;background:#f8fafc;border-left:3px solid #00EA80;padding:6px 10px;margin-bottom:10px;border-radius:4px;"></div>
       <div class="mentions-grid" id="mentionsGrid"></div>
     </div>
   </div>
@@ -923,10 +925,31 @@ function selectCountry(code, D) {
   const country = D.country_data[code];
   document.getElementById('detailTitle').textContent = `${country.flag} ${country.name} — Detail`;
 
-  // SERP Table
+  // SERP Table — per country
   buildSerpTable(D.serp_data?.results?.[code] || {});
-  // AIO Table
+
+  // AI Overview Table — per country
   buildAioTable(D.ai_overview_data?.results?.[code] || {});
+
+  // LLM — global signal, show note
+  const llmBody = document.getElementById('llmPartABody');
+  const llmBodyB = document.getElementById('llmPartBBody');
+  if (llmBody && !llmBody.dataset.built) {
+    // Already built on init — just add a country note above the table
+    llmBody.dataset.built = '1';
+  }
+  const llmNote = document.getElementById('llmCountryNote');
+  if (llmNote) {
+    llmNote.textContent = `Showing global LLM data — queries run across all markets, not per country.`;
+    llmNote.style.display = 'block';
+  }
+
+  // Earned Media — global signal, show note
+  const emNote = document.getElementById('emCountryNote');
+  if (emNote) {
+    emNote.textContent = `Showing global Earned Media — mentions tracked across all platforms, not per country.`;
+    emNote.style.display = 'block';
+  }
 }
 
 // ── Country Tabs ───────────────────────────────────────────────────────────
@@ -1022,11 +1045,15 @@ function buildSerpTable(countryResults) {
              </div>`
           : '';
         const domainDisplay = r.domain || '';
+        // When URL is missing, construct a best-guess link from the domain
+        const linkUrl = r.url || (r.domain ? 'https://' + r.domain : '#');
+        // When title is missing, use domain as display text
+        const displayTitle = title !== '—' ? title : (r.domain || '—');
         return `<tr class="${r.is_ivisa ? 'ivisa-row' : ''}">
           <td style="vertical-align:top;padding-top:10px;">${r.position ? posBadge(r.position) : '—'}</td>
           <td style="vertical-align:top;">
             <div style="font-size:.72rem;color:var(--muted);margin-bottom:2px;">${domainDisplay}</div>
-            <a href="${r.url||'#'}" target="_blank" style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:#1a0dab;text-decoration:none;line-height:1.3;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${title}</a>
+            <a href="${linkUrl}" target="_blank" style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:#1a0dab;text-decoration:none;line-height:1.3;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${displayTitle}</a>
             ${snippetHtml}
           </td>
           <td style="text-align:center;vertical-align:top;padding-top:10px;">${sentEmoji(r.sentiment)} ${pillSentiment(r.sentiment)}</td>
@@ -1166,7 +1193,9 @@ function buildAioTable(countryResults) {
 // ── LLM Tables ─────────────────────────────────────────────────────────────
 let llmExpandCount = 0;
 function llmResponseCell(text, score) {
-  if (!text) return '<span style="color:var(--muted);font-size:.75rem;">No response</span>';
+  // Guard against Python None serialized as the string "None" or "null"
+  if (!text || text === 'None' || text === 'null' || text === 'undefined')
+    return '<span style="color:var(--muted);font-size:.75rem;">No response</span>';
   const id = 'llm-r-' + (++llmExpandCount);
   const scoreHtml = score != null
     ? `<span style="font-weight:700;color:${scoreColor(score)};margin-right:6px;">${fmtScore(score)}/100</span>`
@@ -1187,7 +1216,10 @@ function buildLlmTables(llmData) {
       <tr>
         <td style="max-width:200px;font-weight:600;">${r.query}</td>
         <td style="max-width:280px">${llmResponseCell(r.claude_response, r.claude_sentiment)}</td>
-        <td style="max-width:280px">${llmResponseCell(r.gemini_response, r.gemini_sentiment)}</td>
+        <td style="max-width:280px">
+          ${llmResponseCell(r.gemini_response, r.gemini_sentiment)}
+          ${(r.gemini_sources||[]).length ? `<div style="margin-top:5px;">${(r.gemini_sources||[]).slice(0,3).map(u=>`<a href="${u}" target="_blank" style="display:block;font-size:.7rem;color:#08ADE4;word-break:break-all;margin-bottom:2px;">${u.replace(/^https?:\/\//,'').substring(0,55)}…</a>`).join('')}</div>` : ''}
+        </td>
         <td style="text-align:center">
           <span style="font-weight:800;font-size:1.1rem;color:${scoreColor(r.avg_sentiment||0)}">${fmtScore(r.avg_sentiment)}</span>
           <div class="progress-bar" style="width:60px;margin:4px auto 0">

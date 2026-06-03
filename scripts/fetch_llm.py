@@ -109,19 +109,43 @@ def _ask_claude(client, prompt: str, max_tokens: int = 500) -> str | None:
         return None
 
 
-def _ask_gemini(client, prompt: str) -> str | None:
-    """Send a prompt to Gemini via google.genai Client. Returns text or None."""
+def _ask_gemini(client, prompt: str, with_grounding: bool = False) -> tuple[str | None, list[str]]:
+    """
+    Send a prompt to Gemini via google.genai Client.
+    Returns (text, sources) — sources is a list of URLs from grounding (if enabled).
+    Falls back to (None, []) on error.
+    """
     if client is None:
-        return None
+        return None, []
     try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
-        )
-        return response.text.strip()
+        kwargs = {"model": GEMINI_MODEL, "contents": prompt}
+        if with_grounding:
+            try:
+                import google.genai.types as genai_types
+                kwargs["config"] = genai_types.GenerateContentConfig(
+                    tools=[genai_types.Tool(google_search=genai_types.GoogleSearch())]
+                )
+            except Exception:
+                pass  # grounding not available — fall through without it
+
+        response = client.models.generate_content(**kwargs)
+        text = response.text.strip() if response.text else None
+
+        # Extract grounding sources if available
+        sources = []
+        try:
+            chunks = response.candidates[0].grounding_metadata.grounding_chunks
+            for chunk in chunks:
+                url = getattr(getattr(chunk, 'web', None), 'uri', None)
+                if url:
+                    sources.append(url)
+        except Exception:
+            pass
+
+        return text, sources
     except Exception as exc:
         logger.warning("Gemini query failed: %s", exc)
-        return None
+        return None, []
 
 
 def _score_sentiment(text: str, claude_client, gemini_model) -> tuple[float | None, float | None]:
@@ -147,10 +171,9 @@ def _score_sentiment(text: str, claude_client, gemini_model) -> tuple[float | No
 
     gemini_score = None
     if gemini_model:
-        raw = _ask_gemini(gemini_model, prompt)
+        raw, _ = _ask_gemini(gemini_model, prompt)
         if raw:
             try:
-                # Gemini sometimes wraps the number in prose — extract first number
                 import re
                 nums = re.findall(r'\d+(?:\.\d+)?', raw)
                 if nums:
@@ -174,7 +197,7 @@ def _run_part_a(claude_client, gemini_model) -> dict[str, Any]:
 
         claude_response = _ask_claude(claude_client, query)
         time.sleep(0.5)
-        gemini_response = _ask_gemini(gemini_model, query)
+        gemini_response, gemini_sources = _ask_gemini(gemini_model, query, with_grounding=True)
         time.sleep(0.5)
 
         # Score Claude's response
@@ -192,7 +215,7 @@ def _run_part_a(claude_client, gemini_model) -> dict[str, Any]:
         gemini_sentiment = None
         if gemini_response:
             import re
-            raw = _ask_gemini(gemini_model, SENTIMENT_PROMPT_TEMPLATE.format(text=gemini_response[:2000]))
+            raw, _ = _ask_gemini(gemini_model, SENTIMENT_PROMPT_TEMPLATE.format(text=gemini_response[:2000]))
             if raw:
                 try:
                     nums = re.findall(r'\d+(?:\.\d+)?', raw)
@@ -209,6 +232,7 @@ def _run_part_a(claude_client, gemini_model) -> dict[str, Any]:
             "query": query,
             "claude_response": claude_response,
             "gemini_response": gemini_response,
+            "gemini_sources": gemini_sources,
             "claude_sentiment": claude_sentiment,
             "gemini_sentiment": gemini_sentiment,
             "avg_sentiment": avg_sentiment,
@@ -237,7 +261,7 @@ def _run_part_b(claude_client, gemini_model) -> dict[str, Any]:
 
         claude_response = _ask_claude(claude_client, query)
         time.sleep(0.5)
-        gemini_response = _ask_gemini(gemini_model, query)
+        gemini_response, gemini_sources = _ask_gemini(gemini_model, query, with_grounding=True)
         time.sleep(0.5)
 
         claude_mentions = "ivisa" in (claude_response or "").lower()
@@ -261,7 +285,7 @@ def _run_part_b(claude_client, gemini_model) -> dict[str, Any]:
             time.sleep(0.3)
 
         if gemini_mentions and gemini_response:
-            raw = _ask_gemini(gemini_model, SENTIMENT_PROMPT_TEMPLATE.format(text=gemini_response[:2000]))
+            raw, _ = _ask_gemini(gemini_model, SENTIMENT_PROMPT_TEMPLATE.format(text=gemini_response[:2000]))
             if raw:
                 try:
                     nums = re.findall(r'\d+(?:\.\d+)?', raw)
@@ -281,6 +305,7 @@ def _run_part_b(claude_client, gemini_model) -> dict[str, Any]:
             "query": query,
             "claude_mentions_ivisa": claude_mentions,
             "gemini_mentions_ivisa": gemini_mentions,
+            "gemini_sources": gemini_sources,
             "claude_sentiment": claude_sentiment,
             "gemini_sentiment": gemini_sentiment,
             "avg_sentiment": avg_sentiment,
@@ -335,3 +360,122 @@ def fetch_llm_data() -> dict[str, Any]:
         "part_b": part_b,
         "global_score": global_score,
     }
+
+
+# ---------------------------------------------------------------------------
+# Per-country LLM brand perception
+# ---------------------------------------------------------------------------
+
+COUNTRY_BRAND_QUERY_TEMPLATES = [
+    "Is iVisa trustworthy for travelers from {country_name}?",
+    "Is iVisa legit for {country_name} passport holders?",
+    "Is iVisa safe to use in {country_name}?",
+    "iVisa review {country_name}",
+    "Should I use iVisa from {country_name}?",
+]
+
+
+def run_llm_by_country(countries: dict, claude_client, gemini_model) -> dict:
+    """
+    Run 5 country-specific brand queries against Claude and Gemini for each country.
+
+    Args:
+        countries: dict of {code: {"name": str, ...}} from config.COUNTRIES
+        claude_client: Anthropic client instance (or None)
+        gemini_model:  google.genai Client instance (or None)
+
+    Returns:
+        {
+          country_code: {
+            "queries": [
+              {
+                "query": str,
+                "claude_response": str | None,
+                "gemini_response": str | None,
+                "claude_sentiment": float | None,
+                "gemini_sentiment": float | None,
+                "avg_sentiment": float,
+              }, ...
+            ],
+            "avg_sentiment": float,
+          }, ...
+        }
+    """
+    import re as _re
+
+    results: dict = {}
+
+    for code, config in countries.items():
+        country_name = config.get("name", code)
+        logger.info("  [LLM by country] %s (%s)...", country_name, code)
+
+        query_results = []
+
+        try:
+            for template in COUNTRY_BRAND_QUERY_TEMPLATES:
+                query = template.format(country_name=country_name)
+
+                claude_response = _ask_claude(claude_client, query)
+                time.sleep(0.5)
+                gemini_response, _ = _ask_gemini(gemini_model, query, with_grounding=True)
+                time.sleep(0.5)
+
+                # Score Claude response using Claude
+                claude_sentiment = None
+                if claude_response:
+                    raw = _ask_claude(
+                        claude_client,
+                        SENTIMENT_PROMPT_TEMPLATE.format(text=claude_response[:2000]),
+                        max_tokens=10,
+                    )
+                    if raw:
+                        try:
+                            claude_sentiment = max(0.0, min(100.0, float(raw)))
+                        except ValueError:
+                            pass
+                    time.sleep(0.3)
+
+                # Score Gemini response using Gemini
+                gemini_sentiment = None
+                if gemini_response:
+                    raw_g, _ = _ask_gemini(
+                        gemini_model,
+                        SENTIMENT_PROMPT_TEMPLATE.format(text=gemini_response[:2000]),
+                    )
+                    if raw_g:
+                        try:
+                            nums = _re.findall(r'\d+(?:\.\d+)?', raw_g)
+                            if nums:
+                                gemini_sentiment = max(0.0, min(100.0, float(nums[0])))
+                        except ValueError:
+                            pass
+                    time.sleep(0.3)
+
+                scores = [s for s in [claude_sentiment, gemini_sentiment] if s is not None]
+                avg_sentiment = round(sum(scores) / len(scores), 2) if scores else 50.0
+
+                query_results.append({
+                    "query": query,
+                    "claude_response": claude_response,
+                    "gemini_response": gemini_response,
+                    "claude_sentiment": claude_sentiment,
+                    "gemini_sentiment": gemini_sentiment,
+                    "avg_sentiment": avg_sentiment,
+                })
+
+        except Exception as exc:
+            logger.error("  [LLM by country] %s failed: %s", code, exc)
+
+        if query_results:
+            avg = round(sum(r["avg_sentiment"] for r in query_results) / len(query_results), 2)
+        else:
+            avg = 50.0
+
+        logger.info("    → %s LLM: avg sentiment %.1f", code, avg)
+
+        results[code] = {
+            "queries": query_results,
+            "avg_sentiment": avg,
+        }
+
+    return results

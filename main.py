@@ -49,7 +49,14 @@ def _save_historical(data: dict, historical_dir: pathlib.Path, run_date: date) -
     fname = historical_dir / f"{run_date.isoformat()}.json"
     try:
         with open(fname, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2, default=str)
+            # Use default=str only for non-serialisable types (date, Path, etc.)
+            # but never convert None → "None" (that breaks Gemini/LLM display)
+            def _json_default(obj):
+                import datetime
+                if isinstance(obj, (datetime.date, datetime.datetime)):
+                    return obj.isoformat()
+                return str(obj)
+            json.dump(data, f, ensure_ascii=False, indent=2, default=_json_default)
         logger.info("  Historical snapshot saved: %s", fname)
     except OSError as exc:
         logger.error("  Could not save historical data: %s", exc)
@@ -65,6 +72,8 @@ def _build_report_payload(
     action_items_by_tab: dict,
     previous_csov: float | None,
     country_configs: dict,
+    earned_media_by_country: dict | None = None,
+    llm_by_country: dict | None = None,
 ) -> dict:
     """Assemble all data into the shape expected by generate_report."""
     # Build country_data for the country grid + component breakdown
@@ -148,20 +157,22 @@ def _build_report_payload(
         pass
 
     return {
-        "csov_score":          csov_result["csov_score"],
-        "previous_csov_score": previous_csov,
-        "components":          components,
-        "country_data":        country_data,
-        "serp_data":           serp_data,
-        "ai_overview_data":    ai_overview_data,
-        "llm_data":            llm_data,
-        "earned_media":        earned_media_data,
-        "historical":          history,
-        "action_items":        action_items,
-        "action_items_by_tab": action_items_by_tab,
-        "formula":             csov_result.get("formula", ""),
-        "period1_baseline":    period1_baseline,
-        "scoring_version":     SCORING_VERSION,
+        "csov_score":               csov_result["csov_score"],
+        "previous_csov_score":      previous_csov,
+        "components":               components,
+        "country_data":             country_data,
+        "serp_data":                serp_data,
+        "ai_overview_data":         ai_overview_data,
+        "llm_data":                 llm_data,
+        "earned_media":             earned_media_data,
+        "earned_media_by_country":  earned_media_by_country or {},
+        "llm_by_country":           llm_by_country or {},
+        "historical":               history,
+        "action_items":             action_items,
+        "action_items_by_tab":      action_items_by_tab,
+        "formula":                  csov_result.get("formula", ""),
+        "period1_baseline":         period1_baseline,
+        "scoring_version":          SCORING_VERSION,
     }
 
 
@@ -267,17 +278,32 @@ def run(dry_run: bool = False, send_slack: bool = False) -> None:
             action_items         = ["Recalculation required — see logs for errors."]
             action_items_by_tab  = {}
 
+        # 4b. Per-country Earned Media
+        logger.info("[4b/6] Fetching per-country earned media...")
+        earned_media_by_country: dict = {}
+        try:
+            from scripts.fetch_earned_media import fetch_earned_media_by_country
+            earned_media_by_country = fetch_earned_media_by_country(COUNTRIES)
+        except Exception as exc:
+            logger.error("Per-country EM fetch failed: %s — skipping.", exc)
+
+        # 4c. Per-country LLM brand perception — deferred to v1.1
+        # (requires language-specific queries + Gemini locale grounding)
+        llm_by_country: dict = {}
+
         logger.info("[5/6] Generating HTML report...")
         report_payload = _build_report_payload(
-            serp_data         = serp_data,
-            ai_overview_data  = ai_overview_data,
-            llm_data          = llm_data,
-            earned_media_data = {**earned_media_data, **{"score": earned_media_data.get("score", 60)}},
-            csov_result       = csov_result,
-            action_items         = action_items,
-            action_items_by_tab  = action_items_by_tab,
-            previous_csov        = prev_csov,
-            country_configs   = COUNTRIES,
+            serp_data                = serp_data,
+            ai_overview_data         = ai_overview_data,
+            llm_data                 = llm_data,
+            earned_media_data        = {**earned_media_data, **{"score": earned_media_data.get("score", 60)}},
+            csov_result              = csov_result,
+            action_items             = action_items,
+            action_items_by_tab      = action_items_by_tab,
+            previous_csov            = prev_csov,
+            country_configs          = COUNTRIES,
+            earned_media_by_country  = earned_media_by_country,
+            llm_by_country           = llm_by_country,
         )
         report_payload["previous_csov_score"] = prev_csov
 

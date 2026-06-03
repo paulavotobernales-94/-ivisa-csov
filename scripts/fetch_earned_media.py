@@ -593,3 +593,132 @@ def fetch_earned_media_data(date_range: tuple[str, str] | None = None) -> dict[s
         "counts": counts,
         "source_breakdown": source_breakdown,
     }
+
+
+# ---------------------------------------------------------------------------
+# Per-country earned media
+# ---------------------------------------------------------------------------
+
+def fetch_earned_media_by_country(countries: dict) -> dict:
+    """
+    Fetch earned media mentions for iVisa per country using gl= parameter.
+
+    Args:
+        countries: dict of {code: {"name": str, "flag": str, ...}} from config.COUNTRIES
+
+    Returns:
+        {
+          country_code: {
+            "score": float,
+            "mentions": [...],
+            "counts": {"total": int, "positive": int, "neutral": int, "negative": int},
+          }, ...
+        }
+    """
+    if not SERPAPI_KEY:
+        logger.warning("SERPAPI_KEY not set — skipping per-country earned media fetch.")
+        return {}
+
+    today = date.today()
+    date_range = ((today - timedelta(days=90)).isoformat(), today.isoformat())
+    start_fmt = _date_to_google_fmt(date_range[0])
+    end_fmt = _date_to_google_fmt(date_range[1])
+    tbs = f"cdr:1,cd_min:{start_fmt},cd_max:{end_fmt}"
+
+    results: dict = {}
+
+    for code, config in countries.items():
+        country_name = config.get("name", code)
+        gl = code.lower()
+        logger.info("  [EM by country] %s (%s)...", country_name, code)
+
+        all_mentions: list[dict] = []
+
+        try:
+            # 1. Google News for each EM query
+            for query in EM_QUERIES:
+                params = {
+                    "engine": "google",
+                    "q": query,
+                    "tbm": "nws",
+                    "gl": gl,
+                    "hl": "en",
+                    "num": 10,
+                    "tbs": tbs,
+                }
+                data = _serpapi_search(params)
+                all_mentions.extend(_parse_news_results(data))
+                time.sleep(0.3)
+
+            # 2. Travel blogs
+            sites_combined = " OR ".join([
+                "site:lonelyplanet.com", "site:nomadicmatt.com",
+                "site:thepointsguy.com", "site:travelpulse.com",
+                "site:skift.com", "site:forbes.com", "site:businessinsider.com",
+                "site:cntraveler.com", "site:afar.com", "site:matadornetwork.com",
+            ])
+            params = {
+                "engine": "google",
+                "q": f"iVisa ({sites_combined})",
+                "gl": gl,
+                "hl": "en",
+                "num": 20,
+                "tbs": tbs,
+            }
+            data = _serpapi_search(params)
+            all_mentions.extend(_parse_organic_results(data, "blog"))
+            time.sleep(0.3)
+
+            # 3. Reddit
+            params = {
+                "engine": "google",
+                "q": "iVisa site:reddit.com -site:reddit.com/r/ivisa",
+                "gl": gl,
+                "hl": "en",
+                "num": 20,
+                "tbs": tbs,
+            }
+            data = _serpapi_search(params)
+            all_mentions.extend(_parse_organic_results(data, "reddit"))
+            time.sleep(0.3)
+
+            # 4. YouTube
+            params = {
+                "engine": "google",
+                "q": "iVisa review site:youtube.com",
+                "gl": gl,
+                "hl": "en",
+                "num": 10,
+                "tbs": tbs,
+            }
+            data = _serpapi_search(params)
+            all_mentions.extend(_parse_organic_results(data, "youtube"))
+            time.sleep(0.3)
+
+        except Exception as exc:
+            logger.error("  [EM by country] %s failed: %s", code, exc)
+
+        # De-duplicate
+        seen: set[str] = set()
+        unique: list[dict] = []
+        for m in all_mentions:
+            if m["url"] not in seen:
+                seen.add(m["url"])
+                unique.append(m)
+
+        counts = {"total": len(unique), "positive": 0, "neutral": 0, "negative": 0}
+        for m in unique:
+            s = m.get("sentiment", "neutral")
+            if s in counts:
+                counts[s] += 1
+
+        score = _calculate_em_score(unique)
+        logger.info("    → %s EM: %.1f (%d mentions)", code, score, counts["total"])
+
+        results[code] = {
+            "score": score,
+            "mentions": unique,
+            "counts": counts,
+        }
+
+    return results
