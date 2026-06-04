@@ -709,13 +709,6 @@ function buildComponentCards(components) {
 
 // ── Trend Chart ────────────────────────────────────────────────────────────
 
-// Periods: Oct–Jan, Feb–May, Jun–Sep
-const PERIODS = [
-  { label: 'Oct – Jan', months: [10, 11, 12, 1] },
-  { label: 'Feb – May', months: [2, 3, 4, 5] },
-  { label: 'Jun – Sep', months: [6, 7, 8, 9] },
-];
-
 // Parse "Jun 01 – Jun 07, 2026" or "May 2026" → { year, month } of the END date
 function parseWeekLabel(label) {
   // Monthly label e.g. "May 2026"
@@ -762,49 +755,6 @@ function toMonthly(history) {
   });
 }
 
-// Aggregate monthly → period points (avg of last 2 weeks of last month of period)
-function toPeriod(history) {
-  // First get monthly groups
-  const byMonth = {};
-  history.forEach(h => {
-    const p = parseWeekLabel(h.week_label);
-    if (!p) return;
-    const key = `${p.year}-${String(p.month).padStart(2,'0')}`;
-    if (!byMonth[key]) byMonth[key] = { items: [], year: p.year, month: p.month };
-    byMonth[key].items.push(h);
-  });
-
-  // Group months into periods, identify which period+year each month belongs to
-  const byPeriod = {};
-  Object.keys(byMonth).sort().forEach(key => {
-    const { year, month, items } = byMonth[key];
-    const period = PERIODS.find(p => p.months.includes(month));
-    if (!period) return;
-    // Period year = year of the last month in the period
-    // For Oct-Jan, Jan belongs to the following year's period
-    let periodYear = year;
-    if (period.label === 'Oct – Jan' && month === 10) periodYear = year; // Oct starts it
-    const pKey = `${periodYear}-${period.label}`;
-    if (!byPeriod[pKey]) byPeriod[pKey] = { label: period.label, year: periodYear, months: period.months, monthData: {} };
-    byPeriod[pKey].monthData[month] = items;
-  });
-
-  return Object.keys(byPeriod).sort().map(key => {
-    const g = byPeriod[key];
-    // Find the last month of this period that has data
-    const lastMonth = g.months.slice().reverse().find(m => g.monthData[m]);
-    if (!lastMonth) return null;
-    const items = g.monthData[lastMonth];
-    return {
-      week_label:   `${g.label} ${g.year}`,
-      csov:         avgLast2(items, 'csov'),
-      serp:         avgLast2(items, 'serp'),
-      ai_overview:  avgLast2(items, 'ai_overview'),
-      llm:          avgLast2(items, 'llm'),
-      earned_media: avgLast2(items, 'earned_media'),
-    };
-  }).filter(Boolean);
-}
 
 let _trendChart = null;
 let _currentView = 'weekly';
@@ -812,7 +762,7 @@ let _currentView = 'weekly';
 function setChartView(view) {
   _currentView = view;
   // Update toggle button styles
-  ['weekly','monthly','period'].forEach(v => {
+  ['weekly','monthly'].forEach(v => {
     const btn = document.getElementById('btn-' + v);
     if (!btn) return;
     if (v === view) {
@@ -822,7 +772,7 @@ function setChartView(view) {
     }
   });
   const raw = REPORT_DATA.historical || REPORT_DATA.history || [];
-  const history = view === 'monthly' ? toMonthly(raw) : view === 'period' ? toPeriod(raw) : raw;
+  const history = view === 'monthly' ? toMonthly(raw) : raw;
   _renderTrendChart(history, view);
 }
 
@@ -909,7 +859,7 @@ function _renderTrendChart(history, view) {
 function downloadTrendCSV() {
   const raw = REPORT_DATA.historical || REPORT_DATA.history || [];
   if (!raw.length) { alert('No historical data available yet.'); return; }
-  const history = _currentView === 'monthly' ? toMonthly(raw) : _currentView === 'period' ? toPeriod(raw) : raw;
+  const history = _currentView === 'monthly' ? toMonthly(raw) : raw;
   const headers = ['Date','Overall CSOV','SERP','AI Overview','LLM','Earned Media'];
   const rows = history.map(h => [
     h.week_label,
@@ -1669,7 +1619,10 @@ def generate_report(report_data: dict[str, Any], output_path: str) -> None:
     reports_dir = DOCS_DIR / "reports"
     archive_links = ""
     try:
-        archive_files = sorted(reports_dir.glob("*.html"), reverse=True)
+        archive_files = sorted(
+            [f for f in reports_dir.glob("*.html") if f.stem != "index"],
+            reverse=True,
+        )
         for af in archive_files:
             stem = af.stem  # e.g. "2026-06-02"
             try:

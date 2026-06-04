@@ -206,7 +206,6 @@ def run(dry_run: bool = False, send_slack: bool = False) -> None:
             sys.exit(1)
 
         logger.info("[2-4/6] Skipping API calls (dry-run).")
-        logger.info("[5/6] Generating HTML report...")
 
     # ── LIVE RUN ──────────────────────────────────────────────────────────────
     else:
@@ -312,7 +311,6 @@ def run(dry_run: bool = False, send_slack: bool = False) -> None:
         # (requires language-specific queries + Gemini locale grounding)
         llm_by_country: dict = {}
 
-        logger.info("[5/6] Generating HTML report...")
         report_payload = _build_report_payload(
             serp_data                = serp_data,
             ai_overview_data         = ai_overview_data,
@@ -326,7 +324,6 @@ def run(dry_run: bool = False, send_slack: bool = False) -> None:
             earned_media_by_country  = earned_media_by_country,
             llm_by_country           = llm_by_country,
         )
-        report_payload["previous_csov_score"] = prev_csov
 
     # ── HTML Report ───────────────────────────────────────────────────────────
     logger.info("[5/6] Generating HTML report...")
