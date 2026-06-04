@@ -297,6 +297,91 @@ def check_report_gen():
 check("HTML report generation", check_report_gen)
 
 
+# ── 10. Snippet coverage in sample data ──────────────────────────────────────
+print(f"\n{SEP}")
+print("  10. Snippet Coverage (SERP results must show text)")
+print(SEP)
+
+def check_snippet_coverage():
+    """
+    Every informational keyword must have snippets for at least 50% of results.
+    Branded 'iVisa' keyword is exempt — Google serves it as sitelinks/app cards.
+    If this fails, the SerpAPI organic fallback in fetch_serp.py is broken.
+    Uses the most recent historical run (real data), not synthetic sample_data.json.
+    """
+    import json, pathlib
+    from scripts.config import HISTORICAL_DIR, SAMPLE_DATA_FILE
+
+    # Prefer most recent real run; fall back to sample data with lower bar
+    hist_files = sorted(pathlib.Path(HISTORICAL_DIR).glob("*.json"), reverse=True)
+    if hist_files:
+        data_file = hist_files[0]
+        is_sample = False
+    else:
+        data_file = SAMPLE_DATA_FILE
+        is_sample = True
+
+    with open(data_file, "r") as f:
+        data = json.load(f)
+
+    if is_sample:
+        return "No historical run data yet — skipping (sample_data.json has no real snippets)"
+
+    serp_results = data.get("serp_data", {}).get("results", {})
+    if not serp_results:
+        return "No SERP results in sample data — skipping"
+
+    # Exempt branded single-word query: Google serves sitelinks there, not standard organic
+    EXEMPT_KEYWORDS = {"iVisa", "ivisa"}
+    MIN_COVERAGE = 0.50  # at least 50% of results must have a snippet
+
+    failures = []
+    checked = 0
+
+    for country_code, kw_results in serp_results.items():
+        for keyword, results in kw_results.items():
+            if keyword.strip().lower() in {k.lower() for k in EXEMPT_KEYWORDS}:
+                continue
+            if not results:
+                continue
+            has_snip = sum(1 for r in results if r.get("snippet", "").strip())
+            coverage = has_snip / len(results)
+            checked += 1
+            if coverage < MIN_COVERAGE:
+                failures.append(
+                    f"'{keyword}' ({country_code}): {has_snip}/{len(results)} snippets ({coverage:.0%})"
+                )
+
+    if failures:
+        raise Exception(
+            f"Low snippet coverage on {len(failures)} keyword(s) — "
+            f"SerpAPI fallback may be broken:\n    " + "\n    ".join(failures[:5])
+        )
+
+    return f"{checked} keyword/country combos checked — all above {MIN_COVERAGE:.0%} threshold"
+
+check("Snippet coverage in sample data", check_snippet_coverage)
+
+
+# ── 11. Gemini model is not a preview/dated model ─────────────────────────────
+print(f"\n{SEP}")
+print("  11. Gemini model safety check")
+print(SEP)
+
+def check_gemini_model():
+    from scripts.config import GEMINI_MODEL
+    import re
+    # Preview models contain a date like -05-20 or "preview" — they expire silently
+    if re.search(r'preview|\d{2}-\d{2}', GEMINI_MODEL, re.IGNORECASE):
+        raise Exception(
+            f"GEMINI_MODEL='{GEMINI_MODEL}' looks like a preview/dated model. "
+            f"Update to a stable model (e.g. 'gemini-2.0-flash') in scripts/config.py"
+        )
+    return f"model='{GEMINI_MODEL}' — no preview/date suffix ✓"
+
+check("Gemini model is stable (not preview)", check_gemini_model)
+
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 print(f"\n{SEP}")
 passed = sum(1 for r in results if r[0] == PASS)
