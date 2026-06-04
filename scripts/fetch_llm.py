@@ -93,59 +93,76 @@ def _get_gemini_client():
 # Single-call helpers
 # ---------------------------------------------------------------------------
 
-def _ask_claude(client, prompt: str, max_tokens: int = 500) -> str | None:
-    """Send a prompt to Claude. Returns text or None on failure."""
+def _ask_claude(client, prompt: str, max_tokens: int = 500, retries: int = 2) -> str | None:
+    """Send a prompt to Claude with retry on rate-limit. Returns text or None on failure."""
     if client is None:
         return None
-    try:
-        message = client.messages.create(
-            model=CLAUDE_MODEL,
-            max_tokens=max_tokens,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return message.content[0].text.strip()
-    except Exception as exc:
-        logger.warning("Claude query failed: %s", exc)
-        return None
+    for attempt in range(retries + 1):
+        try:
+            message = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=max_tokens,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            text = message.content[0].text.strip() if message.content else None
+            return text if text else None
+        except Exception as exc:
+            exc_str = str(exc).lower()
+            if attempt < retries and ("rate" in exc_str or "529" in exc_str or "overloaded" in exc_str):
+                wait = 10 * (attempt + 1)
+                logger.warning("Claude rate limit (attempt %d/%d) — retrying in %ds", attempt+1, retries+1, wait)
+                time.sleep(wait)
+            else:
+                logger.warning("Claude query failed: %s", exc)
+                return None
+    return None
 
 
-def _ask_gemini(client, prompt: str, with_grounding: bool = False) -> tuple[str | None, list[str]]:
+def _ask_gemini(client, prompt: str, with_grounding: bool = False, retries: int = 2) -> tuple[str | None, list[str]]:
     """
-    Send a prompt to Gemini via google.genai Client.
+    Send a prompt to Gemini via google.genai Client with retry on rate-limit.
     Returns (text, sources) — sources is a list of URLs from grounding (if enabled).
     Falls back to (None, []) on error.
     """
     if client is None:
         return None, []
-    try:
-        kwargs = {"model": GEMINI_MODEL, "contents": prompt}
-        if with_grounding:
-            try:
-                import google.genai.types as genai_types
-                kwargs["config"] = genai_types.GenerateContentConfig(
-                    tools=[genai_types.Tool(google_search=genai_types.GoogleSearch())]
-                )
-            except Exception:
-                pass  # grounding not available — fall through without it
-
-        response = client.models.generate_content(**kwargs)
-        text = response.text.strip() if response.text else None
-
-        # Extract grounding sources if available
-        sources = []
+    for attempt in range(retries + 1):
         try:
-            chunks = response.candidates[0].grounding_metadata.grounding_chunks
-            for chunk in chunks:
-                url = getattr(getattr(chunk, 'web', None), 'uri', None)
-                if url:
-                    sources.append(url)
-        except Exception:
-            pass
+            kwargs = {"model": GEMINI_MODEL, "contents": prompt}
+            if with_grounding:
+                try:
+                    import google.genai.types as genai_types
+                    kwargs["config"] = genai_types.GenerateContentConfig(
+                        tools=[genai_types.Tool(google_search=genai_types.GoogleSearch())]
+                    )
+                except Exception:
+                    pass  # grounding not available — fall through without it
 
-        return text, sources
-    except Exception as exc:
-        logger.warning("Gemini query failed: %s", exc)
-        return None, []
+            response = client.models.generate_content(**kwargs)
+            text = response.text.strip() if response.text else None
+
+            # Extract grounding sources if available
+            sources = []
+            try:
+                chunks = response.candidates[0].grounding_metadata.grounding_chunks
+                for chunk in chunks:
+                    url = getattr(getattr(chunk, 'web', None), 'uri', None)
+                    if url:
+                        sources.append(url)
+            except Exception:
+                pass
+
+            return text, sources
+        except Exception as exc:
+            exc_str = str(exc).lower()
+            if attempt < retries and ("rate" in exc_str or "429" in exc_str or "quota" in exc_str or "resource" in exc_str):
+                wait = 15 * (attempt + 1)
+                logger.warning("Gemini rate limit (attempt %d/%d) — retrying in %ds", attempt+1, retries+1, wait)
+                time.sleep(wait)
+            else:
+                logger.warning("Gemini query failed (model=%s): %s", GEMINI_MODEL, exc)
+                return None, []
+    return None, []
 
 
 def _score_sentiment(text: str, claude_client, gemini_model) -> tuple[float | None, float | None]:

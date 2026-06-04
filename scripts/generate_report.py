@@ -327,7 +327,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
           <div id="viewToggle" style="display:flex;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;font-size:11px;">
             <button onclick="setChartView('weekly')"  id="btn-weekly"  style="padding:4px 10px;border:none;cursor:pointer;font-family:inherit;background:#00EA80;color:#0A2540;font-weight:600;">Weekly</button>
             <button onclick="setChartView('monthly')" id="btn-monthly" style="padding:4px 10px;border:none;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;">Monthly</button>
-            <button onclick="setChartView('period')"  id="btn-period"  style="padding:4px 10px;border:none;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;">Period</button>
           </div>
           <button onclick="downloadTrendCSV()" style="font-size:11px;padding:4px 10px;border:1px solid #00EA80;background:transparent;color:#00EA80;border-radius:6px;cursor:pointer;font-family:inherit;">⬇ Download CSV</button>
         </div>
@@ -411,29 +410,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <li>🟡 <strong>55–74:</strong> Needs attention — some risks present</li>
             <li>🔴 <strong>0–54:</strong> Critical — active reputation risk</li>
           </ul>
-          <p style="margin-top:8px;"><strong>Period 1 (Feb–May 2026):</strong> Baseline — establishes where we started.<br>
-          <strong>Period 2 (Jun–Sep 2026):</strong> Goal period — target 70+ across all components.<br>
-          <strong>Data sources:</strong> SEMrush, Ahrefs, SerpAPI (Google), Claude (Anthropic), Gemini (Google).</p>
+          <p style="margin-top:8px;"><strong>Data sources:</strong> SEMrush, Ahrefs, SerpAPI (Google), Claude (Anthropic), Gemini (Google).</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PERIOD FRAMEWORK + ANALYSIS -->
-  <div class="period-panel" id="periodPanel" style="display:none;">
-    <div class="section-title" style="margin-bottom:4px;">📅 Measurement Periods</div>
-    <p style="font-size:.82rem;color:var(--muted);margin-bottom:0;">
-      <strong>Period 1 (P1) Feb–May 2026</strong> = baseline benchmark (where we started) &nbsp;|&nbsp;
-      <strong>Period 2 (P2) Jun–Sep 2026</strong> = goal period, target 70+ across all components
-    </p>
-    <div class="period-grid" id="periodGrid"></div>
-
-    <!-- SCORE ANALYSIS — sits directly below the period comparison -->
-    <div id="scoreAnalysisPanel" style="display:none;margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
-      <div style="font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:4px;">🔍 What's Driving the Score This Week</div>
-      <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">Auto-generated from SERP, AI Overview, LLM and country data</p>
-      <ul id="scoreAnalysisList" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;"></ul>
-    </div>
+  <!-- WHAT'S DRIVING THE SCORE THIS WEEK -->
+  <div class="period-panel" id="scoreAnalysisPanel" style="margin-bottom:24px;">
+    <div class="section-title" style="margin-bottom:4px;">🔍 What's Driving the Score This Week</div>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">Auto-generated from SERP, AI Overview, LLM and country data</p>
+    <ul id="scoreAnalysisList" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;"></ul>
   </div>
 
   <!-- COUNTRY BREAKDOWN -->
@@ -627,10 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Earned Media
   buildEarnedMedia(D.earned_media);
 
-  // Period Framework
-  buildPeriodPanel(D);
-
-  // Score Analysis
+  // Score Analysis — What's Driving the Score This Week
   buildScoreAnalysis(D);
 
   // Actions
@@ -1526,66 +1510,6 @@ function buildEarnedMedia(earnedMedia) {
   _renderEmCards('all');
 }
 
-// ── Period Framework ───────────────────────────────────────────────────────
-function buildPeriodPanel(D) {
-  const p1 = D.period1_baseline;
-  const panel = document.getElementById('periodPanel');
-  const grid  = document.getElementById('periodGrid');
-
-  if (!p1) return;  // No baseline yet — hide panel
-  panel.style.display = 'block';
-
-  const current = {
-    csov:         D.csov_score || 0,
-    serp:         D.components?.serp?.score || 0,
-    ai_overview:  D.components?.ai_overview?.score || 0,
-    llm:          D.components?.llm?.score || 0,
-    earned_media: D.components?.earned_media?.score || 0,
-  };
-
-  const P2_TARGETS = { csov: 70, serp: 70, ai_overview: 65, llm: 65, earned_media: 65 };
-
-  function deltaHtml(current, baseline) {
-    const d = current - baseline;
-    if (Math.abs(d) < 0.1) return '<span style="color:var(--muted)">→</span>';
-    const cls = d > 0 ? 'period-delta-pos' : 'period-delta-neg';
-    return `<span class="${cls}">${d > 0 ? '+' : ''}${d.toFixed(1)}</span>`;
-  }
-
-  const metrics = [
-    { label: 'Overall CSOV', key: 'csov' },
-    { label: 'SERP',         key: 'serp' },
-    { label: 'AI Overview',  key: 'ai_overview' },
-    { label: 'LLM',          key: 'llm' },
-    { label: 'Earned Media', key: 'earned_media' },
-  ];
-
-  let p1Html = `<div class="period-col"><h4>📊 Period 1 — Baseline (Feb–May 2026)<br><small style="font-weight:400;color:var(--muted);font-size:.78rem;">Used as starting benchmark for P2 goals</small></h4>`;
-  metrics.forEach(({ label, key }) => {
-    p1Html += `<div class="period-row">
-      <span class="period-label">${label}</span>
-      <span class="period-val">${(p1[key]||0).toFixed(1)}</span>
-    </div>`;
-  });
-  p1Html += `<div style="margin-top:8px;font-size:.75rem;color:var(--muted);">${p1.months_used||0} months averaged</div></div>`;
-
-  let p2Html = `<div class="period-col"><h4>🎯 Period 2 — Now vs P1 Baseline (Jun–Sep 2026 goal)<br><small style="font-weight:400;color:var(--muted);font-size:.78rem;">Current week vs P1 average · Target = 70+</small></h4>`;
-  metrics.forEach(({ label, key }) => {
-    const target = P2_TARGETS[key] || 70;
-    p2Html += `<div class="period-row">
-      <span class="period-label">${label}</span>
-      <span style="display:flex;gap:8px;align-items:center;">
-        <span class="period-val">${current[key].toFixed(1)}</span>
-        ${deltaHtml(current[key], p1[key]||0)}
-        <span class="period-target">Goal: ${target}</span>
-      </span>
-    </div>`;
-  });
-  p2Html += `</div>`;
-
-  grid.innerHTML = p1Html + p2Html;
-}
-
 // ── Score Analysis ─────────────────────────────────────────────────────────
 function buildScoreAnalysis(D) {
   const panel = document.getElementById('scoreAnalysisPanel');
@@ -1596,7 +1520,6 @@ function buildScoreAnalysis(D) {
   const history  = D.historical  || D.history || [];
   const serp     = D.serp_data   || {};
   const aio      = D.ai_overview_data || {};
-  const p1       = D.period1_baseline || null;
   const current  = {
     csov:         D.csov_score || 0,
     serp:         D.components?.serp?.score || 0,
@@ -1658,19 +1581,16 @@ function buildScoreAnalysis(D) {
     insights.push({ icon:'🤖', text:`<strong>Google AI Overviews are surfacing concerns about ${topicStr}</strong> — these are the specific topics being cited negatively in AI summaries. Content addressing these directly will improve the AI Overview score.` });
   }
 
-  // ── Period comparison ────────────────────────────────────────────────────
-  if (p1) {
-    const drops = [];
-    const gains = [];
-    ['serp','ai_overview','llm','earned_media'].forEach(k => {
-      const diff = current[k] - (p1[k]||0);
-      const label = {serp:'SERP',ai_overview:'AI Overview',llm:'LLM',earned_media:'Earned Media'}[k];
-      if (diff <= -3) drops.push(`${label} (${diff.toFixed(1)})`);
-      if (diff >= 3)  gains.push(`${label} (+${diff.toFixed(1)})`);
-    });
-    if (drops.length) insights.push({ icon:'📉', text:`<strong>Below P1 baseline:</strong> ${drops.join(', ')} — these components have weakened since the Feb–May benchmark. Focus content and outreach efforts here first.` });
-    if (gains.length) insights.push({ icon:'🚀', text:`<strong>Above P1 baseline:</strong> ${gains.join(', ')} — showing positive movement vs the starting benchmark.` });
-    if (!drops.length && !gains.length) insights.push({ icon:'➡️', text:`<strong>Scores stable vs P1 baseline</strong> — no significant movement yet. This is week one of Period 2; expect trends to form over the next 4–6 weeks as new content and PR efforts take effect.` });
+  // ── Week-over-week trend ─────────────────────────────────────────────────
+  if (history.length >= 2) {
+    const prev = history[history.length - 2];
+    const curr = history[history.length - 1];
+    const diff = (curr.csov || 0) - (prev.csov || 0);
+    if (Math.abs(diff) >= 1) {
+      const dir = diff > 0 ? '↑' : '↓';
+      const cls = diff > 0 ? 'color:var(--green-dark)' : 'color:var(--red)';
+      insights.push({ icon: diff > 0 ? '📈' : '📉', text:`<strong style="${cls}">Overall CSOV ${dir}${Math.abs(diff).toFixed(1)} vs last week</strong> — ${diff > 0 ? 'positive momentum, keep publishing trust-building content.' : 'score dipped — check which component dropped most in the breakdown above.'}` });
+    }
   }
 
   if (!insights.length) {
@@ -1678,9 +1598,6 @@ function buildScoreAnalysis(D) {
   }
 
   panel.style.display = 'block';
-  // also ensure parent periodPanel is visible
-  const parentPanel = document.getElementById('periodPanel');
-  if (parentPanel) parentPanel.style.display = 'block';
   insights.forEach(({ icon, text }) => {
     list.innerHTML += `<li style="display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:var(--bg);border-radius:8px;font-size:.875rem;line-height:1.55;">
       <span style="font-size:1.1rem;flex-shrink:0;margin-top:1px;">${icon}</span>
@@ -1765,9 +1682,113 @@ def generate_report(report_data: dict[str, Any], output_path: str) -> None:
         pass
     if not archive_links:
         archive_links = '<span style="padding:10px 16px;display:block;color:var(--muted);font-size:.82rem;">No archived reports yet</span>'
+    # Add "View all reports" link at the bottom of the dropdown
+    archive_links += '<a href="reports/index.html" style="font-weight:700;border-top:2px solid var(--border);color:var(--blue);">📋 View all reports →</a>\n'
     html = html.replace("__ARCHIVE_LINKS_PLACEHOLDER__", archive_links)
 
     out = pathlib.Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     logger.info("  Report written to: %s (%d KB)", output_path, len(html) // 1024)
+
+
+def generate_reports_index(reports_dir: str, output_path: str) -> None:
+    """
+    Generate docs/reports/index.html — a clean archive page listing all weekly reports.
+    Linked from the main dashboard header dropdown.
+    """
+    import pathlib
+    from datetime import date
+
+    reports_path = pathlib.Path(reports_dir)
+    archive_files = sorted(
+        [f for f in reports_path.glob("*.html") if f.stem != "index"],
+        reverse=True,
+    )
+
+    rows = ""
+    for af in archive_files:
+        stem = af.stem
+        try:
+            d = date.fromisoformat(stem)
+            # Week range Mon–Sun
+            from datetime import timedelta
+            mon = d - timedelta(days=d.weekday())
+            sun = mon + timedelta(days=6)
+            label = f"Week of {mon.strftime('%b %d')} – {sun.strftime('%b %d, %Y')}"
+            date_label = d.strftime("%b %d, %Y")
+        except ValueError:
+            label = stem
+            date_label = stem
+
+        rows += f"""
+        <tr>
+          <td style="padding:12px 16px;font-weight:600;color:var(--navy);">{label}</td>
+          <td style="padding:12px 16px;color:var(--muted);font-size:.85rem;">{date_label}</td>
+          <td style="padding:12px 16px;">
+            <a href="{af.name}" style="color:var(--blue);font-weight:600;text-decoration:none;
+               padding:6px 14px;border:1.5px solid var(--blue);border-radius:6px;font-size:.82rem;">
+              View Report →
+            </a>
+          </td>
+        </tr>"""
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iVisa CSOV — All Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {{
+    --navy:#0A2540; --blue:#394FE1; --green:#00EA80;
+    --bg:#F4FBF7; --card:#fff; --border:#D8EDE4;
+    --muted:#5A7A6A; --text:#0A2540;
+  }}
+  *, *::before, *::after {{ box-sizing:border-box; margin:0; padding:0; }}
+  body {{ font-family:'Manrope',Arial,sans-serif; background:var(--bg); color:var(--text); }}
+  .header {{ background:#fff; padding:18px 32px; display:flex; align-items:center;
+             justify-content:space-between; border-bottom:3px solid var(--green);
+             box-shadow:0 2px 8px rgba(0,0,0,.06); }}
+  .header h1 {{ font-size:1.15rem; font-weight:800; color:var(--navy); }}
+  .header a {{ font-size:.82rem; color:var(--blue); text-decoration:none; font-weight:600; }}
+  .container {{ max-width:900px; margin:0 auto; padding:32px 24px; }}
+  h2 {{ font-size:1rem; font-weight:800; color:var(--navy);
+        border-bottom:3px solid var(--green); padding-bottom:8px; margin-bottom:20px; }}
+  table {{ width:100%; border-collapse:collapse; background:var(--card);
+           border-radius:12px; overflow:hidden;
+           box-shadow:0 1px 3px rgba(10,37,64,.07),0 4px 16px rgba(10,37,64,.06); }}
+  thead {{ background:var(--navy); color:#fff; }}
+  thead th {{ padding:12px 16px; text-align:left; font-size:.82rem; font-weight:700; letter-spacing:.04em; }}
+  tbody tr {{ border-bottom:1px solid var(--border); }}
+  tbody tr:last-child {{ border-bottom:none; }}
+  tbody tr:hover {{ background:var(--bg); }}
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>📋 iVisa CSOV — All Weekly Reports</h1>
+  <a href="../index.html">← Back to Dashboard</a>
+</header>
+<div class="container">
+  <h2>Reports Archive</h2>
+  REPORTS_TABLE_PLACEHOLDER
+</div>
+</body>
+</html>"""
+
+    if not archive_files:
+        table_html = "<p style='color:var(--muted);'>No reports archived yet.</p>"
+    else:
+        table_html = (
+            "<table><thead><tr>"
+            "<th>Week</th><th>Run Date</th><th>Report</th>"
+            "</tr></thead><tbody>" + rows + "</tbody></table>"
+        )
+    html = html.replace("  REPORTS_TABLE_PLACEHOLDER", table_html)
+
+    out = pathlib.Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(html, encoding="utf-8")
+    logger.info("  Reports index written: %s", output_path)

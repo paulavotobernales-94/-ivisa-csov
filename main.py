@@ -342,6 +342,15 @@ def run(dry_run: bool = False, send_slack: bool = False) -> None:
         archive_path.parent.mkdir(parents=True, exist_ok=True)
         generate_report(report_payload, str(archive_path))
 
+        # Reports archive index: docs/reports/index.html
+        try:
+            from scripts.generate_report import generate_reports_index
+            reports_index_path = DOCS_DIR / "reports" / "index.html"
+            generate_reports_index(str(DOCS_DIR / "reports"), str(reports_index_path))
+            logger.info("    • %s", reports_index_path)
+        except Exception as exc_idx:
+            logger.warning("  Reports index generation failed: %s", exc_idx)
+
         logger.info("  Reports saved:")
         logger.info("    • %s", index_path)
         logger.info("    • %s", archive_path)

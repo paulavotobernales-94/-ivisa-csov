@@ -133,7 +133,7 @@ GENERAL_QUERIES = [
 
 # ── Claude LLM Settings ───────────────────────────────────────────────────────
 CLAUDE_MODEL = "claude-haiku-4-5-20251001"
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "gemini-2.5-flash-preview-05-20"
 
 SENTIMENT_PROMPT_TEMPLATE = (
     "Rate the overall sentiment of this response about iVisa from 0 to 100. "
