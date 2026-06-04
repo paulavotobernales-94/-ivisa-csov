@@ -210,6 +210,27 @@ def run(dry_run: bool = False, send_slack: bool = False) -> None:
 
     # ── LIVE RUN ──────────────────────────────────────────────────────────────
     else:
+        # 0. SerpAPI credits check
+        try:
+            import urllib.request
+            from scripts.config import SERPAPI_KEY
+            if SERPAPI_KEY:
+                url = f"https://serpapi.com/account?api_key={SERPAPI_KEY}"
+                with urllib.request.urlopen(url, timeout=8) as resp:
+                    account = json.loads(resp.read().decode())
+                remaining = account.get("total_searches_left", None)
+                plan_searches = account.get("plan_searches_left", None)
+                display = plan_searches if plan_searches is not None else remaining
+                if display is not None:
+                    if display < 100:
+                        logger.warning("⚠️  SerpAPI credits CRITICAL: %d remaining — report data will be incomplete!", display)
+                    elif display < 300:
+                        logger.warning("⚠️  SerpAPI credits LOW: %d remaining — consider skipping this run until renewal.", display)
+                    else:
+                        logger.info("  SerpAPI credits: %d remaining ✓", display)
+        except Exception as exc:
+            logger.warning("  Could not check SerpAPI credits: %s", exc)
+
         # 1. SERP
         logger.info("[1/6] Fetching SERP data (SEMrush + Ahrefs)...")
         try:
