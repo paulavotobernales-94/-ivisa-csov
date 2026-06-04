@@ -382,6 +382,160 @@ def check_gemini_model():
 check("Gemini model is stable (not preview)", check_gemini_model)
 
 
+# ── 12. Formula weights sum to 1.0 ───────────────────────────────────────────
+print(f"\n{SEP}")
+print("  12. Formula & Country Weights")
+print(SEP)
+
+def check_weights():
+    from scripts.config import (
+        WEIGHT_SERP, WEIGHT_AI_OVERVIEW, WEIGHT_LLM, WEIGHT_EARNED_MEDIA, COUNTRIES
+    )
+    formula_total = WEIGHT_SERP + WEIGHT_AI_OVERVIEW + WEIGHT_LLM + WEIGHT_EARNED_MEDIA
+    if abs(formula_total - 1.0) > 0.001:
+        raise Exception(
+            f"CSOV formula weights sum to {formula_total:.4f}, not 1.0 — "
+            f"scores will be wrong. Fix in scripts/config.py."
+        )
+    country_total = sum(c["weight"] for c in COUNTRIES.values())
+    # Country weights intentionally sum to ~0.95 (not 1.0) — the scoring
+    # functions divide by actual sum so this is handled. Warn if badly off.
+    if abs(country_total - 1.0) > 0.10:
+        raise Exception(
+            f"Country weights sum to {country_total:.3f} — too far from 1.0. "
+            f"Check COUNTRIES weights in scripts/config.py."
+        )
+    return (
+        f"CSOV weights = {formula_total:.2f} ✓ | "
+        f"country weights = {country_total:.2f} (normalised in scoring)"
+    )
+
+check("CSOV formula + country weights", check_weights)
+
+
+# ── 13. Historical data integrity ─────────────────────────────────────────────
+print(f"\n{SEP}")
+print("  13. Historical Data Integrity")
+print(SEP)
+
+def check_historical_data():
+    import json, pathlib
+    from datetime import date, timedelta
+    from scripts.config import HISTORICAL_DIR
+
+    hist_dir = pathlib.Path(HISTORICAL_DIR)
+    files = sorted(hist_dir.glob("*.json"), reverse=True)
+    if not files:
+        return "No historical files yet — first run will create them"
+
+    # Latest file must be valid JSON with a csov_score
+    latest = files[0]
+    with open(latest) as f:
+        data = json.load(f)
+
+    if "csov_score" not in data:
+        raise Exception(f"{latest.name} is missing 'csov_score' field — corrupt snapshot?")
+
+    score = data["csov_score"]
+    if not (0 <= score <= 100):
+        raise Exception(f"{latest.name} has invalid csov_score={score} (must be 0–100)")
+
+    # Warn if latest file is older than 8 days (missed a Monday run)
+    try:
+        file_date = date.fromisoformat(latest.stem)
+        days_old = (date.today() - file_date).days
+        if days_old > 8:
+            raise Exception(
+                f"Latest snapshot is {days_old} days old ({latest.name}) — "
+                f"a Monday run may have been missed or failed silently."
+            )
+    except ValueError:
+        pass  # filename isn't a date — skip age check
+
+    return f"{len(files)} snapshots, latest={latest.name}, score={score}"
+
+check("Historical data integrity", check_historical_data)
+
+
+# ── 14. Sentiment distribution sanity ────────────────────────────────────────
+print(f"\n{SEP}")
+print("  14. Sentiment Distribution Sanity")
+print(SEP)
+
+def check_sentiment_distribution():
+    import json, pathlib
+    from scripts.config import HISTORICAL_DIR
+
+    files = sorted(pathlib.Path(HISTORICAL_DIR).glob("*.json"), reverse=True)
+    if not files:
+        return "No historical data yet — skipping"
+
+    with open(files[0]) as f:
+        data = json.load(f)
+
+    serp = data.get("serp_data", {}).get("results", {})
+    sentiments = []
+    for country in serp.values():
+        for kw_results in country.values():
+            for r in kw_results:
+                s = r.get("sentiment")
+                if s:
+                    sentiments.append(s)
+
+    if len(sentiments) < 10:
+        return f"Only {len(sentiments)} classified results — not enough to check distribution"
+
+    from collections import Counter
+    counts = Counter(sentiments)
+    total = len(sentiments)
+    pos_pct = counts.get("positive", 0) / total
+    neg_pct = counts.get("negative", 0) / total
+
+    # If >90% are all one class, classification is probably broken
+    if pos_pct > 0.90:
+        raise Exception(
+            f"{pos_pct:.0%} of results are positive — classification looks broken "
+            f"(positive signals matching everything)"
+        )
+    if neg_pct > 0.90:
+        raise Exception(
+            f"{neg_pct:.0%} of results are negative — classification looks broken "
+            f"(negative signals matching everything)"
+        )
+
+    return (
+        f"{total} results: {pos_pct:.0%} positive, "
+        f"{counts.get('neutral',0)/total:.0%} neutral, "
+        f"{neg_pct:.0%} negative — distribution looks healthy"
+    )
+
+check("Sentiment distribution sanity", check_sentiment_distribution)
+
+
+# ── 15. Report file size sanity ───────────────────────────────────────────────
+print(f"\n{SEP}")
+print("  15. Report File Size")
+print(SEP)
+
+def check_report_size():
+    import pathlib
+    from scripts.config import DOCS_DIR
+
+    index = pathlib.Path(DOCS_DIR) / "index.html"
+    if not index.exists():
+        raise Exception("docs/index.html does not exist — report was never generated")
+
+    kb = index.stat().st_size // 1024
+    if kb < 200:
+        raise Exception(
+            f"docs/index.html is only {kb} KB — expected > 200 KB. "
+            f"A major section is likely missing (SERP table, LLM data, etc.)"
+        )
+    return f"{kb} KB ✓"
+
+check("Report file size > 200 KB", check_report_size)
+
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 print(f"\n{SEP}")
 passed = sum(1 for r in results if r[0] == PASS)
