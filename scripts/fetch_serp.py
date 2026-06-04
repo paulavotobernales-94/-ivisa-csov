@@ -269,6 +269,11 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
             if neg_hits_snip == 0:
                 return "positive"  # clean debunking with no remaining negatives
             return "neutral"
+        else:
+            # Title raises "scam?" but snippet does NOT debunk it.
+            # This is a forum thread, user question, or complaint page —
+            # negative for brand regardless of any incidental positive words in snippet.
+            return "negative"
 
     # 4. Disclaimer phrases ("not affiliated with", "not government") —
     # only negative if paired with actual complaint language
