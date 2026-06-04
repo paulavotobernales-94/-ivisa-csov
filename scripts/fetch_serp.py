@@ -216,6 +216,57 @@ ALWAYS_NEGATIVE_DOMAINS = [
 
 
 # ---------------------------------------------------------------------------
+# Data quality guards — detect junk titles / snippets from SerpAPI
+# ---------------------------------------------------------------------------
+
+import re as _re
+
+def _is_domain_title(title: str, domain: str = "") -> bool:
+    """
+    Returns True if the title is just a URL or domain string, not real article text.
+    Examples of junk: "www.europeanbusinessreview.com", "https://example.com/page"
+    """
+    t = title.strip()
+    if not t:
+        return False
+    # No spaces + contains a dot → looks like a domain or URL
+    if " " not in t and "." in t:
+        return True
+    # Starts with http or www
+    if t.lower().startswith(("http://", "https://", "www.")):
+        return True
+    # Title is identical to the domain (with or without www.)
+    if domain and t.lower().lstrip("www.").lstrip(".") == domain.lower().lstrip("www.").lstrip("."):
+        return True
+    return False
+
+
+def _is_junk_snippet(snippet: str) -> bool:
+    """
+    Returns True if the snippet looks like JavaScript, PHP, or other non-content code
+    instead of article/page text.
+    Examples: "var theplus_ajax_url = ...", inline script dumps
+    """
+    s = snippet.strip()
+    if not s:
+        return False
+    # JavaScript variable assignments (most common junk pattern from WP sites)
+    if _re.search(r'\bvar\s+\w+\s*=\s*["\']?https?://', s):
+        return True
+    # WordPress nonce / admin-ajax patterns
+    if "wp-admin" in s or "_nonce" in s or "admin-ajax" in s:
+        return True
+    # Generic JS assignment blob — many var x = "..." patterns
+    if s.count("var ") >= 2:
+        return True
+    # High ratio of special/code characters → probably code
+    code_chars = sum(1 for c in s if c in '{}[];=()"\\'  )
+    if len(s) > 20 and code_chars / len(s) > 0.15:
+        return True
+    return False
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -640,8 +691,17 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                 }
 
                 for item in existing:
-                    url = item.get("url", "")
+                    url    = item.get("url", "")
                     domain = item.get("domain", "").lstrip("www.").lstrip(".")
+
+                    # ── Sanitize junk data before enrichment ──────────────────
+                    # Treat domain-as-title and JS snippets as missing data so
+                    # the enrichment fallbacks below can replace them properly.
+                    if _is_domain_title(item.get("title", ""), item.get("domain", "")):
+                        item["title"] = ""
+                    if _is_junk_snippet(item.get("snippet", "")):
+                        item["snippet"] = ""
+
                     # Try URL match first, fall back to normalized domain match
                     organic_match = url_map.get(url) or domain_map.get(domain)
                     if organic_match:
