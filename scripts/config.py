@@ -136,7 +136,7 @@ CLAUDE_MODEL = "claude-haiku-4-5-20251001"
 # NOTE: Gemini preview models expire every ~3 months.
 # If Gemini starts returning "model not found" or no responses, update this to
 # the latest stable flash model from: https://ai.google.dev/gemini-api/docs/models
-GEMINI_MODEL = "gemini-2.5-flash-preview-05-20"
+GEMINI_MODEL = "gemini-2.0-flash"
 
 SENTIMENT_PROMPT_TEMPLATE = (
     "Rate the overall sentiment of this response about iVisa from 0 to 100. "

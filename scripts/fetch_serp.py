@@ -740,6 +740,35 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                         item.get("snippet", ""),
                     )
 
+                # ── Snippet coverage check ────────────────────────────────────
+                # If SEMrush/Ahrefs results have < 40% snippet coverage after all
+                # enrichment attempts, the two sources disagree on what ranks for
+                # this keyword (common for branded queries like "iVisa"). Fall back
+                # to live SerpAPI organic results which have real snippet text.
+                if organic_list:
+                    has_snip = sum(1 for it in existing if it.get("snippet", "").strip())
+                    if existing and has_snip / len(existing) < 0.40:
+                        logger.debug(
+                            "  Low snippet coverage (%d/%d) for '%s' (%s) — using live SerpAPI organic",
+                            has_snip, len(existing), keyword, country_code,
+                        )
+                        results[country_code][keyword] = [
+                            {
+                                "position":  r["position"],
+                                "url":       r["url"],
+                                "domain":    r["domain"],
+                                "title":     r["title"],
+                                "snippet":   r.get("snippet", ""),
+                                "is_ivisa":  _is_ivisa(r["domain"]),
+                                "sentiment": _classify_result(
+                                    r["domain"], r["title"], r.get("snippet", "")
+                                ),
+                                "source":    "serpapi",
+                            }
+                            for r in organic_list
+                            if r.get("position") and r.get("url")
+                        ]
+
     # Recompute scores with enriched data
     for country_code in list(results.keys()):
         serp_data["country_scores"][country_code] = _country_serp_score(results[country_code])

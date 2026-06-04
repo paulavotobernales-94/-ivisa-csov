@@ -155,12 +155,18 @@ def _ask_gemini(client, prompt: str, with_grounding: bool = False, retries: int 
             return text, sources
         except Exception as exc:
             exc_str = str(exc).lower()
-            if attempt < retries and ("rate" in exc_str or "429" in exc_str or "quota" in exc_str or "resource" in exc_str):
+            # RESOURCE_EXHAUSTED = daily quota gone — no point retrying until tomorrow
+            quota_exhausted = "resource_exhausted" in exc_str or "free_tier" in exc_str
+            transient_limit = not quota_exhausted and ("rate" in exc_str or "429" in exc_str)
+            if attempt < retries and transient_limit:
                 wait = 15 * (attempt + 1)
                 logger.warning("Gemini rate limit (attempt %d/%d) — retrying in %ds", attempt+1, retries+1, wait)
                 time.sleep(wait)
             else:
-                logger.warning("Gemini query failed (model=%s): %s", GEMINI_MODEL, exc)
+                if quota_exhausted:
+                    logger.warning("Gemini daily quota exhausted — skipping remaining Gemini queries for this run.")
+                else:
+                    logger.warning("Gemini query failed (model=%s): %s", GEMINI_MODEL, exc)
                 return None, []
     return None, []
 
