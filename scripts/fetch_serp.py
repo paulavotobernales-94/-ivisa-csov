@@ -171,6 +171,17 @@ DEBUNKING_SIGNALS = [
     "the answer is no", "not a scam", "isn't a scam", "is not a scam",
     "legitimate", "legit", "restoring trust", "restoring traveler trust",
     "the truth is", "verdict:", "conclusion:", "in short,",
+    # Title subtitle signals — positive framing after the scam question
+    "restoring", "why trust", "why travelers", "travelers trust",
+    "inside the", "the truth about", "explained", "honest review",
+]
+
+# Title subtitle debunking — positive words that appear after "?" in the title
+# indicate the article is framing the scam question as a hook, not a claim
+TITLE_SUBTITLE_POSITIVE = [
+    "restoring", "why trust", "why travelers", "travelers trust", "trust the",
+    "legitimate", "legit", "safe", "reliable", "secure", "honest",
+    "the truth", "inside the", "explained", "worth it", "recommend",
 ]
 
 # Press/editorial domains — classified from content but given benefit of doubt
@@ -184,6 +195,9 @@ EDITORIAL_DOMAINS = [
     "thepointsguy.com", "travelweekly.com", "phocuswire.com",
     "prnewswire.com", "businesswire.com", "globenewswire.com",
     "accesswire.com", "einpresswire.com",  # press release wires
+    "europeanbusinessreview.com", "lakelandcurrents.com",
+    "travelandleisure.com", "condénast.com", "cntraveler.com",
+    "smarter-travel.com", "smartertravel.com",
 ]
 
 # Structural complaint site domains — always negative regardless of text
@@ -249,7 +263,13 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
         any(q in title_lower for q in ["is ivisa", "is it a", "is this a", "a scam?", "scam?"])
     )
     if title_has_scam_question:
+        # Check if the title itself has a positive subtitle after the "?"
+        # e.g. "Is iVisa a Scam? Inside the Refund Policy That's Restoring..."
+        title_after_q = title_lower.split("?", 1)[1].strip() if "?" in title_lower else ""
+        title_subtitle_positive = any(p in title_after_q for p in TITLE_SUBTITLE_POSITIVE)
+
         snippet_debunks = (
+            title_subtitle_positive or
             any(d in snippet_lower for d in DEBUNKING_SIGNALS) or
             snippet_lower.startswith("no,") or
             snippet_lower.startswith("no.") or
