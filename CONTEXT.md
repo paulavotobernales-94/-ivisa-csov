@@ -1,0 +1,383 @@
+# iVisa CSOV Dashboard — Full Project Context
+
+> **For new Claude sessions:** Read this entire file before doing anything.
+> It replaces all memory from previous sessions and is the single source of truth.
+> After reading it, you will have full context to continue exactly where we left off.
+
+---
+
+## Who You're Working With
+
+**Paula Votobernales** (paula.votobernales@ivisa.com)
+Brand & Creative Manager at iVisa.com, part of the Growth team.
+
+**Her goal:** Increase brand-driven and brand-assisted Growth Service Bookings by strengthening trust, expanding high-intent reach, and enabling product launches and acquisition channels to convert more efficiently.
+
+**Her scope:** Social media, online reputation strategy, creatives (video, copy, images).
+
+**Working style:** Fast executor, proactive, non-technical. Always give terminal commands as a single copy-pasteable line. Never multi-line Python in the shell. Use `python3` not `python` (Mac runs Python 3.9 via Xcode). Explain things in plain English, no jargon.
+
+**Brand voice:** Approachable, Reliable, Straightforward. Standard case. Uses contractions.
+
+**Brand identity:** Manrope font · #00EA80 hero green · #0A2540 navy · #08ADE4 sky blue.
+
+---
+
+## What This Project Is
+
+An automated **weekly CSOV (Credibility Share of Voice) dashboard** for iVisa. It runs every Monday at 07:00 UTC via GitHub Actions, fetches live data from four sources, calculates a composite reputation score, generates an HTML report, publishes it to GitHub Pages, and sends a Slack notification.
+
+**The score measures iVisa's online reputation** — how positive, neutral, or negative the results are for brand-intent searches across 10 countries and 11 keywords.
+
+---
+
+## Repo & Access
+
+| | |
+|---|---|
+| **GitHub** | https://github.com/paulavotobernales-94/-ivisa-csov |
+| **GitHub Pages (live report)** | https://paulavotobernales-94.github.io/-ivisa-csov |
+| **Local folder** | `~/Desktop/Reputation and PR/ivisa-csov/` |
+
+---
+
+## CSOV Formula
+
+```
+CSOV = (SERP × 0.35) + (AI_Overview × 0.25) + (LLM × 0.25) + (Earned_Media × 0.15)
+```
+
+`SCORING_VERSION = "1.0"` — governs this weighting scheme. Do not change weights without updating this version.
+
+---
+
+## Run Commands (all from the repo folder)
+
+```bash
+# Full live run + Slack notification
+python3 main.py --slack
+
+# Dry run — no API calls, uses sample data
+python3 main.py --dry-run
+
+# Pre-Monday validation (run before every Monday)
+python3 scripts/health_check.py
+```
+
+---
+
+## API Keys & Services
+
+All keys live in `.env` in the repo root AND in GitHub repo Secrets (for Actions).
+
+| Key | Service | Notes |
+|---|---|---|
+| `SEMRUSH_API_KEY` | SERP rankings | |
+| `AHREFS_API_KEY` | SERP rankings | Returns 404 for SERP endpoint — pipeline falls back to SerpAPI automatically |
+| `CLAUDE_API_KEY` | LLM sentiment scoring | |
+| `GEMINI_API_KEY` | LLM monitoring | Free tier — daily quota can exhaust mid-run, pipeline handles gracefully |
+| `SERPAPI_KEY` | Google SERP + AI Overviews + Earned Media | Renewal: June 26, 2026 |
+| `SLACK_WEBHOOK_URL` | Slack notifications | |
+| `GITHUB_PAGES_URL` | Set in GitHub repo vars (not secrets) | |
+
+**Models:**
+- Claude: `claude-haiku-4-5-20251001`
+- Gemini: `gemini-2.0-flash` — **ALWAYS use stable models with no date suffix.** Preview models (e.g. `gemini-2.5-flash-preview-05-20`) expire silently every ~3 months. If Gemini returns "model not found", update `GEMINI_MODEL` in `scripts/config.py`. Reference: https://ai.google.dev/gemini-api/docs/models
+
+---
+
+## Countries Tracked (10)
+
+| Code | Country | Weight | Notes |
+|---|---|---|---|
+| us | United States | 35% | English |
+| gb | United Kingdom | 14% | English |
+| au | Australia | 10% | English |
+| de | Germany | 8% | **Non-English — local keywords needed (pending)** |
+| ca | Canada | 7% | English |
+| fr | France | 7% | **Non-English — local keywords needed (pending)** |
+| jp | Japan | 4% | **Non-English — local keywords needed (pending)** |
+| nl | Netherlands | 4% | **Non-English — local keywords needed (pending)** |
+| it | Italy | 3% | **Non-English — local keywords needed (pending)** |
+| ch | Switzerland | 3% | **Non-English — local keywords needed (pending)** |
+
+**⚠️ PENDING WORK:** DE, FR, JP, NL, IT, CH currently use English keywords, which gives inaccurate data because native speakers search in their own language. Paula will provide localized keyword lists. When she does, update `scripts/config.py` to use `KEYWORDS_BY_COUNTRY` (a per-country dict) instead of the single global `KEYWORDS` list, update `fetch_serp.py` to pass the right language (`hl=`) parameter to SerpAPI per country, and add a multilingual sentiment classifier fallback that uses Claude for non-English snippets.
+
+---
+
+## Keywords Tracked (11, currently English for all countries)
+
+```
+iVisa
+what is iVisa
+iVisa scam
+ivisa legit
+is ivisa a scam
+is ivisa legit
+ivisa reviews
+ivisa fake or real
+is ivisa safe
+iVisa affiliated with the gov
+ivisa fee
+```
+
+---
+
+## File Structure
+
+```
+main.py                          Entry point — orchestrates all fetches, scoring, report
+scripts/config.py                All constants: keywords, countries, weights, API keys, models
+scripts/fetch_serp.py            SERP data via SEMrush + Ahrefs + SerpAPI organic fallback
+scripts/fetch_ai_overviews.py    Google AI Overview scraping via SerpAPI
+scripts/fetch_llm.py             Claude + Gemini LLM monitoring with retry logic
+scripts/fetch_earned_media.py    Earned media via SerpAPI (news, blogs, Reddit, YouTube, IG, TikTok)
+scripts/calculate_csov.py        Score calculation + action items
+scripts/generate_report.py       HTML report generation + archive index
+scripts/send_slack.py            Slack webhook notification
+scripts/health_check.py          Pre-run validation — 15 checks including classifier unit tests
+scripts/backfill_historical.py   Historical backfill for Jan–May 2026
+data/historical/                 Weekly JSON snapshots (one file per run date)
+data/sample_data.json            Synthetic data used for dry runs and report generation tests
+docs/                            Generated HTML reports (served via GitHub Pages)
+docs/index.html                  Latest weekly report
+docs/reports/index.html          Archive page — links to all past reports
+docs/ivisa_logo.png              Real iVisa logo (transparent background PNG)
+.github/workflows/weekly-report.yml   GitHub Actions — Monday 07:00 UTC automation
+```
+
+---
+
+## Period Framework
+
+- **Period 1 (Feb–May 2026):** DROPPED from report display. Data was unreliable because scoring rules changed mid-period. Historical JSON files are kept in `data/historical/` but Period 1 is never shown in charts, comparisons, or scoring.
+- **Period 2 (Jun–Sep 2026):** Active tracking period. Target: 70+ across all four components.
+
+**Never re-add Period 1 comparisons to any section of the report or scoring logic.**
+
+---
+
+## Live Scores (for reference)
+
+| Date | CSOV | SERP | AIO | LLM | EM |
+|---|---|---|---|---|---|
+| May 29 2026 | 56.0 | 59.0 | 51.2 | 49.2 | 68.2 |
+| June 3 2026 | 55.7 | — | — | — | — |
+| June 4 2026 | 56.0 | — | — | — | — |
+
+---
+
+## Sentiment Classification Rules (CRITICAL — read carefully)
+
+These rules were developed through multiple iterations. Do not revert them.
+
+### Core philosophy
+Classify from **title + snippet text content**, NOT from domain name alone.
+- Trustpilot, Sitejabber, Tripadvisor → NOT automatically positive. They surface 1-star reviews.
+- Neutral = mixed signals (both positive and negative present).
+- Editorial/press domains with no negative signals → positive (earned press coverage).
+
+### iVisa-owned domains (always positive unless complaint language present)
+`ivisa.com`, `play.google.com`, `apps.apple.com`, `linkedin.com`, `facebook.com`, `instagram.com`, `twitter.com`, `x.com`, `youtube.com`
+
+### Always-negative domains (structural complaint sites)
+`bbb.org`, `ripoffreport.com`, `scamalert.com`, `complaints.com`, `pissedconsumer.com`, `complaintsboard.com`, `scamadviser.com`
+
+### Review aggregators → excluded from earned media (NOT earned media)
+`trustpilot.com`, `sitejabber.com`, `tripadvisor.com`, `yelp.com`
+
+### Junk snippet detection (`_is_junk_snippet()`)
+Clear to `""` before classification if snippet contains:
+- JSON-LD structured data: `{"@context"` or `"@type"` when snippet starts with `{`
+- Google WIZ blobs: `window.WIZ_global_data`, `window.google`
+- Any `window.SOMETHING = {` pattern
+- WordPress: `wp-admin`, `_nonce`, `admin-ajax`
+- Multiple `var ` assignments
+- Code character ratio > 15%
+
+**This sanitization must happen BEFORE enrichment fallbacks AND in the SerpAPI organic fallback output.**
+
+### Scam-question title rule
+If title contains `"scam?"` AND snippet does NOT contain debunking signals → force `negative`.
+"Was using iVisa a mistake" → `negative` (regret framing).
+
+### Title subtitle detection
+Positive words after `?` in title → `positive` even if title contains "scam".
+Example: "Is iVisa a Scam? Inside the Refund Policy That's Restoring..." → `positive`.
+
+### Removed from POSITIVE_TEXT_SIGNALS (caused false positives)
+`"trust"` (single word), `"my experience"`, `"helpful"`, `"convenient"`, `"official"`, `"verified"`, `"it works"`
+
+### Consumer protection / authority warnings (added June 2026)
+Added to NEGATIVE_TEXT_SIGNALS in `fetch_serp.py` AND NEGATIVE_SIGNALS in `fetch_earned_media.py`:
+`"warns of"`, `"warns users"`, `"warns travellers"`, `"warns travelers"`,
+`"consumer advice center"`, `"consumer advice centre"`, `"consumer protection warns"`,
+`"travel permit scam"`, `"permit scam"`
+
+**Why:** "warns" (verb) was missing — only "warning" (noun) was covered. heise.de article "Consumer advice center warns of UK travel permit scam" was not classifying negative.
+
+### Disclaimer phrases ("not affiliated with government")
+These are standard legal compliance copy on all third-party visa services.
+Only classify negative when ALSO paired with actual complaint language (scam, fraud, misleading, etc.).
+
+---
+
+## SERP Data Source Behaviour (important quirks)
+
+### Ahrefs 404
+Ahrefs returns 404 for the SERP endpoint. Pipeline falls back to SerpAPI organic automatically. This is expected, not a bug.
+
+### SEMrush vs SerpAPI organic disagreement
+Google serves branded "iVisa" keyword as sitelinks/app cards, not standard organic results. SEMrush's database tracks different URLs than what SerpAPI organic captures live — they often disagree completely on which domains rank.
+
+**Fix:** After enrichment, if a keyword's SEMrush/Ahrefs results have < 40% snippet coverage, discard that data and use live SerpAPI organic results instead. These match what Google actually shows.
+
+**Never re-add logic that trusts SEMrush position data for display when SerpAPI organic disagrees.** SerpAPI organic is the source of truth for what users actually see.
+
+**This fallback also sanitizes junk snippets** from organic results before storing them.
+
+### Germany / non-English country SERP mismatch
+Same root cause as branded "iVisa" keyword — SEMrush database diverges from live Google.de results. The < 40% snippet coverage fallback handles this. When localized keywords are implemented, add `hl=` language parameter to SerpAPI calls per country.
+
+---
+
+## Gemini API — Free Tier Behaviour
+
+Gemini free tier has a daily quota. If multiple runs happen in one day, quota exhausts.
+Error: `RESOURCE_EXHAUSTED` / `free_tier_requests`.
+
+**Fix:** Pipeline detects `resource_exhausted` and skips remaining Gemini calls immediately — does NOT retry. Report still generates using Claude-only LLM scores.
+
+**Distinguish from transient rate limits:** `resource_exhausted` / `free_tier` → skip immediately. `rate` / `429` → retry with 15s backoff (up to retries limit).
+
+---
+
+## AI Overview Scoring
+
+- No AI Overview appearing = neutral (50), not a problem.
+- No 0.3 penalty for "not cited" — sentiment of what appears is what matters.
+
+---
+
+## Earned Media — What Counts
+
+**Sources that count:** Google News, travel editorial press, Reddit (excl. r/ivisa), YouTube, Instagram (excl. @ivisa), TikTok (excl. @ivisa)
+
+**Excluded:** Trustpilot, Sitejabber, TripAdvisor, BBB, Yelp — these are review aggregators, not earned media.
+
+---
+
+## Report Design Rules
+
+- **Header:** White background so the black+green iVisa logo shows correctly.
+- **Colors:** #00EA80 green, #0A2540 navy, #08ADE4 sky blue, Manrope font.
+- **SERP table:** Google-style — domain small above title, title is clickable blue link, snippet below. Paginated 5+5.
+- **Past Reports dropdown:** Top-right of header. Click to expand list of past weekly reports.
+- **Logo:** Real PNG from `docs/ivisa_logo.png` (transparent background).
+- **"What's Driving the Score" section:** Always visible, standalone.
+
+---
+
+## Code Rules
+
+### No nested f-strings for multi-line HTML
+Use a placeholder string and `.replace()` instead.
+**Why:** Python raises SyntaxError for f-strings containing the same quote type as the outer string.
+
+### None-type refactor audit
+When a value changes from `float` to `float | None`, audit every downstream consumer: return statements, formatters, report renderers, fallback dicts. Grep every call site. Verify `round()`, `str()`, arithmetic won't be called on None unguarded.
+**Why:** June 2026 — changing AI Overview score from `50.0` to `None` for missing data caused `round(score, 2)` to crash, killing the entire AI Overview fetch and SERP enrichment, producing an empty report.
+
+### Python compatibility
+Paula's Mac runs Python 3.9 (Xcode). All scripts need `from __future__ import annotations` at top.
+
+### Terminal commands for Paula
+Always single copy-pasteable line. Multi-line Python with `"` quotes causes `dquote>` shell error.
+Use `python3` not `python`.
+
+---
+
+## Health Check (15 checks + classifier unit tests)
+
+`python3 scripts/health_check.py` — run before every Monday.
+
+Runs automatically in GitHub Actions as a pre-flight step before the pipeline.
+
+**Section 8 contains classifier unit tests** — explicit cases for every junk pattern and sentiment scenario that has appeared in a live report. Add a new test case any time a classification bug is found. The pattern is: write the failing test first, then fix the code, then verify it passes.
+
+Current test cases cover:
+- JSON-LD schema.org blobs (help.ivisa.com bug June 2026)
+- `window.WIZ_global_data` blobs (play.google.com bug June 2026)
+- `window.google` assignment
+- WordPress admin-ajax junk
+- heise.de "Consumer advice center warns of UK travel permit scam" → negative
+- Reddit "Was using iVisa a mistake?" → negative
+- help.ivisa.com with JSON-LD → cleared → owned domain → positive
+- Tripadvisor scam-question thread → negative
+- Debunking article with positive subtitle → positive
+- Structural complaint domain → negative
+- And more
+
+---
+
+## GitHub Actions Automation
+
+Runs every Monday at 07:00 UTC (09:00 Madrid CEST / 08:00 Madrid CET).
+Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
+
+**Steps:**
+1. Checkout repo
+2. Set up Python 3.11
+3. Install dependencies
+4. **Pre-flight health check** (fails fast if anything is misconfigured)
+5. Run CSOV pipeline (`python main.py --slack`)
+6. Commit and push report to `docs/` and `data/historical/`
+7. Deploy `docs/` to GitHub Pages
+
+---
+
+## Known Data Quirks Summary
+
+| Issue | Status |
+|---|---|
+| Ahrefs API → 404 for SERP endpoint | Expected — pipeline falls back to SerpAPI organic |
+| SEMrush vs SerpAPI disagreement on branded "iVisa" keyword | Fixed — < 40% snippet coverage triggers SerpAPI organic fallback |
+| Gemini free tier quota exhaustion | Fixed — detects `resource_exhausted` and skips immediately |
+| JSON-LD snippets from help.ivisa.com | Fixed — `_is_junk_snippet()` now detects JSON-LD |
+| `window.WIZ_global_data` from play.google.com | Fixed — explicitly caught in `_is_junk_snippet()` |
+| heise.de "warns of scam" not classifying negative | Fixed — "warns of" added to NEGATIVE_TEXT_SIGNALS |
+| Germany / non-English SERP mismatch | Partially fixed by snippet coverage fallback. Full fix pending: localized keywords + `hl=` parameter |
+| Non-English countries use English keywords | **PENDING** — Paula to provide localized keyword lists for DE, FR, JP, NL, IT, CH |
+
+---
+
+## Pending / Deferred Work
+
+### 1. Localized keywords per country (HIGH PRIORITY — next session)
+Paula will provide top 10 branded iVisa keywords in native language for DE, FR, JP, NL, IT, CH.
+
+**What to build:**
+- Add `KEYWORDS_BY_COUNTRY` dict to `scripts/config.py` — maps country code to keyword list
+- English-speaking countries (US, GB, AU, CA) keep existing `KEYWORDS`
+- Update `fetch_serp.py` to use per-country keywords and add `hl=` language parameter to SerpAPI calls
+- Add multilingual sentiment classification: when snippet is non-English and no English signals match, use Claude API to classify it (already available, one extra call per unmatched result)
+- Update `health_check.py` section 8 with non-English test cases once keywords are confirmed
+
+### 2. Per-country LLM monitoring (DEFERRED — v1.1)
+`run_llm_by_country()` exists in `fetch_llm.py` but is NOT called in the pipeline. Runs per-country LLM queries with language-specific prompts and Gemini locale grounding. Kept for v1.1.
+
+### 3. Brand24 / n8n automation
+No API available on current plan. Deferred indefinitely.
+
+---
+
+## CONTEXT.md Update Log
+
+| Date | What was added |
+|---|---|
+| June 5 2026 | Initial creation — full project context from sessions May–June 2026 |
+| _(next update)_ | Localized keywords per country (DE, FR, JP, NL, IT, CH) |
+
+---
+
+*Last updated: June 5, 2026. Update this file any time significant decisions are made, new bugs are fixed, or new features are built.*
