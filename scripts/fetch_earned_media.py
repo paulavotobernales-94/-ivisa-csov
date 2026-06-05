@@ -103,6 +103,11 @@ NEGATIVE_SIGNALS = [
     "never again", "waste of", "disappointed", "not legit", "not safe",
     "not legitimate", "not trusted", "shady", "unresponsive", "scammed",
     "avoid ivisa", "avoid using ivisa", "avoid this service",
+    # Consumer protection / authority warnings
+    # e.g. "Consumer advice center warns of UK travel permit scam" (heise.de)
+    "warns of", "warns users", "warns travellers", "warns travelers",
+    "consumer advice center", "consumer advice centre", "consumer protection warns",
+    "travel permit scam", "permit scam",
 ]
 
 POSITIVE_DOMAINS_EM = [

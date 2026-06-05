@@ -126,6 +126,12 @@ NEGATIVE_TEXT_SIGNALS = [
     "unprofessional", "incompetent", "useless", "pathetic",
     "i want my money back", "demanding refund", "filed a complaint",
     "reported to", "legal action", "reported them",
+    # Consumer protection / authority warnings
+    # e.g. "Consumer advice center warns of UK travel permit scam"
+    # "warns" (not "warning" — the noun) needs explicit coverage
+    "warns of", "warns users", "warns travellers", "warns travelers",
+    "consumer advice center", "consumer advice centre", "consumer protection warns",
+    "travel permit scam", "permit scam",
 ]
 
 # Disclaimer phrases that are only negative when paired with real complaint signals
@@ -243,13 +249,27 @@ def _is_domain_title(title: str, domain: str = "") -> bool:
 
 def _is_junk_snippet(snippet: str) -> bool:
     """
-    Returns True if the snippet looks like JavaScript, PHP, or other non-content code
-    instead of article/page text.
-    Examples: "var theplus_ajax_url = ...", inline script dumps
+    Returns True if the snippet looks like JavaScript, PHP, JSON-LD structured
+    data, or other non-content code instead of article/page text.
+    Examples: "var theplus_ajax_url = ...", window.WIZ_global_data blobs,
+              {"@context":"https://schema.org",...} JSON-LD payloads
     """
     s = snippet.strip()
     if not s:
         return False
+    # JSON-LD structured data (schema.org markup captured as snippet text)
+    # e.g. {"@context":"https://schema.org","@type":"WebSite","name":"iVisa Help Center"...}
+    if s.startswith('{') and ('"@context"' in s or '"@type"' in s):
+        return True
+    if '{"@context"' in s or '"@context": "https://schema.org"' in s:
+        return True
+    # Google's client-side JS global data blobs (Play Store, YouTube, etc.)
+    # e.g. window.WIZ_global_data = {"AfY8Hf":false,...}
+    if 'window.WIZ_global_data' in s or 'window.google' in s:
+        return True
+    # Generic window.SOMETHING = { ... } assignment
+    if _re.search(r'window\.\w+\s*=\s*\{', s):
+        return True
     # JavaScript variable assignments (most common junk pattern from WP sites)
     if _re.search(r'\bvar\s+\w+\s*=\s*["\']?https?://', s):
         return True
@@ -665,22 +685,30 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
 
             if not existing:
                 # No SEMrush/Ahrefs data at all — use SerpAPI organic as source
-                results[country_code][keyword] = [
-                    {
+                # Sanitize snippets/titles from organic source before storing
+                organic_clean = []
+                for r in organic_list:
+                    if not (r.get("position") and r.get("url")):
+                        continue
+                    snippet_clean = r.get("snippet", "")
+                    if _is_junk_snippet(snippet_clean):
+                        snippet_clean = ""
+                    title_clean = r.get("title", "")
+                    if _is_domain_title(title_clean, r.get("domain", "")):
+                        title_clean = ""
+                    organic_clean.append({
                         "position": r["position"],
                         "url": r["url"],
                         "domain": r["domain"],
-                        "title": r["title"],
-                        "snippet": r.get("snippet", ""),
+                        "title": title_clean,
+                        "snippet": snippet_clean,
                         "is_ivisa": _is_ivisa(r["domain"]),
                         "sentiment": _classify_result(
-                            r["domain"], r["title"], r.get("snippet", "")
+                            r["domain"], title_clean, snippet_clean
                         ),
                         "source": "serpapi",
-                    }
-                    for r in organic_list
-                    if r.get("position") and r.get("url")
-                ]
+                    })
+                results[country_code][keyword] = organic_clean
             else:
                 # SEMrush/Ahrefs data exists — fill in missing titles + snippets
                 url_map    = {r["url"]: r for r in organic_list if r.get("url")}
@@ -752,22 +780,30 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                             "  Low snippet coverage (%d/%d) for '%s' (%s) — using live SerpAPI organic",
                             has_snip, len(existing), keyword, country_code,
                         )
-                        results[country_code][keyword] = [
-                            {
+                        fallback_results = []
+                        for r in organic_list:
+                            if not (r.get("position") and r.get("url")):
+                                continue
+                            # Sanitize junk snippets in the organic fallback too
+                            snippet_clean = r.get("snippet", "")
+                            if _is_junk_snippet(snippet_clean):
+                                snippet_clean = ""
+                            title_clean = r.get("title", "")
+                            if _is_domain_title(title_clean, r.get("domain", "")):
+                                title_clean = ""
+                            fallback_results.append({
                                 "position":  r["position"],
                                 "url":       r["url"],
                                 "domain":    r["domain"],
-                                "title":     r["title"],
-                                "snippet":   r.get("snippet", ""),
+                                "title":     title_clean,
+                                "snippet":   snippet_clean,
                                 "is_ivisa":  _is_ivisa(r["domain"]),
                                 "sentiment": _classify_result(
-                                    r["domain"], r["title"], r.get("snippet", "")
+                                    r["domain"], title_clean, snippet_clean
                                 ),
                                 "source":    "serpapi",
-                            }
-                            for r in organic_list
-                            if r.get("position") and r.get("url")
-                        ]
+                            })
+                        results[country_code][keyword] = fallback_results
 
     # Recompute scores with enriched data
     for country_code in list(results.keys()):
