@@ -201,8 +201,85 @@ print(f"\n{SEP}")
 print("  8. Sentiment Classification Rules")
 print(SEP)
 
+from scripts.fetch_serp import _classify_result, _is_junk_snippet, _is_domain_title
+
+# ── 8a. Junk snippet detector — explicit unit tests ──────────────────────────
+# Every pattern that has ever caused bad data to appear in the report
+# must be listed here. Add a new row any time a new junk format is found.
+JUNK_SNIPPET_TESTS = [
+    # (snippet, should_be_junk, description)
+
+    # JSON-LD structured data (schema.org) — help.ivisa.com bug June 2026
+    ('{"@context":"https://schema.org","@type":"WebSite","inLanguage":"en","name":"iVisa Help Center"}',
+     True, "JSON-LD schema.org blob (help.ivisa.com bug)"),
+
+    ('{"@context": "https://schema.org", "@type": "Organization", "name": "iVisa"}',
+     True, "JSON-LD with space after colon variant"),
+
+    # Google Play / YouTube WIZ_global_data — play.google.com bug June 2026
+    ('window.WIZ_global_data = {"AfY8Hf":false,"DMjf6c":false,"WFaiLe":false}',
+     True, "window.WIZ_global_data JS blob (play.google.com bug)"),
+
+    ('window.google = {"kEI":"abc123","kEXPI":"12345"}',
+     True, "window.google JS assignment"),
+
+    # WordPress junk (pre-existing catches — must still work)
+    ('var theplus_ajax_url = "https://example.com/wp-admin/admin-ajax.php"; var nonce = "x"',
+     True, "WordPress admin-ajax JS junk"),
+
+    # Real text — must NOT be flagged as junk
+    ("iVisa makes visa applications fast, easy, and secure for travelers worldwide.",
+     False, "Normal article snippet — must NOT be flagged as junk"),
+
+    ("No, iVisa is a legitimate service trusted by millions of travelers.",
+     False, "Debunking snippet — must NOT be flagged as junk"),
+]
+
+print("  8a. Junk snippet detector:")
+for snippet, expect_junk, desc in JUNK_SNIPPET_TESTS:
+    got_junk = _is_junk_snippet(snippet)
+    ok = got_junk == expect_junk
+    status = PASS if ok else FAIL
+    label = "junk" if expect_junk else "clean"
+    results.append((status, f"Junk detect [{label}]: {desc}", f"got_junk={got_junk} expected={expect_junk}"))
+    print(f"    {status}  [{label}] {desc}")
+    if not ok:
+        print(f"          got_junk={got_junk}, expected={expect_junk}")
+        print(f"          snippet: {snippet[:80]}")
+
+# ── 8b. Sentiment classifier — end-to-end cases ───────────────────────────────
+# Each row is a real example that has appeared in a live report.
+# Add new rows whenever a classification bug is reported — never delete old ones.
 SENTIMENT_TESTS = [
     # (domain, title, snippet, expected, description)
+
+    # ── Cases from June 2026 bugs ────────────────────────────────────────────
+    # heise.de: "Consumer advice center warns of UK travel permit scam"
+    # Bug: "warns" (verb) was missing from NEGATIVE_TEXT_SIGNALS; only "warning" (noun) was there
+    ("heise.de",
+     "iVisa.com — Consumer advice center warns of UK travel permit scam",
+     "The consumer advice center has flagged iVisa.com in connection with a UK travel permit scam.",
+     "negative", "heise.de warns-of-scam (consumer protection warning)"),
+
+    # Reddit "Was using ivisa a mistake" — should be negative (doubt/regret)
+    ("reddit.com",
+     "Was using iVisa a mistake?",
+     "I paid $50 for an e-visa that I could have gotten for free. Feeling ripped off.",
+     "negative", "Reddit 'mistake' thread — doubt/regret framing"),
+
+    # JSON-LD snippet cleared → re-evaluated on domain alone (help.ivisa.com = owned → positive)
+    ("help.ivisa.com",
+     "iVisa Help Center",
+     '{"@context":"https://schema.org","@type":"WebSite","name":"iVisa Help Center"}',
+     "positive", "help.ivisa.com with JSON-LD snippet → cleared → owned domain → positive"),
+
+    # play.google.com WIZ blob cleared → owned domain → positive
+    ("play.google.com",
+     "iVisa: ETA, eVisa, ESTA, Visa - Apps on Google Play",
+     'window.WIZ_global_data = {"AfY8Hf":false,"DMjf6c":false}',
+     "positive", "play.google.com WIZ blob → cleared → owned domain → positive"),
+
+    # ── Existing regression cases ────────────────────────────────────────────
     ("tripadvisor.com",
      "ivisa https://www.ivisa.com is it a scam or geniune visa",
      "Today I applied again but through the app of UK Eta: 20€ and application accepted…",
@@ -244,22 +321,18 @@ SENTIMENT_TESTS = [
      "neutral", "JS junk snippet → cleared → no signals → neutral"),
 ]
 
-from scripts.fetch_serp import _classify_result, _is_junk_snippet, _is_domain_title
-
-all_passed = True
+print("  8b. Sentiment classifier:")
 for domain, title, snippet, expected, desc in SENTIMENT_TESTS:
-    # Apply sanitization as pipeline does
+    # Apply sanitization exactly as the pipeline does
     clean_title   = "" if _is_domain_title(title, domain) else title
     clean_snippet = "" if _is_junk_snippet(snippet) else snippet
     result = _classify_result(domain, clean_title, clean_snippet)
     ok = result == expected
-    if not ok:
-        all_passed = False
     status = PASS if ok else FAIL
     results.append((status, f"Sentiment: {desc}", f"got={result} expected={expected}"))
-    print(f"  {status}  {desc}")
+    print(f"    {status}  {desc}")
     if not ok:
-        print(f"        got '{result}', expected '{expected}'")
+        print(f"          got '{result}', expected '{expected}'")
 
 
 # ── 9. Report generation (dry run) ───────────────────────────────────────────
