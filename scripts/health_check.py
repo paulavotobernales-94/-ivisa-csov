@@ -30,9 +30,19 @@ FAIL  = "❌"
 WARN  = "⚠️ "
 SEP   = "─" * 56
 
+# When running inside GitHub Actions, live API calls (Claude, Gemini, SerpAPI)
+# are treated as warnings not failures. A transient API hiccup at 07:00 UTC
+# should never block the whole pipeline — the pipeline itself handles API
+# failures gracefully. All non-API checks (env vars, imports, weights, file
+# sizes, classifier tests) remain hard failures in both environments.
+IS_CI = os.environ.get("GITHUB_ACTIONS") == "true"
+if IS_CI:
+    print(f"\n  ℹ️  Running in GitHub Actions — live API checks are WARNINGS (not failures)")
+
 results: list[tuple[str, str, str]] = []  # (status, name, detail)
 
 def check(name: str, fn):
+    """Hard check — failure always counts as a failed check."""
     try:
         detail = fn()
         results.append((PASS, name, detail or ""))
@@ -40,6 +50,22 @@ def check(name: str, fn):
     except Exception as exc:
         results.append((FAIL, name, str(exc)))
         print(f"  {FAIL}  {name} — {exc}")
+
+def check_api(name: str, fn):
+    """Soft check — failure is a WARNING in CI, a hard FAILURE when run locally.
+    Use this for live API calls (Claude, Gemini, SerpAPI) where a transient
+    network issue should not block the Monday pipeline from running."""
+    try:
+        detail = fn()
+        results.append((PASS, name, detail or ""))
+        print(f"  {PASS}  {name}" + (f" — {detail}" if detail else ""))
+    except Exception as exc:
+        if IS_CI:
+            results.append((WARN, name, f"CI WARNING (non-blocking): {exc}"))
+            print(f"  {WARN}  {name} — CI WARNING (non-blocking): {exc}")
+        else:
+            results.append((FAIL, name, str(exc)))
+            print(f"  {FAIL}  {name} — {exc}")
 
 
 # ── 1. Environment variables ──────────────────────────────────────────────────
@@ -107,7 +133,7 @@ def check_claude_api():
     text = msg.content[0].text.strip()
     return f"model={CLAUDE_MODEL} response='{text}'"
 
-check("Claude API call", check_claude_api)
+check_api("Claude API call", check_claude_api)
 
 
 # ── 4. Gemini API ─────────────────────────────────────────────────────────────
@@ -128,7 +154,7 @@ def check_gemini_api():
     text = response.text.strip() if response.text else "NO RESPONSE"
     return f"model={GEMINI_MODEL} response='{text[:40]}'"
 
-check("Gemini API call", check_gemini_api)
+check_api("Gemini API call", check_gemini_api)
 
 
 # ── 5. SerpAPI (balance check only — no search query) ────────────────────────
@@ -151,7 +177,7 @@ def check_serpapi_credits():
         return f"LOW: {remaining} credits remaining — use sparingly"
     return f"{remaining} credits remaining"
 
-check("SerpAPI credits", check_serpapi_credits)
+check_api("SerpAPI credits", check_serpapi_credits)
 
 
 # ── 6. Serper.dev (AI Overviews) ──────────────────────────────────────────────
@@ -611,17 +637,26 @@ check("Report file size > 200 KB", check_report_size)
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 print(f"\n{SEP}")
-passed = sum(1 for r in results if r[0] == PASS)
-failed = sum(1 for r in results if r[0] == FAIL)
-total  = len(results)
+passed   = sum(1 for r in results if r[0] == PASS)
+failed   = sum(1 for r in results if r[0] == FAIL)
+warnings = sum(1 for r in results if r[0] == WARN)
+total    = len(results)
 
-if failed == 0:
+if failed == 0 and warnings == 0:
     print(f"  {PASS}  ALL {total} CHECKS PASSED — Monday automation is ready!")
+elif failed == 0 and warnings > 0:
+    print(f"  {WARN}  {passed}/{total} passed, {warnings} warning(s) — pipeline will still run")
+    print()
+    for status, name, detail in results:
+        if status == WARN:
+            print(f"       {WARN} {name}: {detail}")
 else:
     print(f"  {FAIL}  {failed}/{total} checks FAILED — fix before Monday")
     print()
     for status, name, detail in results:
         if status == FAIL:
             print(f"       {FAIL} {name}: {detail}")
+        elif status == WARN:
+            print(f"       {WARN} {name}: {detail}")
 print(SEP)
 sys.exit(0 if failed == 0 else 1)
