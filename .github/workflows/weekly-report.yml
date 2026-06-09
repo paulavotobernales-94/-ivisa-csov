@@ -66,7 +66,11 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             python main.py --dry-run
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Manual trigger: always run, even if today's report already exists
+            python main.py --slack --force
           else
+            # Scheduled cron: idempotency guard is active — skips if already ran today
             python main.py --slack
           fi
 

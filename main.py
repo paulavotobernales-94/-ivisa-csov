@@ -178,7 +178,7 @@ def _build_report_payload(
 
 # ── Main Pipeline ─────────────────────────────────────────────────────────────
 
-def run(dry_run: bool = False, send_slack: bool = False) -> None:
+def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) -> None:
     from scripts.config import (
         COUNTRIES,
         DATA_DIR,
@@ -189,6 +189,22 @@ def run(dry_run: bool = False, send_slack: bool = False) -> None:
 
     run_date   = date.today()
     date_str   = run_date.isoformat()
+
+    # ── Idempotency guard ─────────────────────────────────────────────────────
+    # Prevents duplicate Slack messages when GitHub's cron fires late AND
+    # a manual run already completed. Only active on scheduled (cron) runs —
+    # manual triggers (workflow_dispatch or local) always pass --force and
+    # are never blocked.
+    if not dry_run and send_slack and not force:
+        _today_file = HISTORICAL_DIR / f"{date_str}.json"
+        if _today_file.exists():
+            logger.info(
+                "⏭  Report for %s already exists (%s). Skipping duplicate "
+                "automated run. Use --force to override.",
+                date_str, _today_file.name,
+            )
+            sys.exit(0)
+
     prev_csov  = _load_previous_csov(HISTORICAL_DIR)
 
     logger.info("=" * 60)
@@ -406,5 +422,10 @@ Examples:
         action="store_true",
         help="Send Slack notification after the run. Omit to skip Slack (for manual/test runs).",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force run even if today's report already exists (bypasses duplicate-run guard).",
+    )
     args = parser.parse_args()
-    run(dry_run=args.dry_run, send_slack=args.slack)
+    run(dry_run=args.dry_run, send_slack=args.slack, force=args.force)
