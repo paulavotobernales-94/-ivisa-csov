@@ -159,11 +159,12 @@ docs/ivisa_logo.png              Real iVisa logo (transparent background PNG)
 
 ## Live Scores (for reference)
 
-| Date | CSOV | SERP | AIO | LLM | EM |
-|---|---|---|---|---|---|
-| May 29 2026 | 56.0 | 59.0 | 51.2 | 49.2 | 68.2 |
-| June 3 2026 | 55.7 | — | — | — | — |
-| June 4 2026 | 56.0 | — | — | — | — |
+| Date | CSOV | SERP | AIO | LLM | EM | Notes |
+|---|---|---|---|---|---|---|
+| May 29 2026 | 56.0 | 59.0 | 51.2 | 49.2 | 68.2 | |
+| June 3 2026 | 55.7 | — | — | — | — | |
+| June 4 2026 | 56.0 | — | — | — | — | |
+| June 8 2026 | **55.7** | 59.9 | 49.2 | 49.5 | 67.3 | **Canonical score.** Two runs happened (9:53 AM manual + 8:30 PM delayed cron). 8:30 PM run overwrote the JSON and HTML. 55.7 is the stored, accepted baseline. |
 
 ---
 
@@ -325,14 +326,27 @@ Current test cases cover:
 Runs every Monday at 07:00 UTC (09:00 Madrid CEST / 08:00 Madrid CET).
 Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
 
+**Timezone note:** `0 7 * * 1` = 9 AM Madrid in summer (CEST, UTC+2). In winter (CET, UTC+1) this fires at 8 AM Madrid instead — accepted trade-off, not a bug.
+
+**Known reliability issue:** GitHub's cron scheduler sometimes skips or delays runs by hours (up to 10+ hours) with no error log — the run simply doesn't appear. If the report didn't arrive by 10 AM Madrid on Monday, trigger manually via the "Run workflow" button in GitHub Actions.
+
 **Steps:**
 1. Checkout repo
 2. Set up Python 3.11
 3. Install dependencies
-4. **Pre-flight health check** (fails fast if anything is misconfigured)
-5. Run CSOV pipeline (`python main.py --slack`)
+4. **Pre-flight health check** (warns in CI for API issues, hard-fails only for config errors)
+5. Run CSOV pipeline — scheduled cron uses `python main.py --slack`, manual trigger uses `python main.py --slack --force`
 6. Commit and push report to `docs/` and `data/historical/`
 7. Deploy `docs/` to GitHub Pages
+
+**Idempotency guard (added June 9 2026):** `main.py` checks if `data/historical/YYYY-MM-DD.json` already exists before running. If it does AND the run is a scheduled cron (no `--force`), it exits immediately without fetching data or sending Slack. This prevents duplicate reports when GitHub's delayed cron fires after a manual run.
+
+| How triggered | Blocked if already ran today? |
+|---|---|
+| Automated Monday cron | ✅ Yes — no duplicate |
+| "Run workflow" button in GitHub | ❌ No — always runs (passes `--force`) |
+| `python3 main.py --slack` locally | ❌ No — always runs |
+| `python3 main.py --slack --force` | ❌ No — always runs |
 
 ---
 
@@ -348,10 +362,15 @@ Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
 | heise.de "warns of scam" not classifying negative | Fixed — "warns of" added to NEGATIVE_TEXT_SIGNALS |
 | Germany / non-English SERP mismatch | Partially fixed by snippet coverage fallback. Full fix pending: localized keywords + `hl=` parameter |
 | Non-English countries use English keywords | **PENDING** — Paula to provide localized keyword lists for DE, FR, JP, NL, IT, CH |
+| Duplicate Slack reports (cron fires late after manual run) | Fixed June 9 2026 — idempotency guard in main.py, `--force` flag added |
+| Main dashboard trend chart shows backfilled May data | **PENDING** — Paula wants chart to start from June 8 only. All historical JSON + HTML files stay in folder. Only the trend chart display needs updating in `generate_report.py`. |
 
 ---
 
 ## Pending / Deferred Work
+
+### 0. Clean up main dashboard trend chart (do this first)
+The trend chart on `docs/index.html` currently shows backfilled May–June data points. Paula wants it to start clean from June 8, 2026 as the first data point. The historical JSON files and archived HTML reports in `docs/reports/` must NOT be deleted — they stay for reference. Only the chart display logic in `scripts/generate_report.py` needs to filter history to start from `2026-06-08` onward.
 
 ### 1. Localized keywords per country (HIGH PRIORITY — next session)
 Paula will provide top 10 branded iVisa keywords in native language for DE, FR, JP, NL, IT, CH.
@@ -376,8 +395,9 @@ No API available on current plan. Deferred indefinitely.
 | Date | What was added |
 |---|---|
 | June 5 2026 | Initial creation — full project context from sessions May–June 2026 |
+| June 9 2026 | Idempotency guard for duplicate runs, `--force` flag, GitHub Actions workflow update, June 8 canonical score (55.7), trend chart cleanup added as pending task |
 | _(next update)_ | Localized keywords per country (DE, FR, JP, NL, IT, CH) |
 
 ---
 
-*Last updated: June 5, 2026. Update this file any time significant decisions are made, new bugs are fixed, or new features are built.*
+*Last updated: June 10, 2026. Update this file any time significant decisions are made, new bugs are fixed, or new features are built.*
