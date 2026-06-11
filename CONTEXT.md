@@ -195,8 +195,11 @@ Clear to `""` before classification if snippet contains:
 - WordPress: `wp-admin`, `_nonce`, `admin-ajax`
 - Multiple `var ` assignments
 - Code character ratio > 15%
+- **(June 11 2026) Generalized JS detection:** leading `-->`, `<!--`, `//`; any browser-object property access (`window.`, `document.`, `navigator.`, `location.` followed by a property); client-side redirects (`location.replace`, `.location.href`); inline `(function(`, `function(`, `JSON.parse(`. These caught variants that hardcoded patterns missed: `--> if (!window.Intl...` (heise.de / ivisaconsulting.com) and `Redirecting... window.location.replace("/ru")` (ivisa.ru).
 
 **This sanitization must happen BEFORE enrichment fallbacks AND in the SerpAPI organic fallback output.**
+
+**(June 11 2026) Sanitization now also runs at INGESTION** — `_fetch_semrush_keyword()` and `_fetch_ahrefs_keyword()` clear junk snippets/domain-titles before classification. Previously sanitization only ran inside `enrich_with_serpapi_organic()`, and only for keyword/country pairs present in the organic feed — so junk from SEMrush-only keywords leaked straight into storage and the report (root cause of the recurring play.google.com / "google play SERP" breakage).
 
 ### Scam-question title rule
 If title contains `"scam?"` AND snippet does NOT contain debunking signals → force `negative`.
@@ -396,6 +399,7 @@ No API available on current plan. Deferred indefinitely.
 |---|---|
 | June 5 2026 | Initial creation — full project context from sessions May–June 2026 |
 | June 9 2026 | Idempotency guard for duplicate runs, `--force` flag, GitHub Actions workflow update, June 8 canonical score (55.7), trend chart cleanup added as pending task |
+| June 11 2026 | Hardened `_is_junk_snippet()` (generalized JS detection) + added ingestion-level sanitization in SEMrush/Ahrefs fetchers — fixes recurring play.google.com / JS-blob leakage into the report. Added 6 new `health_check.py` Section 8 cases. June 8 canonical report/score untouched. |
 | _(next update)_ | Localized keywords per country (DE, FR, JP, NL, IT, CH) |
 
 ---

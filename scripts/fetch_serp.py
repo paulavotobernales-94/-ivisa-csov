@@ -263,12 +263,23 @@ def _is_junk_snippet(snippet: str) -> bool:
         return True
     if '{"@context"' in s or '"@context": "https://schema.org"' in s:
         return True
-    # Google's client-side JS global data blobs (Play Store, YouTube, etc.)
-    # e.g. window.WIZ_global_data = {"AfY8Hf":false,...}
-    if 'window.WIZ_global_data' in s or 'window.google' in s:
+    # Leading HTML-comment-wrapped inline script: "--> if (!window.Intl ...)"
+    # Google/CDN sites embed feature-detection scripts that SerpAPI captures raw.
+    if s.startswith('-->') or s.startswith('<!--') or s.startswith('//'):
+        return True
+    # Any browser-object property access — window.X / document.X — is JS, never prose.
+    # Catches window.WIZ_global_data, window.google, window.location.replace,
+    # window.Intl.Segmenter, window.localStorage, document.createElement, etc.
+    if _re.search(r'\b(?:window|document|navigator|location)\.\w', s):
+        return True
+    # Client-side redirect snippets, e.g. 'Redirecting... window.location.replace("/ru")'
+    if 'location.replace' in s or '.location.href' in s:
         return True
     # Generic window.SOMETHING = { ... } assignment
     if _re.search(r'window\.\w+\s*=\s*\{', s):
+        return True
+    # Inline JS function / parse calls that only appear in scraped script tags
+    if '(function(' in s or 'JSON.parse(' in s or _re.search(r'\bfunction\s*\(', s):
         return True
     # JavaScript variable assignments (most common junk pattern from WP sites)
     if _re.search(r'\bvar\s+\w+\s*=\s*["\']?https?://', s):
@@ -479,6 +490,13 @@ def _fetch_semrush_keyword(keyword: str, database: str) -> list[dict]:
         domain  = row.get("Domain", "").strip()
         title   = row.get("Title", "").strip()
         snippet = row.get("Snippet", "").strip()
+        # Sanitize junk at ingestion so it never enters storage — enrichment only
+        # runs for keyword/country pairs present in the organic feed, so junk from
+        # SEMrush-only keywords would otherwise leak straight into the report.
+        if _is_junk_snippet(snippet):
+            snippet = ""
+        if _is_domain_title(title, domain):
+            title = ""
         results.append({
             "position": pos,
             "url": row.get("URL", "").strip(),
@@ -529,6 +547,11 @@ def _fetch_ahrefs_keyword(keyword: str, country: str) -> list[dict]:
         domain  = item.get("domain", "").strip()
         title   = item.get("title", "").strip()
         snippet = item.get("snippet", "").strip()
+        # Sanitize junk at ingestion (see SEMrush fetcher note above).
+        if _is_junk_snippet(snippet):
+            snippet = ""
+        if _is_domain_title(title, domain):
+            title = ""
         results.append({
             "position": item.get("position", 0),
             "url": item.get("url", "").strip(),

@@ -249,6 +249,19 @@ JUNK_SNIPPET_TESTS = [
     ('window.google = {"kEI":"abc123","kEXPI":"12345"}',
      True, "window.google JS assignment"),
 
+    # Feature-detection inline script — heise.de / ivisaconsulting.com bug June 2026
+    # Leaked into June 8 data; '-->' prefix + window.Intl property access
+    ("--> if (!window.Intl || !window.Intl.Segmenter) { (function() { var script = document.crea",
+     True, "Leading '-->' inline feature-detection script (window.Intl)"),
+
+    # Client-side redirect snippet — ivisa.ru bug June 2026 (leaked into June 8 data)
+    ('Redirecting... window.location.replace("/ru"); Redirecting to /ru ...',
+     True, "JS redirect snippet (window.location.replace)"),
+
+    # localStorage config parse — heise.de bug June 2026 (leaked into June 8 data)
+    ('var config = JSON.parse(window.localStorage["akwaConfig-v2"] || \'{}\') var scheme = config.',
+     True, "localStorage JSON.parse JS junk"),
+
     # WordPress junk (pre-existing catches — must still work)
     ('var theplus_ajax_url = "https://example.com/wp-admin/admin-ajax.php"; var nonce = "x"',
      True, "WordPress admin-ajax JS junk"),
@@ -259,6 +272,16 @@ JUNK_SNIPPET_TESTS = [
 
     ("No, iVisa is a legitimate service trusted by millions of travelers.",
      False, "Debunking snippet — must NOT be flagged as junk"),
+
+    # Real reviews with parentheses / symbols — must NOT trip the broadened detector
+    ("Through the app, cost was around $80 for a 24-hour application (Standard is NOT an ETA).",
+     False, "Real app review with parentheses — must NOT be flagged as junk"),
+
+    ("Careful! My mum was sent this app by a travel agent, but she ended up paying 160$ CAD.",
+     False, "Real cautionary review — must NOT be flagged as junk"),
+
+    ("The iVisa app is not affiliated with, endorsed by, or representing any government or embassy.",
+     False, "Standard disclaimer copy — must NOT be flagged as junk"),
 ]
 
 print("  8a. Junk snippet detector:")
