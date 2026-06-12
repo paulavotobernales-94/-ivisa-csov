@@ -1415,9 +1415,19 @@ function buildEarnedMedia(earnedMedia) {
   const container = document.getElementById('tab-em');
   const grid      = document.getElementById('mentionsGrid');
   _emMentions     = earnedMedia?.mentions || [];
-  const counts    = earnedMedia?.counts || {};
+  let   counts    = earnedMedia?.counts || {};
   const srcBreak  = earnedMedia?.source_breakdown || {};
   const score     = earnedMedia?.score || 0;
+
+  // Keep the summary bar consistent with the cards: if counts is missing or its
+  // total doesn't match the mentions actually shown, derive it from the list.
+  // (Live data always supplies counts; this guards against any payload that
+  // doesn't, so we never show "0 mentions total" above real cards.)
+  if (!counts.total || counts.total !== _emMentions.length) {
+    const c = { total: _emMentions.length, positive: 0, neutral: 0, negative: 0 };
+    _emMentions.forEach(m => { const s = m.sentiment || 'neutral'; if (c[s] !== undefined) c[s]++; });
+    counts = c;
+  }
 
   // Scope note + summary bar
   const existing = container.querySelector('.em-summary');

@@ -8527,48 +8527,70 @@
     "score": 60.0,
     "mentions": [
       {
-        "source": "Forbes Travel",
+        "source": "news",
+        "domain": "forbes.com",
         "title": "iVisa Makes International Travel Simpler for Millions of Travelers",
         "date": "2026-05-20",
         "sentiment": "positive",
-        "url": "https://www.forbes.com/travel/ivisa-review"
+        "url": "https://www.forbes.com/travel/ivisa-review",
+        "snippet": "iVisa streamlines visa applications for travelers worldwide with a fast, fully online process."
       },
       {
-        "source": "TrustPilot",
-        "title": "5-star review: Processed my Indian e-Visa in under 2 hours. Incredible service.",
+        "source": "news",
+        "domain": "cntraveler.com",
+        "title": "The Online Visa Services Worth Using in 2026 — iVisa Leads",
         "date": "2026-05-22",
         "sentiment": "positive",
-        "url": "https://www.trustpilot.com/review/ivisa.com"
+        "url": "https://www.cntraveler.com/story/best-visa-services-2026",
+        "snippet": "iVisa earns top marks for speed and clear guidance, though it charges a service fee on top of government costs."
       },
       {
-        "source": "TravelPulse",
+        "source": "news",
+        "domain": "travelpulse.com",
         "title": "Top Visa Processing Services of 2026: iVisa Tops the List",
         "date": "2026-05-18",
         "sentiment": "positive",
-        "url": "https://www.travelpulse.com/news/visa-services-2026"
+        "url": "https://www.travelpulse.com/news/visa-services-2026",
+        "snippet": "iVisa ranked first for reliability and customer support among online visa processors this year."
       },
       {
-        "source": "Reddit r/travel",
+        "source": "reddit",
+        "domain": "reddit.com",
         "title": "Used iVisa for my Turkey trip — here's my honest take",
         "date": "2026-05-21",
         "sentiment": "positive",
-        "url": "https://www.reddit.com/r/travel/ivisa-review"
+        "url": "https://www.reddit.com/r/travel/ivisa-review",
+        "snippet": "Worked smoothly, got my e-visa fast. Costs a bit more than the official site but saved me the hassle."
       },
       {
-        "source": "Skift",
+        "source": "news",
+        "domain": "skift.com",
         "title": "How iVisa Is Disrupting the Legacy Visa Services Market",
         "date": "2026-05-15",
         "sentiment": "positive",
-        "url": "https://skift.com/ivisa-market-disruption"
+        "url": "https://skift.com/ivisa-market-disruption",
+        "snippet": "iVisa's tech-first approach is reshaping how travelers obtain visas and travel documents."
       },
       {
-        "source": "BBB",
-        "title": "Consumer complaint: refund delay on cancelled application",
+        "source": "reddit",
+        "domain": "reddit.com",
+        "title": "Refund took weeks after I cancelled — be aware before booking",
         "date": "2026-05-10",
         "sentiment": "negative",
-        "url": "https://www.bbb.org/ivisa"
+        "url": "https://www.reddit.com/r/solotravel/ivisa-refund",
+        "snippet": "Service worked but the refund on my cancelled application took far longer than promised."
       }
-    ]
+    ],
+    "counts": {
+      "total": 6,
+      "positive": 5,
+      "neutral": 0,
+      "negative": 1
+    },
+    "source_breakdown": {
+      "news": 4,
+      "reddit": 2
+    }
   },
   "action_items": [
     "Improve rankings for 'is ivisa a scam', 'ivisa legit', 'ivisa fake or real' — iVisa not in top 3 for several countries.",
