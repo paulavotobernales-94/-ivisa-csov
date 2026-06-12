@@ -341,6 +341,14 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
             llm_by_country           = llm_by_country,
         )
 
+    # ── Data completeness gate ──────────────────────────────────────────────
+    # Detect silently-missing components (e.g. Gemini quota + Claude hiccup
+    # leaving the LLM score a hollow default) BEFORE the report ships.
+    from scripts.check_completeness import assess_completeness, format_completeness
+    completeness = assess_completeness(report_payload)
+    report_payload["data_completeness"] = completeness
+    logger.info(format_completeness(completeness))
+
     # ── HTML Report ───────────────────────────────────────────────────────────
     logger.info("[5/6] Generating HTML report...")
     try:
@@ -377,7 +385,14 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
         _save_historical(report_payload, HISTORICAL_DIR, run_date)
 
         # Slack — only when explicitly requested (--slack flag or Monday automation)
-        if send_slack:
+        # but NEVER when a core component is missing (don't notify the team about
+        # a hollow report).
+        if send_slack and not completeness["ok"]:
+            logger.error(
+                "⛔ Report has MISSING data — NOT sending Slack. Issues: %s",
+                "; ".join(completeness["errors"]),
+            )
+        elif send_slack:
             try:
                 from scripts.send_slack import send_slack_notification
                 send_slack_notification({
@@ -398,6 +413,16 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
         diff = csov_score - prev_csov
         logger.info("      Change vs last week:  %+.1f", diff)
     logger.info("=" * 60)
+
+    # Fail loudly if a core component was missing — prevents the Monday
+    # automation from committing/publishing a hollow report.
+    if not dry_run and not report_payload.get("data_completeness", {}).get("ok", True):
+        logger.error(
+            "⛔ DATA COMPLETENESS FAILED — missing: %s. Exiting non-zero so the "
+            "report is NOT published. Investigate the API(s) above and re-run.",
+            "; ".join(report_payload["data_completeness"]["errors"]),
+        )
+        sys.exit(1)
 
 
 # ── CLI Entry Point ───────────────────────────────────────────────────────────

@@ -313,10 +313,11 @@ def _is_junk_snippet(snippet: str) -> bool:
         return True
     if s.count("://") >= 2:             # multiple raw URLs = dumped link list
         return True
-    # Density of code-only characters that prose essentially never uses
-    code_only = sum(1 for c in s if c in "{}[]<>=\\|`")
-    if len(s) > 15 and code_only / len(s) > 0.05:
-        return True
+    # NOTE: no broad bracket/symbol density check here — legitimate titles and
+    # snippets routinely contain "[UK]", "[2026]", "(see below)", "&", etc.
+    # The specific structural checks above ({ } < > => && || window. …) already
+    # catch real code/JSON/HTML; a density check on []<>= caused false positives
+    # on real earned-media titles like "[UK] iVisa.com UK-ETA is a scam".
 
     # High ratio of special/code characters → probably code
     code_chars = sum(1 for c in s if c in '{}[];=()"\\'  )
