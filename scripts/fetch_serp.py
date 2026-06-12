@@ -290,6 +290,31 @@ def _is_junk_snippet(snippet: str) -> bool:
     # Generic JS assignment blob — many var x = "..." patterns
     if s.count("var ") >= 2:
         return True
+
+    # ── Structural code / markup detection (language-agnostic) ────────────────
+    # THE DURABLE GUARD. Instead of enumerating every junk variant (a losing game
+    # — there is always a new one), reject anything carrying the structural
+    # punctuation of code, JSON, or HTML. Human prose, in ANY language (English,
+    # German, Japanese, Italian…), does not contain these. This is what stops the
+    # whack-a-mole: a never-before-seen JS/JSON blob still gets caught because it
+    # still has braces, tags, or operators.
+    if "{" in s or "}" in s:            # JSON / JS object literals
+        return True
+    if "</" in s or "/>" in s:          # HTML closing / self-closing tags
+        return True
+    if _re.search(r"<[a-zA-Z!/]", s):   # opening HTML/markup tag
+        return True
+    if "=>" in s or "();" in s:         # JS arrow fns / empty call
+        return True
+    if "&&" in s or "||" in s:          # boolean operators
+        return True
+    if s.count("://") >= 2:             # multiple raw URLs = dumped link list
+        return True
+    # Density of code-only characters that prose essentially never uses
+    code_only = sum(1 for c in s if c in "{}[]<>=\\|`")
+    if len(s) > 15 and code_only / len(s) > 0.05:
+        return True
+
     # High ratio of special/code characters → probably code
     code_chars = sum(1 for c in s if c in '{}[];=()"\\'  )
     if len(s) > 20 and code_chars / len(s) > 0.15:
@@ -633,7 +658,51 @@ _PLATFORM_TITLES: dict[str, str] = {
     "glassdoor.com":   "iVisa — Glassdoor Company Profile",
     "indeed.com":      "iVisa — Indeed Company Profile",
     "apps.apple.com":  "iVisa: ETA, eVisa, ESTA, Visa — App Store",
+    "play.google.com": "iVisa: Online Travel Visas — Apps on Google Play",
 }
+
+
+# iVisa-owned app-store listings — canonical title + description used when the
+# live scrape returns a generic store title (e.g. "Android Apps on Google Play")
+# or a blank snippet. The listing copy is controlled by iVisa and stable, so this
+# is safe brand copy, not invented content. Prevents bare "Android Apps on Google
+# Play" cards with no description from appearing in the report.
+_APP_STORE_LISTINGS: dict[str, tuple[str, str]] = {
+    "play.google.com": (
+        "iVisa: Online Travel Visas — Apps on Google Play",
+        "The iVisa app is a private platform that helps users prepare visa and "
+        "travel document applications. Easily apply for ETA, eVisa, ESTA, NZeTA and more.",
+    ),
+    "apps.apple.com": (
+        "iVisa: ETA, eVisa, ESTA, Visa — App Store",
+        "iVisa is your one-stop shop for visas and other travel requirements. "
+        "Apply for travel documents online in a few easy steps.",
+    ),
+}
+
+# Generic store/listing titles that carry no iVisa-specific info — treat as missing
+# so the canonical _APP_STORE_LISTINGS title replaces them.
+_GENERIC_PLATFORM_TITLES = {
+    "android apps on google play", "apps on google play", "google play",
+    "google play store", "app store", "app store - apple", "apps on app store",
+    "app store - apple inc.", "‎app store",
+}
+
+
+def _apply_app_store_fallbacks(item: dict) -> None:
+    """Fill iVisa app-store listings with canonical title/snippet when the live
+    scrape left them generic or blank. Only fills gaps — real review snippets and
+    specific titles are left untouched."""
+    bare = item.get("domain", "").lower().lstrip("www.").lstrip(".")
+    listing = _APP_STORE_LISTINGS.get(bare)
+    if not listing:
+        return
+    fb_title, fb_snippet = listing
+    title = (item.get("title") or "").strip()
+    if not title or title.lower() in _GENERIC_PLATFORM_TITLES:
+        item["title"] = fb_title
+    if not (item.get("snippet") or "").strip():
+        item["snippet"] = fb_snippet
 
 
 _BAD_TITLES = {
@@ -827,6 +896,18 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                                 "source":    "serpapi",
                             })
                         results[country_code][keyword] = fallback_results
+
+    # Final normalization pass: ensure iVisa app-store listings always show real
+    # copy (covers every path above — organic-as-source, enriched, and fallback).
+    for country_code in results:
+        for keyword, items in results[country_code].items():
+            for item in items:
+                _apply_app_store_fallbacks(item)
+                item["sentiment"] = _classify_result(
+                    item.get("domain", ""),
+                    item.get("title", ""),
+                    item.get("snippet", ""),
+                )
 
     # Recompute scores with enriched data
     for country_code in list(results.keys()):

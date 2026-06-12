@@ -1593,6 +1593,46 @@ def _week_range(run_date: date) -> tuple[str, str, str]:
 # Public entry point
 # ---------------------------------------------------------------------------
 
+def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], int]:
+    """
+    FINAL SAFETY GATE — runs over the entire report payload right before it is
+    serialized into the HTML. Every result's snippet/title passes through the
+    junk filter and app-store fallbacks here, so no matter what the fetch layer
+    stored, a junk/code snippet physically cannot reach the published page.
+
+    This is purely text cleanup: it never recomputes sentiment or scores, so the
+    displayed numbers are untouched.
+
+    Returns (report_data, blanked_count).
+    """
+    from scripts.fetch_serp import (
+        _is_junk_snippet, _is_domain_title, _apply_app_store_fallbacks,
+    )
+    blanked = 0
+
+    def walk(o: Any) -> None:
+        nonlocal blanked
+        if isinstance(o, dict):
+            domain = o.get("domain", "") if isinstance(o.get("domain", ""), str) else ""
+            snip = o.get("snippet")
+            if isinstance(snip, str) and snip.strip() and _is_junk_snippet(snip):
+                o["snippet"] = ""
+                blanked += 1
+            title = o.get("title")
+            if isinstance(title, str) and _is_domain_title(title, domain):
+                o["title"] = ""
+            if domain:
+                _apply_app_store_fallbacks(o)
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x)
+
+    walk(report_data)
+    return report_data, blanked
+
+
 def generate_report(report_data: dict[str, Any], output_path: str) -> None:
     """
     Render the self-contained HTML report and write it to output_path.
@@ -1609,6 +1649,11 @@ def generate_report(report_data: dict[str, Any], output_path: str) -> None:
     report_data.setdefault("week_start", week_start)
     report_data.setdefault("week_end", week_end)
     report_data.setdefault("generated_at", datetime.utcnow().isoformat() + "Z")
+
+    # FINAL SAFETY GATE — strip any junk/code snippet before it can reach the page.
+    report_data, _blanked = _sanitize_report_data(report_data)
+    if _blanked:
+        logger.info("  Report safety gate: blanked %d junk snippet(s) before render.", _blanked)
 
     # Embed JSON safely
     json_str = json.dumps(report_data, ensure_ascii=False, default=str)

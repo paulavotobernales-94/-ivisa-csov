@@ -201,6 +201,15 @@ Clear to `""` before classification if snippet contains:
 
 **(June 11 2026) Sanitization now also runs at INGESTION** — `_fetch_semrush_keyword()` and `_fetch_ahrefs_keyword()` clear junk snippets/domain-titles before classification. Previously sanitization only ran inside `enrich_with_serpapi_organic()`, and only for keyword/country pairs present in the organic feed — so junk from SEMrush-only keywords leaked straight into storage and the report (root cause of the recurring play.google.com / "google play SERP" breakage).
 
+### Junk handling = 3 DURABLE LAYERS (June 11 2026 — why it kept recurring before)
+The bug recurred ~4 times because every prior fix was a **denylist** of known-bad strings — a new junk shape always slipped through. The fix is structural + defense-in-depth, so it stops being whack-a-mole:
+
+1. **Structural detection (root cause).** `_is_junk_snippet()` now rejects by the *shape* of code/JSON/HTML, not by specific strings: any `{` `}` (JSON/JS objects), `</` `/>` or `<tag` (HTML), `=>` `();` (JS), `&&` `||`, ≥2 `://` (dumped URLs), and code-only character density. Human prose **in any language** (English, German, Japanese, Italian) never has these, so never-before-seen junk variants are caught automatically. Precise patterns (`window\.\w`) mean legit prose like "within their policy window." is NOT flagged.
+2. **Permanent gate in the report generator.** `_sanitize_report_data()` in `generate_report.py` runs over the ENTIRE payload right before `json.dumps`. Every snippet/title passes the junk filter + app-store fallbacks here. No matter what the fetch layer stored, junk physically cannot reach the published page. Text-only — never recomputes sentiment or scores.
+3. **CI tripwire (fails loudly before publish).** `health_check.py` Section 9 parses the rendered `REPORT_DATA` and runs the real `_is_junk_snippet()` over every snippet/title; if any survived the gate it raises, failing the GitHub Actions pre-flight so a broken report is never published or Slacked. Uses the real detector (not substring matching) so LLM prose containing the word "window." never trips it.
+
+**Only scraped `snippet`/`title` fields can carry junk.** LLM text fields (`gemini_response`, etc.) are generated prose and are intentionally NOT sanitized.
+
 ### Scam-question title rule
 If title contains `"scam?"` AND snippet does NOT contain debunking signals → force `negative`.
 "Was using iVisa a mistake" → `negative` (regret framing).
@@ -400,6 +409,8 @@ No API available on current plan. Deferred indefinitely.
 | June 5 2026 | Initial creation — full project context from sessions May–June 2026 |
 | June 9 2026 | Idempotency guard for duplicate runs, `--force` flag, GitHub Actions workflow update, June 8 canonical score (55.7), trend chart cleanup added as pending task |
 | June 11 2026 | Hardened `_is_junk_snippet()` (generalized JS detection) + added ingestion-level sanitization in SEMrush/Ahrefs fetchers — fixes recurring play.google.com / JS-blob leakage into the report. Added 6 new `health_check.py` Section 8 cases. June 8 canonical report/score untouched. |
+| June 11 2026 | Added `_APP_STORE_LISTINGS` + `_apply_app_store_fallbacks()` in `fetch_serp.py` (final pass in `enrich_with_serpapi_organic`): iVisa Google Play / App Store results now show canonical title + description instead of a bare "Android Apps on Google Play" card when the live scrape returns a generic title or blank snippet. Only fills gaps — real review snippets/titles untouched. Same fallbacks applied to live June 8 report; score still 55.73. |
+| June 11 2026 | **DURABLE junk fix (stops the recurring breakage).** 3 layers: (1) structural detection in `_is_junk_snippet()` — catches junk by code/JSON/HTML shape, language-agnostic, so unseen variants are caught; (2) permanent safety gate `_sanitize_report_data()` in `generate_report.py` runs over the whole payload before render; (3) CI tripwire in `health_check.py` §9 fails the run if any junk survived. Added structural + multilingual (JP/DE/IT) test cases. All text-only — scores untouched. |
 | _(next update)_ | Localized keywords per country (DE, FR, JP, NL, IT, CH) |
 
 ---

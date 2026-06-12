@@ -266,6 +266,19 @@ JUNK_SNIPPET_TESTS = [
     ('var theplus_ajax_url = "https://example.com/wp-admin/admin-ajax.php"; var nonce = "x"',
      True, "WordPress admin-ajax JS junk"),
 
+    # ── Structural detection — catches NEVER-BEFORE-SEEN variants by shape, ──
+    #    not by specific string. This is what breaks the whack-a-mole cycle.
+    ('{"id":123,"name":"iVisa","ok":true}',
+     True, "Generic JSON object (braces) — unknown variant"),
+    ('<div class="app"><span>iVisa</span></div>',
+     True, "HTML markup snippet"),
+    ('const f = (x) => { return x + 1; }',
+     True, "JS arrow function"),
+    ('if (a && b || c) { doThing(); }',
+     True, "JS boolean operators + braces"),
+    ('See https://a.com/x and https://b.com/y and https://c.com/z',
+     True, "Dumped multi-URL list"),
+
     # Real text — must NOT be flagged as junk
     ("iVisa makes visa applications fast, easy, and secure for travelers worldwide.",
      False, "Normal article snippet — must NOT be flagged as junk"),
@@ -282,6 +295,17 @@ JUNK_SNIPPET_TESTS = [
 
     ("The iVisa app is not affiliated with, endorsed by, or representing any government or embassy.",
      False, "Standard disclaimer copy — must NOT be flagged as junk"),
+
+    # Multilingual prose — structural detection must be language-agnostic.
+    # These are real non-English snippets that MUST survive (localized keywords).
+    ("iVisaを使えば、ETAやeVisa、ESTAなどの渡航書類をオンラインで簡単に申請できます。",
+     False, "Japanese app description — must NOT be flagged as junk"),
+    ("Mit iVisa kannst du dein UK ETA, Neuseeland-Visum und weitere Reisedokumente online beantragen.",
+     False, "German app description — must NOT be flagged as junk"),
+    ("iVisa semplifica e accelera il processo di richiesta del visto con un sistema online sicuro.",
+     False, "Italian app description — must NOT be flagged as junk"),
+    ("Easily apply for travel visas and documents like ETA, eVisa, ESTA, NZeTA & more.",
+     False, "Real snippet with single ampersand — must NOT be flagged as junk"),
 ]
 
 print("  8a. Junk snippet detector:")
@@ -414,9 +438,39 @@ def check_report_gen():
             if section not in content:
                 raise Exception(f"Missing section: {section}")
 
-    return f"{size_kb} KB, all sections present, no unreplaced placeholders"
+        # ── TRIPWIRE ──────────────────────────────────────────────────────────
+        # Parse the embedded REPORT_DATA and run the REAL junk detector over every
+        # scraped snippet/title field. If any survived the safety gate, fail loudly
+        # here (runs as a CI pre-flight) so a broken report is never published.
+        # We use _is_junk_snippet (not naive substring matching) so legitimate
+        # prose — e.g. an LLM saying "within their policy window." — never trips it.
+        import re as _re2, json as _json2
+        m = _re2.search(r"const REPORT_DATA = (\{.*?\});\n", content, _re2.DOTALL)
+        if m:
+            payload = _json2.loads(m.group(1))
+            leaks = []
+            def _scan(o, path=""):
+                if isinstance(o, dict):
+                    s = o.get("snippet")
+                    if isinstance(s, str) and s.strip() and _is_junk_snippet(s):
+                        leaks.append((path, s[:60]))
+                    t = o.get("title")
+                    if isinstance(t, str) and _is_junk_snippet(t):
+                        leaks.append((path+"/title", t[:60]))
+                    for k, v in o.items():
+                        _scan(v, path+"/"+str(k))
+                elif isinstance(o, list):
+                    for i, x in enumerate(o):
+                        _scan(x, f"{path}[{i}]")
+            _scan(payload)
+            if leaks:
+                raise Exception(
+                    f"Junk leaked into report payload after safety gate: {leaks[:3]} — do NOT publish."
+                )
 
-check("HTML report generation", check_report_gen)
+    return f"{size_kb} KB, all sections present, no junk in payload, no unreplaced placeholders"
+
+check("HTML report generation + junk tripwire", check_report_gen)
 
 
 # ── 10. Snippet coverage in sample data ──────────────────────────────────────
