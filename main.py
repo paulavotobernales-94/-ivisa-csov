@@ -105,7 +105,7 @@ def _build_report_payload(
 
     # Build historical (last 8 weeks from historical dir if available,
     # otherwise just the current week as a single point)
-    from scripts.config import HISTORICAL_DIR
+    from scripts.config import HISTORICAL_DIR, TREND_CHART_START_DATE
     history = []
     try:
         from datetime import timedelta
@@ -115,9 +115,13 @@ def _build_report_payload(
         current_week_label = f"{monday.strftime('%b %d')} – {sunday.strftime('%b %d, %Y')}"
 
         hfiles = sorted(HISTORICAL_DIR.glob("*.json"))
-        # Deduplicate by week_label — keep latest file per week
+        # Trend starts at the first legit final-version run (TREND_CHART_START_DATE).
+        # Pre-cutoff snapshots (backfilled Jan–May, June test runs) stay on disk for
+        # reference but are NOT plotted — that early data isn't reliable.
         seen_labels: dict = {}
         for hf in hfiles:
+            if hf.stem < TREND_CHART_START_DATE:
+                continue
             with open(hf, "r", encoding="utf-8") as f:
                 hd = json.load(f)
             label = hd.get("week_label", hf.stem)
@@ -131,15 +135,16 @@ def _build_report_payload(
             }
 
         # Always overwrite the current week with live scores so a prior broken run
-        # can never poison the chart for this week.
-        seen_labels[current_week_label] = {
-            "week_label":   current_week_label,
-            "csov":         csov_result.get("csov_score", 0),
-            "serp":         csov_result.get("components", {}).get("serp", {}).get("score", 0),
-            "ai_overview":  csov_result.get("components", {}).get("ai_overview", {}).get("score", 0),
-            "llm":          csov_result.get("components", {}).get("llm", {}).get("score", 0),
-            "earned_media": csov_result.get("components", {}).get("earned_media", {}).get("score", 0),
-        }
+        # can never poison the chart — but only if this week is on/after the cutoff.
+        if monday.isoformat() >= TREND_CHART_START_DATE:
+            seen_labels[current_week_label] = {
+                "week_label":   current_week_label,
+                "csov":         csov_result.get("csov_score", 0),
+                "serp":         csov_result.get("components", {}).get("serp", {}).get("score", 0),
+                "ai_overview":  csov_result.get("components", {}).get("ai_overview", {}).get("score", 0),
+                "llm":          csov_result.get("components", {}).get("llm", {}).get("score", 0),
+                "earned_media": csov_result.get("components", {}).get("earned_media", {}).get("score", 0),
+            }
 
         history = list(seen_labels.values())[-8:]
     except Exception as exc:

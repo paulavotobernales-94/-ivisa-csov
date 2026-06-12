@@ -17,6 +17,13 @@ SERPAPI_KEY       = os.environ.get("SERPAPI_KEY", "")
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
 GITHUB_PAGES_URL  = os.environ.get("GITHUB_PAGES_URL", "https://paulavotobernales-94.github.io/-ivisa-csov")
 
+# ── Trend chart start date ────────────────────────────────────────────────────
+# The CSOV trend chart + CSV only show runs on/after this date. Earlier snapshots
+# (backfilled Jan–May, plus June test runs before the final keyword/scoring version)
+# stay on disk in data/historical/ for reference but are NOT plotted — that early
+# data isn't reliable. June 15 2026 is the first Monday with the final report.
+TREND_CHART_START_DATE = "2026-06-15"
+
 # ── CSOV Formula Weights ──────────────────────────────────────────────────────
 WEIGHT_SERP         = 0.35
 WEIGHT_AI_OVERVIEW  = 0.25

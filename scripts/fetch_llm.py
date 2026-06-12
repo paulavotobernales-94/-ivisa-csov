@@ -58,6 +58,10 @@ from scripts.config import (
 
 logger = logging.getLogger(__name__)
 
+# Set True once Gemini returns a free-tier/quota 429 in a run, so we stop firing
+# ~50 more calls that will all fail (saves minutes) and log the reason just once.
+_gemini_quota_hit = False
+
 
 # ---------------------------------------------------------------------------
 # Model clients (lazy init)
@@ -124,12 +128,14 @@ def _ask_gemini(client, prompt: str, with_grounding: bool = False, retries: int 
     Returns (text, sources) — sources is a list of URLs from grounding (if enabled).
     Falls back to (None, []) on error.
     """
-    if client is None:
+    global _gemini_quota_hit
+    if client is None or _gemini_quota_hit:
         return None, []
+    use_grounding = with_grounding   # may be dropped mid-loop if grounding quota is hit
     for attempt in range(retries + 1):
         try:
             kwargs = {"model": GEMINI_MODEL, "contents": prompt}
-            if with_grounding:
+            if use_grounding:
                 try:
                     import google.genai.types as genai_types
                     kwargs["config"] = genai_types.GenerateContentConfig(
@@ -143,28 +149,52 @@ def _ask_gemini(client, prompt: str, with_grounding: bool = False, retries: int 
 
             # Extract grounding sources if available
             sources = []
-            try:
-                chunks = response.candidates[0].grounding_metadata.grounding_chunks
-                for chunk in chunks:
-                    url = getattr(getattr(chunk, 'web', None), 'uri', None)
-                    if url:
-                        sources.append(url)
-            except Exception:
-                pass
+            if use_grounding:
+                try:
+                    chunks = response.candidates[0].grounding_metadata.grounding_chunks
+                    for chunk in chunks:
+                        url = getattr(getattr(chunk, 'web', None), 'uri', None)
+                        if url:
+                            sources.append(url)
+                except Exception:
+                    pass
 
             return text, sources
         except Exception as exc:
             exc_str = str(exc).lower()
-            # RESOURCE_EXHAUSTED = daily quota gone — no point retrying until tomorrow
+            # RESOURCE_EXHAUSTED / free_tier = a quota was hit (per-day, per-minute,
+            # or the separate Google-Search GROUNDING quota — which is much smaller).
             quota_exhausted = "resource_exhausted" in exc_str or "free_tier" in exc_str
             transient_limit = not quota_exhausted and ("rate" in exc_str or "429" in exc_str)
+
+            # Grounding fallback: the grounding tool has its own tiny free quota.
+            # If a GROUNDED call is quota-blocked, retry WITHOUT grounding — the plain
+            # text quota (~1,500/day) is generous, so Gemini's sentiment still gets
+            # produced and averaged with Claude (we just lose the cited source links).
+            if quota_exhausted and use_grounding:
+                logger.warning(
+                    "Gemini grounding quota hit — retrying this query WITHOUT grounding "
+                    "(sentiment still scored; source links unavailable)."
+                )
+                use_grounding = False
+                continue
+
             if attempt < retries and transient_limit:
                 wait = 15 * (attempt + 1)
                 logger.warning("Gemini rate limit (attempt %d/%d) — retrying in %ds", attempt+1, retries+1, wait)
                 time.sleep(wait)
             else:
                 if quota_exhausted:
-                    logger.warning("Gemini daily quota exhausted — skipping remaining Gemini queries for this run.")
+                    # We get here only if a NON-grounded call is also quota-blocked,
+                    # i.e. the core text quota is genuinely gone — disable Gemini.
+                    if not _gemini_quota_hit:
+                        # Full error names the exact quota (…PerDay / …PerMinute / grounding).
+                        logger.warning(
+                            "Gemini free-tier text quota hit (model=%s, grounding already off) — "
+                            "disabling Gemini for the rest of this run. FULL ERROR: %s",
+                            GEMINI_MODEL, str(exc)[:600],
+                        )
+                    _gemini_quota_hit = True
                 else:
                     logger.warning("Gemini query failed (model=%s): %s", GEMINI_MODEL, exc)
                 return None, []

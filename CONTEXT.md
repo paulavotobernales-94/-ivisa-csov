@@ -246,12 +246,17 @@ Same root cause as branded "iVisa" keyword — SEMrush database diverges from li
 
 ## Gemini API — Free Tier Behaviour
 
-Gemini free tier has a daily quota. If multiple runs happen in one day, quota exhausts.
-Error: `RESOURCE_EXHAUSTED` / `free_tier_requests`.
+Gemini 2.0 Flash free tier (per **project**, resets midnight Pacific): ~1,500 requests/day, ~15/min. A single report run (~50 Gemini calls) is well within that — so a normal daily cap should NOT block a run.
 
-**Fix:** Pipeline detects `resource_exhausted` and skips remaining Gemini calls immediately — does NOT retry. Report still generates using Claude-only LLM scores.
+**⚠️ The real blocker (found June 12 2026): Google-Search GROUNDING quota.** The brand/general queries call Gemini with `with_grounding=True` (GoogleSearch tool) so it can cite live sources. Grounding has its **own, much smaller** free quota, separate from the 1,500/day text quota. When it's exhausted, EVERY grounded call 429s from the very first one — even on a day with no prior runs — which is exactly the "Gemini did nothing again" symptom. The error is still `RESOURCE_EXHAUSTED` / `free_tier`, so it's easy to mistake for "daily quota used up." It is NOT your usage.
 
-**Distinguish from transient rate limits:** `resource_exhausted` / `free_tier` → skip immediately. `rate` / `429` → retry with 15s backoff (up to retries limit).
+**Fix (June 12 2026): grounding fallback in `_ask_gemini`.** If a *grounded* call is quota-blocked, it retries the SAME query WITHOUT grounding — using the generous text quota — so Gemini still produces a response, gets sentiment-scored, and averages with Claude as intended. Only the cited source links are lost. Gemini is disabled for the run **only if a non-grounded call is also quota-blocked** (i.e. the core text quota is genuinely gone). The first such failure logs the FULL error (names `…PerDay` / `…PerMinute` / grounding) once, then a run-level flag stops further doomed calls.
+
+**Guaranteed fix if you also want the source links back:** enable billing on the Google Cloud project for this API key (lifts free-tier caps).
+
+**Distinguish from transient rate limits:** `resource_exhausted` / `free_tier` → grounding fallback, then skip. `rate` / `429` → retry with 15s backoff.
+
+**Completeness:** the data-completeness gate now reports LLM as PARTIAL (warn) when only one model answered, MISSING (block + no Slack + non-zero exit) when neither did — so a hollow LLM score can't ship silently.
 
 ---
 
@@ -365,14 +370,14 @@ Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
 | Germany / non-English SERP mismatch | Partially fixed by snippet coverage fallback. Full fix pending: localized keywords + `hl=` parameter |
 | Non-English countries use English keywords | **PENDING** — Paula to provide localized keyword lists for DE, FR, JP, NL, IT, CH |
 | Duplicate Slack reports (cron fires late after manual run) | Fixed June 9 2026 — idempotency guard in main.py, `--force` flag added |
-| Main dashboard trend chart shows backfilled May data | **PENDING** — Paula wants chart to start from June 8 only. All historical JSON + HTML files stay in folder. Only the trend chart display needs updating in `generate_report.py`. |
+| Main dashboard trend chart shows backfilled May data | **FIXED June 12 2026** — `TREND_CHART_START_DATE = "2026-06-15"` in `config.py`; `main.py` filters history to that date onward. All pre-cutoff snapshots stay on disk, just not plotted. First chart point = Mon June 15 2026 (first final-version run). |
 
 ---
 
 ## Pending / Deferred Work
 
-### 0. Clean up main dashboard trend chart (do this first)
-The trend chart on `docs/index.html` currently shows backfilled May–June data points. Paula wants it to start clean from June 8, 2026 as the first data point. The historical JSON files and archived HTML reports in `docs/reports/` must NOT be deleted — they stay for reference. Only the chart display logic in `scripts/generate_report.py` needs to filter history to start from `2026-06-08` onward.
+### 0. Clean up main dashboard trend chart — ✅ DONE (June 12 2026)
+The trend chart + CSV now start at `TREND_CHART_START_DATE` (`config.py`), set to **2026-06-15** — the first Monday with the final keyword/scoring version. `main.py` skips any historical snapshot dated before the cutoff and only adds the current week if it's on/after it. All historical JSON + archived HTML stay on disk; they're just not plotted. (Paula moved the start from June 8 → June 15 so only fully-legit final-version data shows.)
 
 ### 1. Localized keywords per country — ✅ DONE (June 12 2026)
 Per-country localized keywords are live. `KEYWORDS_BY_COUNTRY` in `config.py`; per-country `hl` via `serpapi_hl`; Claude multilingual fallback in `fetch_serp.py`; Switzerland → Spain (3%). health_check §8c/§8d cover routing + config. See the June 12 update-log entry and the Sentiment Classification section for details.

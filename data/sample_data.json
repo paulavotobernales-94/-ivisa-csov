@@ -38,63 +38,7 @@
   },
   "historical": [
     {
-      "week_label": "Apr 4",
-      "csov": 47.2,
-      "serp": 41.0,
-      "ai_overview": 50.0,
-      "llm": 58.0,
-      "earned_media": 55.0
-    },
-    {
-      "week_label": "Apr 11",
-      "csov": 48.9,
-      "serp": 43.5,
-      "ai_overview": 51.2,
-      "llm": 59.5,
-      "earned_media": 55.0
-    },
-    {
-      "week_label": "Apr 18",
-      "csov": 50.1,
-      "serp": 44.8,
-      "ai_overview": 52.0,
-      "llm": 60.2,
-      "earned_media": 57.0
-    },
-    {
-      "week_label": "Apr 25",
-      "csov": 51.6,
-      "serp": 46.0,
-      "ai_overview": 53.5,
-      "llm": 61.0,
-      "earned_media": 58.0
-    },
-    {
-      "week_label": "May 2",
-      "csov": 53.4,
-      "serp": 47.2,
-      "ai_overview": 55.0,
-      "llm": 62.5,
-      "earned_media": 58.0
-    },
-    {
-      "week_label": "May 9",
-      "csov": 54.0,
-      "serp": 47.9,
-      "ai_overview": 55.8,
-      "llm": 63.0,
-      "earned_media": 59.0
-    },
-    {
-      "week_label": "May 16",
-      "csov": 55.1,
-      "serp": 49.1,
-      "ai_overview": 54.0,
-      "llm": 63.8,
-      "earned_media": 60.0
-    },
-    {
-      "week_label": "May 23",
+      "week_label": "Jun 15",
       "csov": 58.3,
       "serp": 52.4,
       "ai_overview": 58.2,
