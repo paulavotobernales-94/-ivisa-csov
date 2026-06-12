@@ -24,6 +24,8 @@ WEIGHT_LLM          = 0.25
 WEIGHT_EARNED_MEDIA = 0.15
 
 # ── Keywords Tracked ─────────────────────────────────────────────────────────
+# Legacy global list — kept as a fallback for any country missing from
+# KEYWORDS_BY_COUNTRY. Live runs use the per-country lists below.
 KEYWORDS = [
     "iVisa",
     "what is iVisa",
@@ -38,18 +40,83 @@ KEYWORDS = [
     "ivisa fee",
 ]
 
+# ── Per-Country Keywords (localized) ──────────────────────────────────────────
+# Top brand-intent keywords in each market's native search language.
+# English-speaking markets (US/UK/AU/CA) keep English keywords (lists differ
+# slightly per market). DE/FR/JP/NL/IT/ES use local-language keywords so the
+# SERP data reflects what native speakers actually search and see.
+# Source: Paula's "Keywords top 10 countries csov report" sheet (June 2026).
+# Cleaned: Japan deduped to 10 unique (was "ivisaとは" twice); NL row 11 typo
+# "s iVisa…" → "is iVisa…"; France/Spain typos already fixed in the sheet.
+KEYWORDS_BY_COUNTRY = {
+    "us": [
+        "ivisa", "is ivisa legit", "is iVisa a scam", "ivisa reviews",
+        "is ivisa safe", "what is ivisa", "ivisa customer service",
+        "ivisa india", "ivisa uk eta", "iVisa affiliated with the gov", "ivisa fee",
+    ],
+    "gb": [
+        "ivisa", "is ivisa legit", "is iVisa a scam", "ivisa reviews",
+        "ivisa application", "what is ivisa", "ivisa india",
+        "ivisa com fake or real", "is ivisa safe",
+        "iVisa affiliated with the gov", "ivisa fee",
+    ],
+    "au": [
+        "ivisa", "is ivisa legit", "is iVisa a scam", "ivisa reviews",
+        "is ivisa safe", "what is ivisa", "ivisa customer service",
+        "ivisa india", "ivisa uk eta", "iVisa affiliated with the gov", "ivisa fee",
+    ],
+    "ca": [
+        "ivisa", "is ivisa legit", "is iVisa a scam", "ivisa reviews",
+        "is ivisa safe", "what is ivisa", "ivisa customer service",
+        "ivisa india", "ivisa uk eta", "iVisa affiliated with the gov", "ivisa fee",
+    ],
+    "de": [
+        "ivisa", "ivisa legit", "ivisa seriös", "ist ivisa seriös",
+        "ivisa erfahrungen", "ivisa eta uk", "ivisa reviews", "was ist ivisa",
+        "what is ivisa", "ivisa indien", "ivisa kosten",
+    ],
+    "fr": [
+        "iVisa", "ivisa avis", "iVisa review", "ivisa est il fiable",
+        "is ivisa reliable?", "site ivisa avis", "ivisa arnaque",
+        "ivisa site fiable", "is ivisa legit", "ivisa uk eta", "application ivisa",
+    ],
+    "jp": [
+        "ivisa", "ivisaとは", "ivisa 高い", "ivisa 評判", "ivisa 詐欺",
+        "ivisa 返金", "ivisaは政府機関と提携していますか？", "ivisa reviews",
+        "ivisa support", "ivisa.com 評判",
+    ],
+    "nl": [
+        "ivisa", "ivisa betrouwbaar", "ivisa reviews", "is ivisa betrouwbaar",
+        "ivisa kosten", "ivisa contact", "ivisa review", "is ivisa legit",
+        "ivisa eta uk", "wat is ivisa", "is iVisa verbonden aan de overheid?",
+    ],
+    "it": [
+        "iVisa", "is ivisa a scam", "ivisa support", "is ivisa legit",
+        "ivisa india", "ivisa è affidabile", "ivisa app", "ivisa eta uk",
+        "ivisa reviews", "is ivisa safe to use", "ivisa fee",
+    ],
+    "es": [
+        "iVisa", "ivisa opiniones", "ivisa funciona", "que es ivisa",
+        "ivisa es confiable", "ivisa es legitimo", "ivisa reviews",
+        "es seguro usar ivisa?", "ivisa reseñas", "ivisa precio",
+        "ivisa esta afiliado al gobierno?",
+    ],
+}
+
 # ── Countries Tracked ─────────────────────────────────────────────────────────
+# serpapi_hl = Google interface language for SerpAPI (local language for
+# non-English markets so results come back in the native language).
 COUNTRIES = {
-    "us": {"name": "United States", "flag": "🇺🇸", "semrush_db": "us", "ahrefs_country": "us", "weight": 0.35},
-    "gb": {"name": "United Kingdom", "flag": "🇬🇧", "semrush_db": "uk", "ahrefs_country": "gb", "weight": 0.14},
-    "au": {"name": "Australia",      "flag": "🇦🇺", "semrush_db": "au", "ahrefs_country": "au", "weight": 0.10},
-    "de": {"name": "Germany",        "flag": "🇩🇪", "semrush_db": "de", "ahrefs_country": "de", "weight": 0.08},
-    "ca": {"name": "Canada",         "flag": "🇨🇦", "semrush_db": "ca", "ahrefs_country": "ca", "weight": 0.07},
-    "fr": {"name": "France",         "flag": "🇫🇷", "semrush_db": "fr", "ahrefs_country": "fr", "weight": 0.07},
-    "jp": {"name": "Japan",          "flag": "🇯🇵", "semrush_db": "jp", "ahrefs_country": "jp", "weight": 0.04},
-    "nl": {"name": "Netherlands",    "flag": "🇳🇱", "semrush_db": "nl", "ahrefs_country": "nl", "weight": 0.04},
-    "it": {"name": "Italy",          "flag": "🇮🇹", "semrush_db": "it", "ahrefs_country": "it", "weight": 0.03},
-    "ch": {"name": "Switzerland",    "flag": "🇨🇭", "semrush_db": "ch", "ahrefs_country": "ch", "weight": 0.03},
+    "us": {"name": "United States", "flag": "🇺🇸", "semrush_db": "us", "ahrefs_country": "us", "serpapi_hl": "en", "weight": 0.35},
+    "gb": {"name": "United Kingdom", "flag": "🇬🇧", "semrush_db": "uk", "ahrefs_country": "gb", "serpapi_hl": "en", "weight": 0.14},
+    "au": {"name": "Australia",      "flag": "🇦🇺", "semrush_db": "au", "ahrefs_country": "au", "serpapi_hl": "en", "weight": 0.10},
+    "de": {"name": "Germany",        "flag": "🇩🇪", "semrush_db": "de", "ahrefs_country": "de", "serpapi_hl": "de", "weight": 0.08},
+    "ca": {"name": "Canada",         "flag": "🇨🇦", "semrush_db": "ca", "ahrefs_country": "ca", "serpapi_hl": "en", "weight": 0.07},
+    "fr": {"name": "France",         "flag": "🇫🇷", "semrush_db": "fr", "ahrefs_country": "fr", "serpapi_hl": "fr", "weight": 0.07},
+    "jp": {"name": "Japan",          "flag": "🇯🇵", "semrush_db": "jp", "ahrefs_country": "jp", "serpapi_hl": "ja", "weight": 0.04},
+    "nl": {"name": "Netherlands",    "flag": "🇳🇱", "semrush_db": "nl", "ahrefs_country": "nl", "serpapi_hl": "nl", "weight": 0.04},
+    "it": {"name": "Italy",          "flag": "🇮🇹", "semrush_db": "it", "ahrefs_country": "it", "serpapi_hl": "it", "weight": 0.03},
+    "es": {"name": "Spain",          "flag": "🇪🇸", "semrush_db": "es", "ahrefs_country": "es", "serpapi_hl": "es", "weight": 0.03},
 }
 
 # ── Domain Sentiment Classification ───────────────────────────────────────────

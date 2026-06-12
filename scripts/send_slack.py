@@ -74,7 +74,7 @@ def send_slack_notification(report_data: dict) -> bool:
                 "text": {
                     "type": "mrkdwn",
                     "text": (
-                        f"Weekly global reputation snapshot across 10 countries and 10 keywords. "
+                        f"Weekly global reputation snapshot across 10 countries and up to 11 localized keywords. "
                         f"Score measures positive vs. negative brand signals in search, AI, and media."
                     ),
                 },

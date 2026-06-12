@@ -408,6 +408,60 @@ for domain, title, snippet, expected, desc in SENTIMENT_TESTS:
         print(f"          got '{result}', expected '{expected}'")
 
 
+# ── 8c. Multilingual fallback routing (deterministic — no API call) ──────────
+# Verifies WHICH results get sent to Claude for non-English classification.
+# We only want to spend an LLM call when the English rules had no signal at all.
+from scripts.fetch_serp import _rule_signals_inconclusive
+ROUTING_TESTS = [
+    # (domain, title, snippet, should_route_to_llm, description)
+    ("blog.de", "iVisa", "iVisa ist eine schnelle und einfache Lösung für Reisedokumente.",
+     True,  "German neutral-looking snippet, no English signals → route to Claude"),
+    ("forum.it", "iVisa", "Ho usato iVisa per il mio visto, esperienza positiva.",
+     True,  "Italian snippet, no English signals → route to Claude"),
+    ("blog.de", "Is iVisa a scam?", "iVisa is a scam, total fraud, avoid.",
+     False, "Has English negative signal → rules handle it, no LLM call"),
+    ("blog.fr", "iVisa review", "iVisa is legit and safe to use, highly recommend.",
+     False, "Has English positive signal → rules handle it, no LLM call"),
+    ("bbb.org", "iVisa", "Beschwerde über iVisa",
+     False, "Structural complaint domain → already negative, no LLM call"),
+    ("ivisa.com", "iVisa", "Beantragen Sie Ihr Visum online.",
+     False, "iVisa-owned domain → already positive, no LLM call"),
+]
+print("  8c. Multilingual fallback routing:")
+for domain, title, snippet, expect_route, desc in ROUTING_TESTS:
+    got = _rule_signals_inconclusive(domain, title, snippet)
+    ok = got == expect_route
+    status = PASS if ok else FAIL
+    results.append((status, f"LLM routing: {desc}", f"route={got} expected={expect_route}"))
+    print(f"    {status}  {desc}")
+    if not ok:
+        print(f"          route={got}, expected={expect_route}")
+
+
+# ── 8d. Per-country keyword config sanity ────────────────────────────────────
+from scripts.config import KEYWORDS_BY_COUNTRY, COUNTRIES
+print("  8d. Per-country keyword config:")
+_cfg_checks = [
+    ("All 10 countries have keyword lists",
+     set(KEYWORDS_BY_COUNTRY.keys()) == set(COUNTRIES.keys())),
+    ("Spain (es) present, Switzerland (ch) removed",
+     "es" in COUNTRIES and "ch" not in COUNTRIES),
+    ("Every country has serpapi_hl set",
+     all("serpapi_hl" in c for c in COUNTRIES.values())),
+    ("Non-English markets use local hl",
+     COUNTRIES["de"]["serpapi_hl"] == "de" and COUNTRIES["jp"]["serpapi_hl"] == "ja"
+     and COUNTRIES["es"]["serpapi_hl"] == "es"),
+    ("No duplicate keywords within any country",
+     all(len(v) == len(set(k.lower() for k in v)) for v in KEYWORDS_BY_COUNTRY.values())),
+    ("Each country has 10–11 keywords",
+     all(10 <= len(v) <= 11 for v in KEYWORDS_BY_COUNTRY.values())),
+]
+for desc, ok in _cfg_checks:
+    status = PASS if ok else FAIL
+    results.append((status, f"Keyword config: {desc}", str(ok)))
+    print(f"    {status}  {desc}")
+
+
 # ── 9. Report generation (dry run) ───────────────────────────────────────────
 print(f"\n{SEP}")
 print("  9. Report Generation (dry run)")

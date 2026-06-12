@@ -38,8 +38,11 @@ import requests
 
 from scripts.config import (
     AHREFS_API_KEY,
+    CLAUDE_API_KEY,
+    CLAUDE_MODEL,
     COUNTRIES,
     KEYWORDS,
+    KEYWORDS_BY_COUNTRY,
     NEGATIVE_DOMAINS,
     SEMRUSH_API_KEY,
 )
@@ -430,6 +433,74 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
 
     # 8. Everything else → neutral
     return "neutral"
+
+
+# ---------------------------------------------------------------------------
+# Multilingual sentiment fallback (Claude)
+# In non-English markets the snippets are in the local language, so the English
+# signal words above don't match and the rule classifier returns an
+# inconclusive "neutral". For exactly those cases we ask Claude to classify.
+# Cached per text (snippets repeat across keywords/countries); one Haiku call
+# per unique unmatched snippet; skipped entirely if CLAUDE_API_KEY is unset.
+# ---------------------------------------------------------------------------
+_LLM_SENTIMENT_CACHE: dict[str, str] = {}
+
+
+def _rule_signals_inconclusive(domain: str, title: str, snippet: str) -> bool:
+    """True only when the English rule classifier had NO signal to act on:
+    non-owned, non-complaint, non-editorial, and zero positive/negative English
+    signal words. These are the local-language results worth an LLM call —
+    confident neutrals (mixed signals) and domain-based verdicts are left alone."""
+    domain_lower = domain.lower()
+    if any(d in domain_lower for d in ALWAYS_NEGATIVE_DOMAINS):
+        return False
+    if any(d in domain_lower for d in IVISA_OWNED_DOMAINS):
+        return False
+    if any(d in domain_lower for d in EDITORIAL_DOMAINS):
+        return False
+    text = f"{title.lower()} {snippet.lower()}"
+    pos = sum(1 for s in POSITIVE_TEXT_SIGNALS if s in text)
+    neg = sum(1 for s in NEGATIVE_TEXT_SIGNALS if s in text)
+    return pos == 0 and neg == 0
+
+
+def _classify_with_claude(title: str, snippet: str) -> str | None:
+    """Classify a (typically non-English) SERP result as positive/negative/neutral
+    via Claude. Returns None on any failure so the caller keeps the existing value."""
+    text = f"{title}\n{snippet}".strip()
+    if not text or not CLAUDE_API_KEY:
+        return None
+    if text in _LLM_SENTIMENT_CACHE:
+        return _LLM_SENTIMENT_CACHE[text]
+    prompt = (
+        "This is a Google search result about iVisa, an online visa / travel-document "
+        "service. The text may be in any language. Classify how it reflects on iVisa's "
+        "reputation. Reply with EXACTLY one word: positive, negative, or neutral.\n"
+        "- positive: defends, recommends, praises, or is iVisa's own official listing\n"
+        "- negative: scam/fraud accusation, complaint, warning, regret, or strong criticism\n"
+        "- neutral: mixed pros and cons, purely factual, or not really about iVisa\n\n"
+        f"Result:\n{text[:1200]}"
+    )
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+        msg = client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=5,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw = msg.content[0].text.strip().lower()
+        label = (
+            "positive" if "positive" in raw else
+            "negative" if "negative" in raw else
+            "neutral"  if "neutral"  in raw else None
+        )
+        if label:
+            _LLM_SENTIMENT_CACHE[text] = label
+        return label
+    except Exception as exc:
+        logger.warning("Claude multilingual classify failed: %s", exc)
+        return None
 
 
 def _is_ivisa(domain: str) -> bool:
@@ -909,6 +980,29 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                     item.get("snippet", ""),
                 )
 
+    # Multilingual sentiment fallback — for non-English markets, upgrade the
+    # results the English rules couldn't classify (inconclusive neutral) using
+    # Claude. No-ops when CLAUDE_API_KEY is unset (results stay neutral).
+    llm_upgraded = 0
+    for country_code in results:
+        if COUNTRIES.get(country_code, {}).get("serpapi_hl", "en") == "en":
+            continue
+        for keyword, items in results[country_code].items():
+            for item in items:
+                if item.get("sentiment") != "neutral":
+                    continue
+                title = item.get("title", "") or ""
+                snippet = item.get("snippet", "") or ""
+                if not (title or snippet):
+                    continue
+                if _rule_signals_inconclusive(item.get("domain", ""), title, snippet):
+                    label = _classify_with_claude(title, snippet)
+                    if label and label != "neutral":
+                        item["sentiment"] = label
+                        llm_upgraded += 1
+    if llm_upgraded:
+        logger.info("  → Multilingual fallback: Claude re-classified %d non-English result(s).", llm_upgraded)
+
     # Recompute scores with enriched data
     for country_code in list(results.keys()):
         serp_data["country_scores"][country_code] = _country_serp_score(results[country_code])
@@ -941,7 +1035,7 @@ def fetch_serp_data() -> dict[str, Any]:
         logger.info("  Fetching SERP for country: %s (%s)", country_info["name"], country_code)
         results[country_code] = {}
 
-        for keyword in KEYWORDS:
+        for keyword in KEYWORDS_BY_COUNTRY.get(country_code, KEYWORDS):
             logger.debug("    Keyword: %s", keyword)
 
             semrush_data = _fetch_semrush_keyword(keyword, country_info["semrush_db"])

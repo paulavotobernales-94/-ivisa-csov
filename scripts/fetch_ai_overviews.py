@@ -39,6 +39,7 @@ from scripts.config import (
     CLAUDE_MODEL,
     COUNTRIES,
     KEYWORDS,
+    KEYWORDS_BY_COUNTRY,
     SENTIMENT_PROMPT_TEMPLATE,
     SERPAPI_KEY,
 )
@@ -239,8 +240,13 @@ def _detect_negative_topics(text: str) -> list[str]:
     return detected
 
 
-def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
-    """Fetch one keyword + country from SerpAPI."""
+def _fetch_serpapi_result(keyword: str, country_code: str, hl: str = "en") -> dict[str, Any]:
+    """Fetch one keyword + country from SerpAPI.
+
+    hl = Google interface language. For non-English markets this is the local
+    language (de, fr, ja, nl, it, es) so Google returns native-language results
+    instead of English ones — the core fix for inaccurate non-English data.
+    """
     if not SERPAPI_KEY:
         return {
             "has_ai_overview": None,
@@ -256,7 +262,7 @@ def _fetch_serpapi_result(keyword: str, country_code: str) -> dict[str, Any]:
         "engine": "google",
         "q": keyword,
         "gl": country_code,
-        "hl": "en",
+        "hl": hl,
         "num": 20,
         "api_key": SERPAPI_KEY,
     }
@@ -369,9 +375,10 @@ def fetch_ai_overview_data() -> dict[str, Any]:
         results[country_code] = {}
         organic_data[country_code] = {}
 
-        for keyword in KEYWORDS:
-            logger.debug("    Keyword: %s", keyword)
-            result = _fetch_serpapi_result(keyword, country_code)
+        hl = country_info.get("serpapi_hl", "en")
+        for keyword in KEYWORDS_BY_COUNTRY.get(country_code, KEYWORDS):
+            logger.debug("    Keyword: %s (hl=%s)", keyword, hl)
+            result = _fetch_serpapi_result(keyword, country_code, hl)
             # Separate organic results from AIO result before storing
             organic_data[country_code][keyword] = result.pop("organic_results", [])
             results[country_code][keyword] = result

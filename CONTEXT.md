@@ -88,38 +88,28 @@ All keys live in `.env` in the repo root AND in GitHub repo Secrets (for Actions
 
 ## Countries Tracked (10)
 
-| Code | Country | Weight | Notes |
-|---|---|---|---|
-| us | United States | 35% | English |
-| gb | United Kingdom | 14% | English |
-| au | Australia | 10% | English |
-| de | Germany | 8% | **Non-English — local keywords needed (pending)** |
-| ca | Canada | 7% | English |
-| fr | France | 7% | **Non-English — local keywords needed (pending)** |
-| jp | Japan | 4% | **Non-English — local keywords needed (pending)** |
-| nl | Netherlands | 4% | **Non-English — local keywords needed (pending)** |
-| it | Italy | 3% | **Non-English — local keywords needed (pending)** |
-| ch | Switzerland | 3% | **Non-English — local keywords needed (pending)** |
+| Code | Country | Weight | hl | Notes |
+|---|---|---|---|---|
+| us | United States | 35% | en | English |
+| gb | United Kingdom | 14% | en | English |
+| au | Australia | 10% | en | English |
+| de | Germany | 8% | de | Localized keywords ✓ |
+| ca | Canada | 7% | en | English |
+| fr | France | 7% | fr | Localized keywords ✓ |
+| jp | Japan | 4% | ja | Localized keywords ✓ (10 unique kw) |
+| nl | Netherlands | 4% | nl | Localized keywords ✓ |
+| it | Italy | 3% | it | Localized keywords ✓ |
+| es | Spain | 3% | es | Localized keywords ✓ (replaced Switzerland, June 12 2026) |
 
-**⚠️ PENDING WORK:** DE, FR, JP, NL, IT, CH currently use English keywords, which gives inaccurate data because native speakers search in their own language. Paula will provide localized keyword lists. When she does, update `scripts/config.py` to use `KEYWORDS_BY_COUNTRY` (a per-country dict) instead of the single global `KEYWORDS` list, update `fetch_serp.py` to pass the right language (`hl=`) parameter to SerpAPI per country, and add a multilingual sentiment classifier fallback that uses Claude for non-English snippets.
+**✅ DONE (June 12 2026):** Localized per-country keywords are live. `scripts/config.py` now has `KEYWORDS_BY_COUNTRY` (per-country lists); `fetch_serp.py` and `fetch_ai_overviews.py` iterate per-country keywords; SerpAPI gets the local `hl=` language per country (`serpapi_hl` field in `COUNTRIES`); and a Claude multilingual fallback (`_classify_with_claude` in `fetch_serp.py`) classifies non-English results the English rules can't. **Switzerland was replaced by Spain** (Spain inherited Switzerland's 3% weight — weights still sum to 0.95, formula unchanged).
 
 ---
 
-## Keywords Tracked (11, currently English for all countries)
+## Keywords Tracked (per-country, localized)
 
-```
-iVisa
-what is iVisa
-iVisa scam
-ivisa legit
-is ivisa a scam
-is ivisa legit
-ivisa reviews
-ivisa fake or real
-is ivisa safe
-iVisa affiliated with the gov
-ivisa fee
-```
+Each country has its own keyword list in `KEYWORDS_BY_COUNTRY` (`scripts/config.py`) — 11 keywords each, except Japan (10 unique). English markets (US/UK/AU/CA) use English keywords (the four lists differ slightly); DE/FR/JP/NL/IT/ES use native-language keywords from Paula's June 2026 keyword sheet. The legacy global `KEYWORDS` list is kept only as a fallback for any country missing from the dict.
+
+**Source sheet:** "Keywords top 10 countries csov report" (Google Sheets). Cleanups applied vs. raw sheet: Japan deduped (`ivisaとは` appeared twice → 10 unique); NL row 11 `s iVisa…` → `is iVisa…`; France/Spain typos fixed in-sheet by Paula.
 
 ---
 
@@ -384,15 +374,8 @@ Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
 ### 0. Clean up main dashboard trend chart (do this first)
 The trend chart on `docs/index.html` currently shows backfilled May–June data points. Paula wants it to start clean from June 8, 2026 as the first data point. The historical JSON files and archived HTML reports in `docs/reports/` must NOT be deleted — they stay for reference. Only the chart display logic in `scripts/generate_report.py` needs to filter history to start from `2026-06-08` onward.
 
-### 1. Localized keywords per country (HIGH PRIORITY — next session)
-Paula will provide top 10 branded iVisa keywords in native language for DE, FR, JP, NL, IT, CH.
-
-**What to build:**
-- Add `KEYWORDS_BY_COUNTRY` dict to `scripts/config.py` — maps country code to keyword list
-- English-speaking countries (US, GB, AU, CA) keep existing `KEYWORDS`
-- Update `fetch_serp.py` to use per-country keywords and add `hl=` language parameter to SerpAPI calls
-- Add multilingual sentiment classification: when snippet is non-English and no English signals match, use Claude API to classify it (already available, one extra call per unmatched result)
-- Update `health_check.py` section 8 with non-English test cases once keywords are confirmed
+### 1. Localized keywords per country — ✅ DONE (June 12 2026)
+Per-country localized keywords are live. `KEYWORDS_BY_COUNTRY` in `config.py`; per-country `hl` via `serpapi_hl`; Claude multilingual fallback in `fetch_serp.py`; Switzerland → Spain (3%). health_check §8c/§8d cover routing + config. See the June 12 update-log entry and the Sentiment Classification section for details.
 
 ### 2. Per-country LLM monitoring (DEFERRED — v1.1)
 `run_llm_by_country()` exists in `fetch_llm.py` but is NOT called in the pipeline. Runs per-country LLM queries with language-specific prompts and Gemini locale grounding. Kept for v1.1.
@@ -411,7 +394,7 @@ No API available on current plan. Deferred indefinitely.
 | June 11 2026 | Hardened `_is_junk_snippet()` (generalized JS detection) + added ingestion-level sanitization in SEMrush/Ahrefs fetchers — fixes recurring play.google.com / JS-blob leakage into the report. Added 6 new `health_check.py` Section 8 cases. June 8 canonical report/score untouched. |
 | June 11 2026 | Added `_APP_STORE_LISTINGS` + `_apply_app_store_fallbacks()` in `fetch_serp.py` (final pass in `enrich_with_serpapi_organic`): iVisa Google Play / App Store results now show canonical title + description instead of a bare "Android Apps on Google Play" card when the live scrape returns a generic title or blank snippet. Only fills gaps — real review snippets/titles untouched. Same fallbacks applied to live June 8 report; score still 55.73. |
 | June 11 2026 | **DURABLE junk fix (stops the recurring breakage).** 3 layers: (1) structural detection in `_is_junk_snippet()` — catches junk by code/JSON/HTML shape, language-agnostic, so unseen variants are caught; (2) permanent safety gate `_sanitize_report_data()` in `generate_report.py` runs over the whole payload before render; (3) CI tripwire in `health_check.py` §9 fails the run if any junk survived. Added structural + multilingual (JP/DE/IT) test cases. All text-only — scores untouched. |
-| _(next update)_ | Localized keywords per country (DE, FR, JP, NL, IT, CH) |
+| June 12 2026 | **Localized per-country keywords live.** `KEYWORDS_BY_COUNTRY` in `config.py` (11 kw each, Japan 10); `fetch_serp.py` + `fetch_ai_overviews.py` iterate per-country; SerpAPI uses local `hl=` per country (`serpapi_hl`); Claude multilingual fallback `_classify_with_claude()` classifies non-English results the English rules miss (cached, graceful skip if no key). **Switzerland → Spain** (Spain = 3%, weights still 0.95, CSOV formula + SCORING_VERSION unchanged). Report/Slack copy updated; health_check §8c (LLM routing) + §8d (keyword config) added. |
 
 ---
 

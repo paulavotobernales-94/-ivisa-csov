@@ -358,7 +358,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
         <div class="method-item">
           <h4>🔍 SERP Score (35%) — How it's calculated</h4>
-          <p>We check the <strong>top 10 Google results</strong> for each of 10 brand keywords across 10 countries (1,000 results). Each result is classified:</p>
+          <p>We check the <strong>top 10 Google results</strong> for up to 11 brand keywords across 10 countries (~1,100 results), in each market's local language. Each result is classified:</p>
           <p style="margin-top:8px;">We classify each result by reading the <strong>title + preview snippet text</strong> — not by domain. Trustpilot with a 1-star review is negative. Forbes praising iVisa is positive. The content decides, not the website name.</p>
           <p style="margin-top:8px;"><strong>🔴 Negative</strong> — text contains: "scam", "fraud", "fake", "avoid", "warning", "do not use", "beware", "rip off", "never again", "not legit", "not safe", "overcharged", "refund denied", "stay away", "suspicious" — <em>or</em> the domain is a structural complaint site (bbb.org, ripoffreport.com, scamalert.com)</p>
           <p style="margin-top:8px;"><strong>🟢 Positive</strong> — text contains: "not a scam", "is legit", "is safe", "trusted", "recommend", "works", "my experience was good", "why use iVisa", "yes iVisa is trustworthy", "honest review", "no issues", "smooth process", "helped me", "great service"</p>
@@ -374,7 +374,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <li><strong>No AI Overview shown</strong> → score = 50 (neutral baseline — no appearance is not a problem, just no signal)</li>
           </ul>
           <p style="margin-top:8px;">When specific weaknesses appear in the AI Overview text (e.g. refund policy, fees), the Action Items section generates a targeted content recommendation to counter that narrative.</p>
-          <p style="margin-top:8px;">Final score = weighted average across 10 keywords × 10 countries, weighted by country traffic share.</p>
+          <p style="margin-top:8px;">Final score = weighted average across up to 11 keywords × 10 countries, weighted by country traffic share.</p>
         </div>
 
         <div class="method-item">
@@ -1482,7 +1482,7 @@ function buildScoreAnalysis(D) {
   const countryScores = serp.country_scores || {};
   const countryNames  = { us:'United States', gb:'United Kingdom', au:'Australia',
                           de:'Germany', ca:'Canada', fr:'France',
-                          jp:'Japan', nl:'Netherlands', it:'Italy', ch:'Switzerland' };
+                          jp:'Japan', nl:'Netherlands', it:'Italy', es:'Spain' };
 
   // Lowest-scoring countries
   const sortedCountries = Object.entries(countryScores).sort((a,b) => a[1]-b[1]);
