@@ -2,9 +2,17 @@ name: Weekly CSOV Report
 
 on:
   schedule:
-    # Every Monday at 07:00 UTC = 09:00 Madrid (CEST, summer)
-    # In winter (CET) this runs at 08:00 Madrid — 1hr early, acceptable
-    - cron: '0 7 * * 1'
+    # Monday morning, Madrid time (CEST in summer = UTC+2).
+    # GitHub's cron is best-effort and the top of the hour ('0') is the most
+    # over-subscribed slot — it's why a single 07:00 run often fired hours late.
+    # We schedule THREE staggered off-peak attempts; the idempotency guard in
+    # main.py means only the FIRST one that succeeds actually produces/publishes
+    # a report (the later ones see today's snapshot already exists and exit).
+    # If a run FAILS on missing data it does NOT save a snapshot, so the next
+    # slot retries cleanly.
+    - cron: '5 7 * * 1'    # ~09:05 Madrid (primary)
+    - cron: '35 7 * * 1'   # ~09:35 Madrid (backup if primary was delayed/skipped)
+    - cron: '5 8 * * 1'    # ~10:05 Madrid (last-resort backup)
   workflow_dispatch:
     inputs:
       dry_run:

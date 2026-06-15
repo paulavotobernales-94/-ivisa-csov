@@ -383,21 +383,27 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
     except Exception as exc:
         logger.error("Report generation failed: %s", exc)
 
+    # ── Completeness gate: bail BEFORE saving on missing core data ──────────────
+    # If a core component is missing we do NOT save a snapshot, do NOT Slack, and
+    # exit non-zero. Not saving is deliberate: it leaves no YYYY-MM-DD.json, so the
+    # next staggered Monday cron slot retries cleanly instead of being blocked by
+    # the duplicate-guard. Transient API outages thus self-heal within ~30 min.
+    if not dry_run and not completeness["ok"]:
+        logger.error(
+            "⛔ DATA COMPLETENESS FAILED — missing: %s. NOT saving a snapshot, NOT "
+            "sending Slack, exiting non-zero so this report is NOT published and a "
+            "later run can retry.",
+            "; ".join(completeness["errors"]),
+        )
+        sys.exit(1)
+
     # ── Save Historical Data ───────────────────────────────────────────────────
     if not dry_run:
         slack_label = "sending Slack notification" if send_slack else "skipping Slack (use --slack to send)"
         logger.info("[6/6] Saving historical snapshot... (%s)", slack_label)
         _save_historical(report_payload, HISTORICAL_DIR, run_date)
 
-        # Slack — only when explicitly requested (--slack flag or Monday automation)
-        # but NEVER when a core component is missing (don't notify the team about
-        # a hollow report).
-        if send_slack and not completeness["ok"]:
-            logger.error(
-                "⛔ Report has MISSING data — NOT sending Slack. Issues: %s",
-                "; ".join(completeness["errors"]),
-            )
-        elif send_slack:
+        if send_slack:
             try:
                 from scripts.send_slack import send_slack_notification
                 send_slack_notification({
@@ -418,16 +424,6 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
         diff = csov_score - prev_csov
         logger.info("      Change vs last week:  %+.1f", diff)
     logger.info("=" * 60)
-
-    # Fail loudly if a core component was missing — prevents the Monday
-    # automation from committing/publishing a hollow report.
-    if not dry_run and not report_payload.get("data_completeness", {}).get("ok", True):
-        logger.error(
-            "⛔ DATA COMPLETENESS FAILED — missing: %s. Exiting non-zero so the "
-            "report is NOT published. Investigate the API(s) above and re-run.",
-            "; ".join(report_payload["data_completeness"]["errors"]),
-        )
-        sys.exit(1)
 
 
 # ── CLI Entry Point ───────────────────────────────────────────────────────────

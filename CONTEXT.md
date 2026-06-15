@@ -335,7 +335,7 @@ Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
 
 **Timezone note:** `0 7 * * 1` = 9 AM Madrid in summer (CEST, UTC+2). In winter (CET, UTC+1) this fires at 8 AM Madrid instead — accepted trade-off, not a bug.
 
-**Known reliability issue:** GitHub's cron scheduler sometimes skips or delays runs by hours (up to 10+ hours) with no error log — the run simply doesn't appear. If the report didn't arrive by 10 AM Madrid on Monday, trigger manually via the "Run workflow" button in GitHub Actions.
+**Known reliability issue (mitigated June 12 2026):** GitHub's cron is best-effort and the top of the hour (`0`) is the most over-subscribed slot — that's why a single `0 7 * * 1` run often fired hours late or "next day." **Fix:** the workflow now has THREE staggered off-peak cron slots — `5 7`, `35 7`, `5 8` (≈09:05 / 09:35 / 10:05 Madrid CEST). The idempotency guard means only the FIRST slot that succeeds produces/publishes a report; later slots see today's snapshot and exit. If a run FAILS on missing data it does NOT save a snapshot, so the next slot retries cleanly. GitHub still can't guarantee an exact minute, so the manual "Run workflow" button remains the ultimate backup (the guard prevents duplicates). Note: staggered slots are not a hard lock — a rare simultaneous double-fire could double-post, but that's far less likely than the old single-slot misses.
 
 **Steps:**
 1. Checkout repo
