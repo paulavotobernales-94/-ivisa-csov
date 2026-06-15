@@ -1616,7 +1616,7 @@ def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], 
     Returns (report_data, blanked_count).
     """
     from scripts.fetch_serp import (
-        _is_junk_snippet, _is_domain_title, _apply_app_store_fallbacks,
+        _is_junk_snippet, _is_domain_title, _apply_app_store_fallbacks, _platform_snippet,
     )
     blanked = 0
 
@@ -1633,6 +1633,13 @@ def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], 
                 o["title"] = ""
             if domain:
                 _apply_app_store_fallbacks(o)
+                # Fill a blank snippet for known social/review/owned domains with a
+                # neutral one-line descriptor (SEMrush ranks these domain-level with
+                # no body text). Display-only — sentiment/score are NOT touched.
+                if "snippet" in o and not (o.get("snippet") or "").strip():
+                    ps = _platform_snippet(domain)
+                    if ps:
+                        o["snippet"] = ps
             for v in o.values():
                 walk(v)
         elif isinstance(o, list):

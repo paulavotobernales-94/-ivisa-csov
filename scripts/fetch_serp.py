@@ -777,6 +777,37 @@ def _apply_app_store_fallbacks(item: dict) -> None:
         item["snippet"] = fb_snippet
 
 
+# Accurate one-line descriptions for social / review / owned domains. SEMrush
+# ranks these at the domain level (no per-page snippet), and they don't appear in
+# organic results with body text — so without this they render as a title with a
+# blank preview line. These are neutral factual descriptors (NOT sentiment-bearing),
+# applied display-only so they never change a result's classification or score.
+_PLATFORM_SNIPPETS: dict[str, str] = {
+    "ivisa.com":       "Apply for your visa, ETA, or travel document online with iVisa — fast, simple, and secure.",
+    "facebook.com":    "iVisa's official Facebook page — product updates, travel tips, and customer support.",
+    "instagram.com":   "iVisa on Instagram — travel inspiration and visa tips.",
+    "linkedin.com":    "iVisa's official company profile on LinkedIn.",
+    "youtube.com":     "Video reviews and how-to guides about iVisa on YouTube.",
+    "twitter.com":     "iVisa on X (Twitter) — updates and customer support.",
+    "x.com":           "iVisa on X (Twitter) — updates and customer support.",
+    "reddit.com":      "Traveler discussions and reviews of iVisa on Reddit.",
+    "quora.com":       "Traveler questions and answers about iVisa on Quora.",
+    "tripadvisor.com": "Traveler reviews and ratings for iVisa on Tripadvisor.",
+    "trustpilot.com":  "Customer reviews and ratings for iVisa on Trustpilot.",
+    "sitejabber.com":  "Customer reviews for iVisa on Sitejabber.",
+    "bbb.org":         "iVisa's Better Business Bureau profile and customer feedback.",
+    "yelp.com":        "Customer reviews for iVisa on Yelp.",
+    "glassdoor.com":   "Employee reviews and company information for iVisa on Glassdoor.",
+    "indeed.com":      "Company information and reviews for iVisa on Indeed.",
+}
+
+
+def _platform_snippet(domain: str) -> str:
+    """Return a canned descriptor for a known platform domain, else ''."""
+    bare = (domain or "").lower().lstrip("www.").lstrip(".")
+    return _PLATFORM_SNIPPETS.get(bare, "")
+
+
 _BAD_TITLES = {
     "just a moment", "just a moment...", "attention required",
     "403 forbidden", "404 not found", "502 bad gateway", "503 service unavailable",
@@ -814,6 +845,15 @@ def _fetch_page_title(url: str, timeout: int = 4) -> tuple[str, str]:
         # Extract a short plain-text body snippet (strip tags, collapse whitespace)
         body = re.sub(r"<[^>]+>", " ", html)
         body = re.sub(r"\s+", " ", body).strip()[:1000]
+
+        # Reject GENERIC HOMEPAGE titles. SEMrush often gives only a domain, so we
+        # fetch https://<domain> — the site HOMEPAGE — and grab its <title>, e.g.
+        # "News - Lakeland Currents", "Travelsloth - Alles für Backpacker", "Home -
+        # Adventures & Sunsets". If neither the title nor the page body even mentions
+        # iVisa, this isn't the iVisa article — attaching its generic title (with no
+        # snippet) just clutters the report. Better to return nothing.
+        if "ivisa" not in (title + " " + body).lower():
+            return "", ""
 
         # Reject body that looks like an error/challenge page
         body_check = body.lower()
