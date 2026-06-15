@@ -102,16 +102,19 @@ def _extract_sources(data: dict) -> list[str]:
     """Extract cited source URLs from the AI Overview section."""
     sources = []
 
+    def _ok(u: str) -> bool:
+        return bool(u) and u.lower().startswith(("http://", "https://"))
+
     ai_overview = data.get("ai_overview", {})
     for source in ai_overview.get("sources", []):
         link = source.get("link", "")
-        if link:
+        if _ok(link):
             sources.append(link)
 
     if not sources:
         for result in data.get("organic_results", [])[:5]:
             link = result.get("link", "")
-            if link:
+            if _ok(link):
                 sources.append(link)
 
     return sources[:10]
@@ -129,6 +132,11 @@ def _extract_organic_results(data: dict) -> list[dict]:
 
     def parse_item(item: dict, pos_override: int = 0) -> dict:
         link = item.get("link", "")
+        # Drop relative / Google redirect links (e.g. "/goto?url=CAES...") — they
+        # have no real domain and, rendered in the report on a GitHub Pages
+        # project site, resolve to a "There isn't a GitHub Pages site here" 404.
+        if link and not link.lower().startswith(("http://", "https://")):
+            return {"position": 0, "url": "", "domain": "", "title": "", "snippet": ""}
         domain = item.get("domain", "")
         if not domain and link:
             domain = urlparse(link).netloc.replace("www.", "")

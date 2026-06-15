@@ -264,7 +264,9 @@ def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
     mentions = []
     for item in data.get("organic_results", []):
         url = item.get("link", "")
-        if not url:
+        # Require a real absolute link — drop relative/redirect links ("/goto?url=…")
+        # that would render as a GitHub Pages 404 in the report.
+        if not url or not url.lower().startswith(("http://", "https://")):
             continue
         domain = item.get("domain", "") or _extract_domain(url)
         title = item.get("title", "")

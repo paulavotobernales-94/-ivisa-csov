@@ -1140,7 +1140,7 @@ function buildSerpTable(countryResults) {
     function makeRows(items) {
       if (!items.length) return '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:12px;">No data</td></tr>';
       return items.map(r => {
-        const title    = r.title || r.url || '—';
+        const title    = r.title || '—';
         const snippet  = (r.snippet || '').trim();
         // Snippet: first 15 words + expand toggle if longer
         const words    = snippet.split(/\s+/).filter(Boolean);
@@ -1154,15 +1154,22 @@ function buildSerpTable(countryResults) {
              </div>`
           : '';
         const domainDisplay = r.domain || '';
-        // When URL is missing, construct a best-guess link from the domain
-        const linkUrl = r.url || (r.domain ? 'https://' + r.domain : '#');
+        // Only ever link to a real absolute http(s) URL. A relative/redirect link
+        // (e.g. "/goto?url=...") would resolve to a GitHub Pages 404, so fall back
+        // to the domain homepage, or render plain text if neither is valid.
+        const linkUrl = (r.url && /^https?:\/\//i.test(r.url))
+          ? r.url
+          : (r.domain ? 'https://' + r.domain.replace(/^https?:\/\//i,'') : '');
         // When title is missing, use domain as display text
         const displayTitle = title !== '—' ? title : (r.domain || '—');
+        const titleHtml = linkUrl
+          ? `<a href="${linkUrl}" target="_blank" style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:#1a0dab;text-decoration:none;line-height:1.3;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${displayTitle}</a>`
+          : `<span style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:var(--navy);line-height:1.3;">${displayTitle}</span>`;
         return `<tr class="${r.is_ivisa ? 'ivisa-row' : ''}">
           <td style="vertical-align:top;padding-top:10px;">${r.position ? posBadge(r.position) : '—'}</td>
           <td style="vertical-align:top;">
             <div style="font-size:.72rem;color:var(--muted);margin-bottom:2px;">${domainDisplay}</div>
-            <a href="${linkUrl}" target="_blank" style="font-size:.83rem;font-weight:${r.is_ivisa?'700':'600'};color:#1a0dab;text-decoration:none;line-height:1.3;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${displayTitle}</a>
+            ${titleHtml}
             ${snippetHtml}
           </td>
           <td style="text-align:center;vertical-align:top;padding-top:10px;">${sentEmoji(r.sentiment)} ${pillSentiment(r.sentiment)}</td>
