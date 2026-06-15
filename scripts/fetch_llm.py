@@ -54,6 +54,7 @@ from scripts.config import (
     GEMINI_MODEL,
     GENERAL_QUERIES,
     SENTIMENT_PROMPT_TEMPLATE,
+    USE_GEMINI,
 )
 
 logger = logging.getLogger(__name__)
@@ -79,7 +80,10 @@ def _get_claude_client():
 
 
 def _get_gemini_client():
-    """Return a google.genai Client, or None if unavailable."""
+    """Return a google.genai Client, or None if unavailable/disabled."""
+    if not USE_GEMINI:
+        logger.info("  Gemini is disabled (USE_GEMINI=False) — LLM scores will be Claude-only.")
+        return None
     if not GEMINI_API_KEY:
         return None
     try:

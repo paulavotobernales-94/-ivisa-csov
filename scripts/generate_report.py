@@ -379,14 +379,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
         <div class="method-item">
           <h4>💬 LLM Score (25%) — How it's calculated</h4>
-          <p>We ask Claude and Gemini 50 questions and analyse their responses. Two parts:</p>
+          <p>We ask Claude 50 questions and analyse its responses. Two parts:</p>
           <ul style="margin-top:8px;">
             <li><strong>Part A (20 direct brand questions):</strong> "Is iVisa legit?", "Can I trust iVisa?", "Is iVisa a scam?" etc.
             Claude reads each response and scores its sentiment 0–100. 100 = "strongly recommended", 0 = "avoid completely".</li>
             <li><strong>Part B (30 general travel questions):</strong> "Best visa service?", "Safest way to apply for a visa online?" etc.
             Score = (mention rate × 40%) + (average sentiment when mentioned × 60%).</li>
           </ul>
-          <p style="margin-top:8px;">LLM Score = (Part A score + Part B score) ÷ 2. Both Claude and Gemini are averaged.</p>
+          <p style="margin-top:8px;">LLM Score = (Part A score + Part B score) ÷ 2. Scored by Claude (Gemini is currently disabled).</p>
         </div>
 
         <div class="method-item">
@@ -463,7 +463,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <!-- LLM Tab -->
     <div class="tab-content" id="tab-llm">
       <p style="font-size:.78rem;color:var(--muted);margin-bottom:6px;">
-        <strong>Part A:</strong> 20 direct brand queries asked to Claude + Gemini, scored 0–100 sentiment. &nbsp;
+        <strong>Part A:</strong> 20 direct brand queries scored 0–100 sentiment by Claude. &nbsp;
         <strong>Part B:</strong> 30 general travel queries — score = mention rate (40%) + sentiment when cited (60%). &nbsp;
         LLM Score = (A + B) / 2. Click any response to expand.
       </p>
@@ -478,13 +478,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       </div>
       <div id="llm-parta">
         <div class="table-wrap"><table>
-          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th>Gemini Response, Score &amp; Sources</th><th>Avg</th></tr></thead>
+          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th class="gemini-col">Gemini Response, Score &amp; Sources</th><th>Avg</th></tr></thead>
           <tbody id="llmPartABody"></tbody>
         </table></div>
       </div>
       <div id="llm-partb" style="display:none;">
         <div class="table-wrap"><table>
-          <thead><tr><th>Query</th><th>Claude Response</th><th>Gemini Response</th><th>iVisa Mentioned?</th><th>Avg Sentiment</th></tr></thead>
+          <thead><tr><th>Query</th><th>Claude Response</th><th class="gemini-col">Gemini Response</th><th>iVisa Mentioned?</th><th>Avg Sentiment</th></tr></thead>
           <tbody id="llmPartBBody"></tbody>
         </table></div>
       </div>
@@ -1317,15 +1317,21 @@ function llmResponseCell(text, score) {
 function buildLlmTables(llmData) {
   if (!llmData) return;
 
-  // Part A
   const partA  = llmData.part_a?.results || [];
+  const partB  = llmData.part_b?.results || [];
+  // Hide the Gemini column entirely when there's no Gemini data (e.g. Gemini
+  // disabled / Claude-only) so the table never shows a wall of "No response".
+  const hasGemini = partA.concat(partB).some(
+    r => r.gemini_sentiment != null || (r.gemini_response || '').trim()
+  );
+
   const tbodyA = document.getElementById('llmPartABody');
   partA.forEach(r => {
     tbodyA.innerHTML += `
       <tr>
         <td style="max-width:200px;font-weight:600;">${r.query}</td>
         <td style="max-width:280px">${llmResponseCell(r.claude_response, r.claude_sentiment)}</td>
-        <td style="max-width:280px">
+        <td class="gemini-col" style="max-width:280px">
           ${llmResponseCell(r.gemini_response, r.gemini_sentiment)}
           ${(r.gemini_sources||[]).length ? `<div style="margin-top:5px;">${(r.gemini_sources||[]).slice(0,3).map(u=>`<a href="${u}" target="_blank" style="display:block;font-size:.7rem;color:#08ADE4;word-break:break-all;margin-bottom:2px;">${u.replace(/^https?:\/\//,'').substring(0,55)}…</a>`).join('')}</div>` : ''}
         </td>
@@ -1339,20 +1345,21 @@ function buildLlmTables(llmData) {
   });
   if (!tbodyA.innerHTML) tbodyA.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part A data — check API keys.</td></tr>';
 
-  // Part B
-  const partB  = llmData.part_b?.results || [];
   const tbodyB = document.getElementById('llmPartBBody');
   partB.forEach(r => {
     const mentioned = r.claude_mentions_ivisa || r.gemini_mentions_ivisa;
+    const mentionDetail = hasGemini
+      ? `Claude: ${r.claude_mentions_ivisa?'✓':'✗'} &nbsp; Gemini: ${r.gemini_mentions_ivisa?'✓':'✗'}`
+      : `Claude: ${r.claude_mentions_ivisa?'✓':'✗'}`;
     tbodyB.innerHTML += `
       <tr>
         <td style="max-width:200px;font-weight:600;">${r.query}</td>
         <td style="max-width:240px">${llmResponseCell(r.claude_response, null)}</td>
-        <td style="max-width:240px">${llmResponseCell(r.gemini_response, null)}</td>
+        <td class="gemini-col" style="max-width:240px">${llmResponseCell(r.gemini_response, null)}</td>
         <td style="text-align:center">
           ${mentioned
             ? `<span class="pill pill-yes">✅ iVisa mentioned</span><br>
-               <small style="color:var(--muted);font-size:.7rem;">Claude: ${r.claude_mentions_ivisa?'✓':'✗'} &nbsp; Gemini: ${r.gemini_mentions_ivisa?'✓':'✗'}</small>`
+               <small style="color:var(--muted);font-size:.7rem;">${mentionDetail}</small>`
             : '<span class="pill pill-no">Not mentioned</span>'}
         </td>
         <td style="text-align:center">${r.avg_sentiment != null
@@ -1361,6 +1368,11 @@ function buildLlmTables(llmData) {
       </tr>`;
   });
   if (!tbodyB.innerHTML) tbodyB.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part B data — check API keys.</td></tr>';
+
+  // Claude-only (or any run with no Gemini data): drop the empty Gemini column.
+  if (!hasGemini) {
+    document.querySelectorAll('.gemini-col').forEach(el => { el.style.display = 'none'; });
+  }
 }
 
 // ── Earned Media ───────────────────────────────────────────────────────────

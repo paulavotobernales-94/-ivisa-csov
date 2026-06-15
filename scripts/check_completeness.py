@@ -59,7 +59,21 @@ def assess_completeness(payload: dict[str, Any]) -> dict[str, Any]:
     gemini_ans = sum(1 for r in pa if r.get("gemini_sentiment") is not None)
     both_none = sum(1 for r in pa if r.get("claude_sentiment") is None and r.get("gemini_sentiment") is None)
 
-    if not pa or (claude_ans == 0 and gemini_ans == 0):
+    try:
+        from scripts.config import USE_GEMINI as _USE_GEMINI
+    except Exception:
+        _USE_GEMINI = True
+
+    if not _USE_GEMINI:
+        # Claude-only by design — Gemini absence is expected, not a degradation.
+        if not pa or claude_ans == 0:
+            components["llm"] = {"status": "missing",
+                                 "detail": "Claude produced no brand-query sentiment — LLM score is a hollow default"}
+            errors.append("LLM: Claude produced no sentiment (Gemini is disabled) — the LLM score is a meaningless default (50)")
+        else:
+            components["llm"] = {"status": "ok",
+                                 "detail": f"Claude-only (Gemini disabled): {claude_ans}/{len(pa)} brand queries scored"}
+    elif not pa or (claude_ans == 0 and gemini_ans == 0):
         components["llm"] = {"status": "missing",
                              "detail": "no brand-query sentiment from either Claude or Gemini — LLM score is a hollow default"}
         errors.append("LLM: neither Claude nor Gemini produced any sentiment — the LLM score is a meaningless default (50)")

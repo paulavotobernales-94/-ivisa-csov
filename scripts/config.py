@@ -212,6 +212,15 @@ CLAUDE_MODEL = "claude-haiku-4-5-20251001"
 # the latest stable flash model from: https://ai.google.dev/gemini-api/docs/models
 GEMINI_MODEL = "gemini-2.0-flash"
 
+# ── Gemini toggle ─────────────────────────────────────────────────────────────
+# OFF (June 15 2026): the GEMINI_API_KEY's free tier consistently refuses every
+# call with RESOURCE_EXHAUSTED (first call, every run, even non-grounded) — i.e.
+# Google gives this project ~zero free Gemini quota. Rather than show empty
+# "No response" columns, the LLM score is Claude-only by design.
+# TO RE-ENABLE: set this True after enabling billing on the Google Cloud project
+# behind GEMINI_API_KEY (gemini-2.0-flash is ~pennies/month at this volume).
+USE_GEMINI = False
+
 SENTIMENT_PROMPT_TEMPLATE = (
     "Rate the overall sentiment of this response about iVisa from 0 to 100. "
     "Use this scale strictly: "
