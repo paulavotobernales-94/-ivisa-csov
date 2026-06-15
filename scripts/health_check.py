@@ -392,6 +392,13 @@ SENTIMENT_TESTS = [
      "1883 Magazine | Celebrity Interviews, Fashion, Beauty, Music & Film",
      'var theplus_ajax_url = "https://1883magazine.com/wp-admin/admin-ajax.php"; var nonce = "abc123"',
      "neutral", "JS junk snippet → cleared → no signals → neutral"),
+
+    # Award / recognition press release (non-editorial domain) → positive.
+    # Bug June 15 2026: "wins … Provider of the Year" matched no positive signal → neutral.
+    ("traveltechbreakthrough.com",
+     "iVisa wins Travel Commerce Solution Provider of the Year",
+     "At the 2026 TravelTech Breakthrough Awards, iVisa was named winner.",
+     "positive", "Award win on non-editorial domain → positive (award terms)"),
 ]
 
 print("  8b. Sentiment classifier:")

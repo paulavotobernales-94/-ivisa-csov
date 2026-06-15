@@ -114,6 +114,12 @@ POSITIVE_SIGNALS = [
     "worked", "works", "helped", "guide", "how to use", "review", "pros",
     "easy", "convenient", "fast", "efficient", "excellent", "great",
     "helpful", "officially", "trusted service", "5 star", "five star",
+    # Awards, recognition & positive brand news (press releases / editorial).
+    # NEGATIVE_SIGNALS are checked first, so these never override a real complaint.
+    "wins", "winner", "award", "awarded", "award-winning", "provider of the year",
+    "of the year", "leading", "leader", "top-rated", "best-in-class",
+    "recognized", "recognised", "honored", "honoured", "breakthrough award",
+    "milestone", "launches", "expands", "partners with", "named winner",
 ]
 
 NEGATIVE_SIGNALS = [

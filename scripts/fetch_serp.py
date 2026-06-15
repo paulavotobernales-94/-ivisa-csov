@@ -87,6 +87,10 @@ POSITIVE_TEXT_SIGNALS = [
     # Editorial/press coverage framing
     "review", "how ivisa works", "ivisa launches", "ivisa partners",
     "ivisa expands", "ivisa raises", "ivisa announces",
+    # Awards & recognition (press releases) — e.g. "iVisa wins ... Provider of
+    # the Year". Negative signals are counted alongside, so a complaint still wins.
+    "wins", "winner", "award", "awarded", "award-winning", "provider of the year",
+    "of the year", "best-in-class", "named winner", "breakthrough award",
     # Intent-to-recommend
     "should i use ivisa", "can i trust ivisa", "is ivisa worth",
     "best visa service", "best way to apply", "how to use ivisa",
