@@ -83,6 +83,27 @@ IVISA_OWNED_SNIPPETS = [
     "/r/ivisa",
 ]
 
+# iVisa's OWN social-media accounts — posts from these are NOT earned media
+# (earned media = what OTHER people/outlets say about iVisa). A URL is excluded
+# if it contains any of these handle paths (case-insensitive). Confirmed handles
+# (June 2026): IG @ivisa_travel, TikTok @ivisa_travel, YouTube @iVisa_travel,
+# Facebook /iVisaTravel, Pinterest /iVisa__Travel, LinkedIn /company/ivisa.
+IVISA_OWNED_SOCIAL = [
+    "instagram.com/ivisa_travel",
+    "tiktok.com/@ivisa_travel",
+    "youtube.com/@ivisa_travel",
+    "facebook.com/ivisatravel",
+    "pinterest.com/ivisa__travel",
+    "linkedin.com/company/ivisa",
+    # Defensive extras for common handle variants / redirects
+    "instagram.com/ivisa",
+    "tiktok.com/@ivisa",
+    "youtube.com/@ivisa",
+    "facebook.com/ivisa",
+    "x.com/ivisa",
+    "twitter.com/ivisa",
+]
+
 # ---------------------------------------------------------------------------
 # Sentiment classification
 # ---------------------------------------------------------------------------
@@ -173,7 +194,8 @@ def _classify_mention(domain: str, title: str, snippet: str = "") -> str:
 
 
 def _is_ivisa_owned(url: str, domain: str) -> bool:
-    """Return True if this result is from an iVisa-owned channel."""
+    """Return True if this result is from an iVisa-owned channel (website,
+    blog, owned subreddit, OR an official iVisa social-media account)."""
     domain_lower = domain.lower().strip()
     for owned in IVISA_OWNED_DOMAINS:
         if owned in domain_lower:
@@ -181,6 +203,9 @@ def _is_ivisa_owned(url: str, domain: str) -> bool:
     url_lower = url.lower()
     for snippet in IVISA_OWNED_SNIPPETS:
         if snippet in url_lower:
+            return True
+    for handle in IVISA_OWNED_SOCIAL:
+        if handle in url_lower:
             return True
     return False
 

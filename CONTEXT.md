@@ -269,9 +269,23 @@ Gemini 2.0 Flash free tier (per **project**, resets midnight Pacific): ~1,500 re
 
 ## Earned Media — What Counts
 
-**Sources that count:** Google News, travel editorial press, Reddit (excl. r/ivisa), YouTube, Instagram (excl. @ivisa), TikTok (excl. @ivisa)
+Earned media = what **other** people/outlets say about iVisa. iVisa's OWN posts never count.
 
-**Excluded:** Trustpilot, Sitejabber, TripAdvisor, BBB, Yelp — these are review aggregators, not earned media.
+**Sources that count:** Google News, travel editorial press, Reddit (excl. r/ivisa), YouTube, Instagram, TikTok, Pinterest — **only from accounts iVisa does NOT own.**
+
+**Excluded — review aggregators:** Trustpilot, Sitejabber, TripAdvisor, BBB, Yelp — user-review platforms, not earned media.
+
+### iVisa-owned social accounts (EXCLUDED from earned media — June 15 2026)
+Posts from these are iVisa's own content, not earned media. Enforced in `fetch_earned_media.py` via `IVISA_OWNED_SOCIAL` (URL-substring match in `_is_ivisa_owned`):
+
+- Instagram: https://www.instagram.com/ivisa_travel/
+- TikTok: https://www.tiktok.com/@ivisa_travel
+- YouTube: https://www.youtube.com/@iVisa_travel
+- Facebook: https://www.facebook.com/iVisaTravel/
+- Pinterest: https://www.pinterest.com/iVisa__Travel/
+- LinkedIn: https://www.linkedin.com/company/ivisa/
+
+(Previously only `ivisa.com`, `blog.ivisa.com`, `help.ivisa.com`, and `r/ivisa` were excluded — so iVisa's own `@ivisa_travel` TikTok/IG posts were wrongly counting as earned media. Fixed June 15 2026.)
 
 ---
 
