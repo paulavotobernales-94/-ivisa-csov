@@ -313,6 +313,12 @@ Posts from these are iVisa's own content, not earned media. Enforced in `fetch_e
 Use a placeholder string and `.replace()` instead.
 **Why:** Python raises SyntaxError for f-strings containing the same quote type as the outer string.
 
+### ⚠️ No apostrophes/contractions in single-quoted JS strings inside the HTML template
+The report is one giant inline `<script>` built from a Python string. Python un-escapes `\'` to a bare `'`, which terminates a single-quoted JS string and **breaks the ENTIRE script** → the live page hangs forever on "Loading…" (score shows `--`). Write **"it is" / "is not"** (no contractions), or use double quotes for the JS string. This bit us June 23 2026 in `aioWhatToFix()`.
+
+### ⚠️ "HTML generated" ≠ "page works" — always validate the rendered JS
+Python-side checks (parse, "report generated", data scans) all pass even when the embedded JavaScript is broken, because to Python the script is just a string. ALWAYS confirm the script runs: health_check §9 runs `node --check` (syntax) and `main.py` headless-renders the page via `scripts/check_render.js` (runtime) before Slack/publish. Never report a run as "verified" based only on generation/data.
+
 ### None-type refactor audit
 When a value changes from `float` to `float | None`, audit every downstream consumer: return statements, formatters, report renderers, fallback dicts. Grep every call site. Verify `round()`, `str()`, arithmetic won't be called on None unguarded.
 **Why:** June 2026 — changing AI Overview score from `50.0` to `None` for missing data caused `round(score, 2)` to crash, killing the entire AI Overview fetch and SERP enrichment, producing an empty report.
@@ -435,4 +441,6 @@ No API available on current plan. Deferred indefinitely.
 
 ---
 
-*Last updated: June 10, 2026. Update this file any time significant decisions are made, new bugs are fixed, or new features are built.*
+*Last updated: June 23, 2026. Update this file any time significant decisions are made, new bugs are fixed, or new features are built.*
+
+> **Session summary — June 12–23, 2026 (for the next Claude):** Big work block. Done & live: localized per-country keywords + Switzerland→Spain (3%); durable structural junk fix + report safety gate + CI tripwire; app-store/platform title+snippet fallbacks; content-less SERP rows hidden; generic-homepage-title rejection; 404/relative-link fix; award/recognition language scores positive; iVisa-owned social excluded from earned media; **Gemini OFF (`USE_GEMINI=False`) → Claude-only LLM** (free tier gives this key ~0 quota; re-enable after billing); data-completeness gate; payload-shape + score-sanity validators; **JS syntax (`node --check`) + headless render (`scripts/check_render.js`) checks** so a broken page can't publish; trend chart starts 2026-06-15; workflow concurrency + 3 staggered Monday crons. Two rules added to Code Rules: no apostrophes in single-quoted JS strings in the template, and always validate the rendered JS (not just that HTML generated). All changes are in the update-log above with file/function names.*
