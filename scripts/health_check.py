@@ -529,7 +529,32 @@ def check_report_gen():
                     f"Junk leaked into report payload after safety gate: {leaks[:3]} — do NOT publish."
                 )
 
-    return f"{size_kb} KB, all sections present, no junk in payload, no unreplaced placeholders"
+        # ── JS SYNTAX TRIPWIRE ────────────────────────────────────────────────
+        # The whole report is one big inline <script>; a single bad quote (e.g. an
+        # apostrophe in a JS string) breaks ALL of it and the page hangs forever on
+        # "Loading…". Syntax-check the script with node so this can never ship
+        # silently again. Best-effort: skipped only if node isn't installed.
+        import shutil as _sh, subprocess as _sub
+        node_bin = _sh.which("node")
+        if node_bin:
+            blocks = _re2.findall(r"<script[^>]*>(.*?)</script>", content, _re2.DOTALL)
+            app_js = max(blocks, key=len) if blocks else ""
+            if app_js.strip():
+                js_path = _os.path.join(tmpdir, "app.js")
+                with open(js_path, "w") as jf:
+                    jf.write(app_js)
+                proc = _sub.run([node_bin, "--check", js_path], capture_output=True, text=True)
+                if proc.returncode != 0:
+                    first = (proc.stderr.strip().splitlines() or ["unknown error"])
+                    raise Exception(
+                        "Report JS has a SYNTAX ERROR — the live page would hang on "
+                        "'Loading…'. " + " ".join(first[:3])
+                    )
+            js_status = "JS syntax OK"
+        else:
+            js_status = "JS check skipped (node not installed)"
+
+    return f"{size_kb} KB, all sections present, no junk, {js_status}, no unreplaced placeholders"
 
 check("HTML report generation + junk tripwire", check_report_gen)
 
