@@ -735,7 +735,16 @@ _PLATFORM_TITLES: dict[str, str] = {
     "indeed.com":      "iVisa — Indeed Company Profile",
     "apps.apple.com":  "iVisa: ETA, eVisa, ESTA, Visa — App Store",
     "play.google.com": "iVisa: Online Travel Visas — Apps on Google Play",
+    "quora.com":       "iVisa — Traveler Questions & Answers on Quora",
+    "pinterest.com":   "iVisa — Pinterest",
 }
+
+
+def _platform_title(domain: str) -> str:
+    """Return a canned title for a known platform domain, else ''. Used to replace
+    a missing/domain-only title (e.g. 'www.quora.com') with a readable label."""
+    bare = (domain or "").lower().lstrip("www.").lstrip(".")
+    return _PLATFORM_TITLES.get(bare, "")
 
 
 # iVisa-owned app-store listings — canonical title + description used when the

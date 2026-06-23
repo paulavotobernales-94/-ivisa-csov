@@ -220,13 +220,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .llm-response-full { font-size: .78rem; color: var(--muted); line-height: 1.5;
                         max-height: 100px; overflow: hidden; transition: max-height .3s;
                         cursor: pointer; }
-  .llm-response-full.expanded { max-height: 600px; }
+  .llm-response-full.expanded { max-height: none; overflow: visible; }
   .llm-expand-hint { font-size: .72rem; color: var(--blue); cursor: pointer; margin-top: 3px; }
 
   /* ── AIO text ── */
   .aio-text-cell { font-size: .78rem; color: var(--muted); line-height: 1.5;
                     max-height: 60px; overflow: hidden; cursor: pointer; }
-  .aio-text-cell.expanded { max-height: 400px; }
+  .aio-text-cell.expanded { max-height: none; overflow: visible; }
 
   /* ── Sentiment Counts ── */
   .sent-counts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
@@ -1635,7 +1635,8 @@ def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], 
     Returns (report_data, blanked_count).
     """
     from scripts.fetch_serp import (
-        _is_junk_snippet, _is_domain_title, _apply_app_store_fallbacks, _platform_snippet,
+        _is_junk_snippet, _is_domain_title, _apply_app_store_fallbacks,
+        _platform_snippet, _platform_title,
     )
     blanked = 0
 
@@ -1652,13 +1653,17 @@ def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], 
                 o["title"] = ""
             if domain:
                 _apply_app_store_fallbacks(o)
-                # Fill a blank snippet for known social/review/owned domains with a
-                # neutral one-line descriptor (SEMrush ranks these domain-level with
-                # no body text). Display-only — sentiment/score are NOT touched.
+                # Fill a blank snippet/title for known social/review/owned domains
+                # (SEMrush ranks these domain-level with no body). Display-only —
+                # sentiment/score are NOT touched.
                 if "snippet" in o and not (o.get("snippet") or "").strip():
                     ps = _platform_snippet(domain)
                     if ps:
                         o["snippet"] = ps
+                if "title" in o and not (o.get("title") or "").strip():
+                    pt = _platform_title(domain)
+                    if pt:
+                        o["title"] = pt
             for v in o.values():
                 walk(v)
         elif isinstance(o, list):
@@ -1666,6 +1671,36 @@ def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], 
                 walk(x)
 
     walk(report_data)
+
+    # ── Drop content-less SERP rows ──────────────────────────────────────────
+    # After all fills above, any SERP result that STILL has no snippet AND no real
+    # title (just a bare domain) carries zero information — e.g. an editorial domain
+    # SEMrush returned at the domain level that we couldn't enrich. Showing it as a
+    # bare "lakelandcurrents.com" link with nothing under it is the recurring
+    # "empty result" complaint. Hide these from the table (display-only; iVisa-owned
+    # results are always kept).
+    def _is_contentless(r: dict) -> bool:
+        if not isinstance(r, dict):
+            return False
+        if r.get("is_ivisa"):
+            return False
+        title = (r.get("title") or "").strip()
+        snippet = (r.get("snippet") or "").strip()
+        dom = (r.get("domain") or "").lower().lstrip("www.").lstrip(".")
+        title_is_domain = title.lower().lstrip("www.").lstrip(".").rstrip("/") in ("", dom)
+        return not snippet and title_is_domain
+
+    dropped = 0
+    serp_results = (report_data.get("serp_data", {}) or {}).get("results", {}) or {}
+    for _cc, kws in serp_results.items():
+        for _kw, rows in kws.items():
+            if isinstance(rows, list):
+                kept = [r for r in rows if not _is_contentless(r)]
+                dropped += len(rows) - len(kept)
+                rows[:] = kept
+    if dropped:
+        logger.info("  Report gate: hid %d content-less SERP row(s) (bare domain, no snippet).", dropped)
+
     return report_data, blanked
 
 
