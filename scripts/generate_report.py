@@ -1243,29 +1243,56 @@ function toggleMethod(btn) {
 
 // ── AIO Table ──────────────────────────────────────────────────────────────
 let aioExpandCount = 0;
-// Extract 2–3 negative talking points from AIO text for the "What to fix" column
+// Read the AIO text for the specific concerns it raises and turn each into a
+// short "what the AI says + what to do about it" recommendation for the team.
 function aioWhatToFix(aioText) {
   if (!aioText) return '<span style="color:var(--muted);font-size:.75rem;">—</span>';
   const t = aioText.toLowerCase();
-  const issues = [];
-  if (/fee|markup|overpriced|expensive|cost|charge|pricey/.test(t))
-    issues.push('💸 High fees vs. applying directly');
-  if (/not.*government|not.*official|third.?party|middleman|not.*agency/.test(t))
-    issues.push('🏛️ Perceived as non-official service');
-  if (/processing time|slow|delay|takes.*long|longer than/.test(t))
-    issues.push('⏱️ Processing time concerns');
-  if (/refund|cancel|non.?refund/.test(t))
-    issues.push('↩️ Refund policy concerns');
-  if (/customer service|support|unresponsive|difficult to reach/.test(t))
-    issues.push('📞 Customer service complaints');
-  if (/hidden fee|extra charge|additional fee/.test(t))
-    issues.push('🔍 Hidden/unclear fees');
-  if (/data|privacy|personal information|security/.test(t))
-    issues.push('🔒 Data security concerns');
-  if (/scam|fraud|not legit|avoid/.test(t))
-    issues.push('⚠️ Scam/legitimacy doubts');
-  if (!issues.length) return '<span style="color:var(--green);font-size:.75rem;">✅ No major issues detected</span>';
-  return issues.slice(0,3).map(i => `<div style="font-size:.73rem;color:var(--red);margin-bottom:3px;">${i}</div>`).join('');
+  // Ordered by how prominently the concern usually drives sentiment. `cat` is used
+  // to de-duplicate (e.g. two pricing patterns shouldn't both show).
+  const checks = [
+    { cat:'price', re:/cheaper|apply directly|directly with|official (government )?(channel|site|website|source|portal)|for free|free of charge|without paying|save money|do it yourself|yourself for/,
+      icon:'💸', label:'Price vs. applying directly',
+      fix:'The AI tells travelers it\'s cheaper to go straight to the official government site. Reframe the fee as value — time saved, guided error-free forms, document checks, support and the refund guarantee — and show a clear government-fee vs service-fee breakdown so the small premium reads as worth it.' },
+    { cat:'price', re:/fee|markup|overpriced|expensive|cost|charge|pricey|premium/,
+      icon:'💸', label:'Fees seen as high',
+      fix:'The AI frames iVisa as pricier than alternatives. Make the value of the service fee explicit and show a transparent price breakdown so pricing feels justified, not hidden.' },
+    { cat:'official', re:/not.*government|not.*official|third.?party|middleman|not.*agency|private company|not affiliated/,
+      icon:'🏛️', label:'"Not official / third-party"',
+      fix:'The AI stresses iVisa isn\'t a government agency. Position iVisa clearly as a legitimate independent service that simplifies the process, and lead with trust signals (verified reviews, success rate, years operating) high on the page.' },
+    { cat:'support', re:/customer service|support|unresponsive|difficult to reach|no response|hard to reach/,
+      icon:'📞', label:'Customer-service complaints',
+      fix:'The AI surfaces support/responsiveness complaints. Highlight live support channels and response-time commitments, and proactively answer the top complaint themes (refunds, delays) in help/FAQ content.' },
+    { cat:'time', re:/processing time|slow|delay|takes.*long|longer than|waiting/,
+      icon:'⏱️', label:'Processing-time concerns',
+      fix:'The AI notes processing can take longer. Show realistic timelines plus expedited options, and surface on-time delivery stats to set expectations.' },
+    { cat:'refund', re:/refund|cancel|non.?refund/,
+      icon:'↩️', label:'Refund-policy concerns',
+      fix:'The AI flags refund/cancellation worries. Make the refund guarantee prominent and in plain language.' },
+    { cat:'transparency', re:/hidden fee|extra charge|additional fee|surprise charge/,
+      icon:'🔍', label:'Fee transparency',
+      fix:'The AI mentions hidden/extra charges. Show the full price (service fee vs government fee) upfront — no checkout surprises.' },
+    { cat:'privacy', re:/data breach|privacy|personal information|data security|identity/,
+      icon:'🔒', label:'Data & privacy',
+      fix:'The AI raises data-security concerns. Surface security certifications, data handling and privacy practices.' },
+    { cat:'legit', re:/scam|fraud|not legit|avoid using|illegitimate/,
+      icon:'⚠️', label:'Legitimacy doubts',
+      fix:'The AI surfaces scam/legitimacy questions. Lead with proof — reviews, press coverage, success numbers — and a clear "is iVisa legit?" explainer.' },
+  ];
+  const seen = new Set();
+  const out = [];
+  for (const c of checks) {
+    if (out.length >= 4) break;
+    if (!seen.has(c.cat) && c.re.test(t)) {
+      seen.add(c.cat);
+      out.push(`<div style="margin-bottom:8px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--red);">${c.icon} ${c.label}</div>
+        <div style="font-size:.69rem;color:#555;line-height:1.4;margin-top:1px;">${c.fix}</div>
+      </div>`);
+    }
+  }
+  if (!out.length) return '<span style="color:var(--green);font-size:.75rem;">✅ No major issues detected</span>';
+  return out.join('');
 }
 
 function buildAioTable(countryResults) {
