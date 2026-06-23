@@ -24,6 +24,16 @@ on:
           - 'true'
           - 'false'
 
+# Serialize every run of this workflow into ONE group so the staggered cron slots
+# (and any manual trigger) can never run on top of each other. If GitHub fires the
+# slots clustered/late, they queue instead of running in parallel — so the FIRST
+# one produces the report and the next one's idempotency guard sees today's
+# snapshot already exists and exits. This is what stops the "3 reports, 3 scores"
+# duplicate-run problem. cancel-in-progress:false = never kill a report mid-run.
+concurrency:
+  group: weekly-csov-report
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
