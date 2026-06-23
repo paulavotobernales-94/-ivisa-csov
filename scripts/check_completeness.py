@@ -127,6 +127,55 @@ def assess_completeness(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _is_num_0_100(v: Any) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v <= 100
+
+
+def validate_payload_shape(payload: dict[str, Any]) -> list[str]:
+    """Return a list of structural problems in the report payload (empty = OK).
+
+    Guards against the "None where a number was expected" class (which once
+    produced an empty report) and any malformed score before it reaches the page.
+    """
+    errs: list[str] = []
+    if not _is_num_0_100(payload.get("csov_score")):
+        errs.append(f"csov_score is not a 0–100 number: {payload.get('csov_score')!r}")
+
+    comps = payload.get("components", {}) or {}
+    for k in ("serp", "ai_overview", "llm", "earned_media"):
+        v = comps.get(k)
+        score = v.get("score") if isinstance(v, dict) else v
+        if not _is_num_0_100(score):
+            errs.append(f"component '{k}' score is not a 0–100 number: {score!r}")
+
+    cd = payload.get("country_data", {}) or {}
+    if not cd:
+        errs.append("country_data is empty")
+    for code, info in cd.items():
+        if not _is_num_0_100((info or {}).get("csov_score")):
+            errs.append(f"country '{code}' csov_score is not a 0–100 number: {(info or {}).get('csov_score')!r}")
+
+    for key in ("serp_data", "ai_overview_data", "llm_data", "earned_media"):
+        if key not in payload:
+            errs.append(f"missing top-level key: {key}")
+
+    return errs
+
+
+def score_sanity(payload: dict[str, Any], prev_csov: float | None, max_jump: float = 15.0) -> list[str]:
+    """Return warnings for implausible score movement (a silent scoring/classifier
+    bug usually shows up as an unusually large week-over-week swing)."""
+    warns: list[str] = []
+    cs = payload.get("csov_score")
+    if isinstance(cs, (int, float)) and isinstance(prev_csov, (int, float)):
+        if abs(cs - prev_csov) > max_jump:
+            warns.append(
+                f"CSOV moved {cs - prev_csov:+.1f} vs last run ({prev_csov} → {cs}) — "
+                f"larger than ±{max_jump:.0f}; verify it's a real change, not a data/classifier bug."
+            )
+    return warns
+
+
 def format_completeness(assessment: dict[str, Any]) -> str:
     """Human-readable multi-line summary for the run log."""
     icon = {"ok": "✅", "partial": "⚠️", "low": "⚠️", "missing": "⛔"}

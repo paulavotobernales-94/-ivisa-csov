@@ -62,6 +62,34 @@ def _save_historical(data: dict, historical_dir: pathlib.Path, run_date: date) -
         logger.error("  Could not save historical data: %s", exc)
 
 
+def _check_render(html_path: str) -> str | None:
+    """Headless-render the generated report and return a problem string if the page
+    failed to populate (a RUNTIME JS error — the kind that makes it hang on
+    'Loading…'), else None. Best-effort: returns None (skip) if node / puppeteer /
+    the script aren't available, so it never blocks a local run that lacks the tool."""
+    import shutil, subprocess, os
+    if not os.path.exists(html_path):
+        return "generated report file not found"
+    node = shutil.which("node")
+    script = pathlib.Path(__file__).parent / "scripts" / "check_render.js"
+    if not node or not script.exists():
+        logger.info("  Render check skipped (node or check_render.js unavailable).")
+        return None
+    try:
+        proc = subprocess.run([node, str(script), html_path],
+                              capture_output=True, text=True, timeout=120)
+    except Exception as exc:
+        logger.warning("  Render check could not run (%s) — skipping.", exc)
+        return None
+    if proc.returncode == 0:
+        logger.info("  ✓ %s", (proc.stdout.strip().splitlines() or ["render OK"])[-1])
+        return None
+    if proc.returncode == 2:  # puppeteer/usage unavailable → best-effort skip
+        logger.info("  Render check skipped (%s).", (proc.stderr.strip() or "tooling unavailable"))
+        return None
+    return "; ".join((proc.stderr.strip().splitlines() or ["page did not populate"])[:3])
+
+
 def _build_report_payload(
     serp_data: dict,
     ai_overview_data: dict,
@@ -349,10 +377,28 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
     # ── Data completeness gate ──────────────────────────────────────────────
     # Detect silently-missing components (e.g. Gemini quota + Claude hiccup
     # leaving the LLM score a hollow default) BEFORE the report ships.
-    from scripts.check_completeness import assess_completeness, format_completeness
+    from scripts.check_completeness import (
+        assess_completeness, format_completeness, validate_payload_shape, score_sanity,
+    )
     completeness = assess_completeness(report_payload)
     report_payload["data_completeness"] = completeness
     logger.info(format_completeness(completeness))
+
+    # Payload shape — every score must be a real 0–100 number (guards the
+    # None-where-a-number-was-expected class). A bad shape is a hard failure.
+    shape_errors = validate_payload_shape(report_payload)
+    if shape_errors:
+        for e in shape_errors:
+            logger.error("  ⛔ payload shape: %s", e)
+        if not completeness["ok"]:
+            completeness["errors"].extend(shape_errors)
+        else:
+            completeness["errors"].extend(shape_errors)
+            completeness["ok"] = False
+
+    # Score sanity — flag implausibly large week-over-week swings (warn only).
+    for w in score_sanity(report_payload, prev_csov):
+        logger.warning("  ⚠️ score sanity: %s", w)
 
     # ── HTML Report ───────────────────────────────────────────────────────────
     logger.info("[5/6] Generating HTML report...")
@@ -382,6 +428,18 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
         logger.info("    • %s", archive_path)
     except Exception as exc:
         logger.error("Report generation failed: %s", exc)
+
+    # ── Headless render check ───────────────────────────────────────────────────
+    # Confirm the generated page actually populates (catches RUNTIME JS errors that
+    # syntax/data checks miss — the "stuck on Loading…" class). Runs BEFORE Slack/
+    # save so a broken page is never notified or published. Best-effort: skips if
+    # puppeteer isn't installed (the workflow installs it in CI).
+    if not dry_run:
+        _render_problem = _check_render(str(DOCS_DIR / "index.html"))
+        if _render_problem:
+            logger.error("  ⛔ RENDER CHECK FAILED — page did not populate: %s", _render_problem)
+            completeness.setdefault("errors", []).append("Render: " + _render_problem)
+            completeness["ok"] = False
 
     # ── Completeness gate: bail BEFORE saving on missing core data ──────────────
     # If a core component is missing we do NOT save a snapshot, do NOT Slack, and

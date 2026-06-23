@@ -72,6 +72,11 @@ jobs:
           SLACK_WEBHOOK_URL:  ${{ secrets.SLACK_WEBHOOK_URL }}
         run: python scripts/health_check.py
 
+      - name: Install render-check browser (Puppeteer)
+        # Lets main.py headless-render the report and block publish if the page
+        # doesn't populate. Best-effort: if install fails, the render check just skips.
+        run: npm install puppeteer@23 || echo "::warning::puppeteer install failed — headless render check will skip this run"
+
       - name: Run CSOV pipeline
         env:
           SEMRUSH_API_KEY:    ${{ secrets.SEMRUSH_API_KEY }}
