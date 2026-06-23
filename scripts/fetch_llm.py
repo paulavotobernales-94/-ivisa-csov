@@ -360,6 +360,8 @@ def _run_part_b(claude_client, gemini_model) -> dict[str, Any]:
 
         results.append({
             "query": query,
+            "claude_response": claude_response,   # store the response so the report can show it
+            "gemini_response": gemini_response,
             "claude_mentions_ivisa": claude_mentions,
             "gemini_mentions_ivisa": gemini_mentions,
             "gemini_sources": gemini_sources,

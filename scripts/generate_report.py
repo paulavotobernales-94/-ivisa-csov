@@ -478,7 +478,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       </div>
       <div id="llm-parta">
         <div class="table-wrap"><table>
-          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th class="gemini-col">Gemini Response, Score &amp; Sources</th><th>Avg</th></tr></thead>
+          <thead><tr><th>Query</th><th>Claude Response &amp; Score</th><th class="gemini-col">Gemini Response, Score &amp; Sources</th><th>Avg</th><th>What to Fix</th></tr></thead>
           <tbody id="llmPartABody"></tbody>
         </table></div>
       </div>
@@ -1260,9 +1260,9 @@ function aioWhatToFix(aioText) {
     { cat:'official', re:/not.*government|not.*official|third.?party|middleman|not.*agency|private company|not affiliated/,
       icon:'🏛️', label:'"Not official / third-party"',
       fix:'The AI stresses iVisa isn\'t a government agency. Position iVisa clearly as a legitimate independent service that simplifies the process, and lead with trust signals (verified reviews, success rate, years operating) high on the page.' },
-    { cat:'support', re:/customer service|support|unresponsive|difficult to reach|no response|hard to reach/,
-      icon:'📞', label:'Customer-service complaints',
-      fix:'The AI surfaces support/responsiveness complaints. Highlight live support channels and response-time commitments, and proactively answer the top complaint themes (refunds, delays) in help/FAQ content.' },
+    { cat:'support', re:/customer service|support|unresponsive|difficult to reach|no response|hard to reach|communication|poor communication/,
+      icon:'📞', label:'Customer-service & communication',
+      fix:'The AI surfaces support/communication complaints (slow or unclear responses, errors). Highlight live support channels and response-time commitments, and proactively answer the top complaint themes (refunds, delays, errors) in help/FAQ content.' },
     { cat:'time', re:/processing time|slow|delay|takes.*long|longer than|waiting/,
       icon:'⏱️', label:'Processing-time concerns',
       fix:'The AI notes processing can take longer. Show realistic timelines plus expedited options, and surface on-time delivery stats to set expectations.' },
@@ -1375,9 +1375,10 @@ function buildLlmTables(llmData) {
             <div class="progress-fill ${fillClass(r.avg_sentiment||0)}" style="width:${r.avg_sentiment||0}%"></div>
           </div>
         </td>
+        <td style="min-width:170px;max-width:220px;vertical-align:top;padding-top:10px;">${aioWhatToFix(r.claude_response)}</td>
       </tr>`;
   });
-  if (!tbodyA.innerHTML) tbodyA.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part A data — check API keys.</td></tr>';
+  if (!tbodyA.innerHTML) tbodyA.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No LLM Part A data — check API keys.</td></tr>';
 
   const tbodyB = document.getElementById('llmPartBBody');
   partB.forEach(r => {
