@@ -23,6 +23,14 @@ on:
         options:
           - 'true'
           - 'false'
+      force:
+        description: 'Force a re-run even if today already has a report (manual re-runs only)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 # Serialize every run of this workflow into ONE group so the staggered cron slots
 # (and any manual trigger) can never run on top of each other. If GitHub fires the
@@ -89,11 +97,16 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             python main.py --dry-run
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # Manual trigger: always run, even if today's report already exists
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.force }}" = "true" ]; then
+            # Human clicked "Run workflow" with force=true → always run, even if
+            # today already has a report (for deliberate manual re-runs).
             python main.py --slack --force
           else
-            # Scheduled cron: idempotency guard is active — skips if already ran today
+            # The external 9am trigger (workflow_dispatch with force=false) AND the
+            # backup GitHub crons all land here: the idempotency guard is ACTIVE, so
+            # only the FIRST run today produces/publishes a report; the rest skip.
+            # This is what lets the reliable external trigger be primary while the
+            # GitHub crons stay as harmless backups.
             python main.py --slack
           fi
 
