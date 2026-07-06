@@ -59,6 +59,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Sync working copy to latest main (kills the duplicate-report bug)
+        # ROOT CAUSE of the "2-3 reports in one day" problem: when GitHub fires the
+        # staggered crons clustered/late, a queued run checks out the commit SHA from
+        # when it was TRIGGERED — which can predate an earlier run's just-pushed
+        # snapshot. main.py's "already ran today" guard then misses the existing
+        # report and generates a DUPLICATE (+ duplicate Slack). The concurrency lock
+        # stops parallel runs but NOT this stale-checkout blind spot.
+        # Hard-syncing to the true latest main at RUN time (not trigger time) means a
+        # later run always sees the prior run's snapshot and correctly skips.
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
