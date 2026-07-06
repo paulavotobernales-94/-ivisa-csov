@@ -110,6 +110,13 @@ def _ask_claude(client, prompt: str, max_tokens: int = 500, retries: int = 2) ->
             message = client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=max_tokens,
+                # temperature=0 → greedy/deterministic decoding. Sentiment scoring
+                # (and mention detection) then return the SAME value for the same
+                # input every run, instead of drifting ~2pts between runs from
+                # sampling noise. This is what removes the ~0.5 CSOV wobble between
+                # back-to-back runs. All Claude calls route through this helper, so
+                # this one line makes the whole LLM component reproducible.
+                temperature=0,
                 messages=[{"role": "user", "content": prompt}],
             )
             text = message.content[0].text.strip() if message.content else None
