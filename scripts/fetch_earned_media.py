@@ -342,6 +342,64 @@ def _parse_news_results(data: dict, require_ivisa_mention: bool = True) -> list[
     return mentions
 
 
+def _months_ago_from_relative(published: str) -> float | None:
+    """Convert a YouTube relative upload date ('3 months ago', '2 years ago',
+    'Streamed 5 days ago', 'Premiered 1 year ago') into an approximate age in
+    MONTHS. Returns None if it can't be parsed."""
+    if not published:
+        return None
+    s = published.lower().replace("streamed", "").replace("premiered", "").strip()
+    m = re.search(r'(\d+)\s*(second|minute|hour|day|week|month|year)s?\s*ago', s)
+    if not m:
+        return None
+    n = int(m.group(1))
+    per_month = {
+        "second": 0.0, "minute": 0.0, "hour": 0.0,
+        "day": 1 / 30.0, "week": 7 / 30.0, "month": 1.0, "year": 12.0,
+    }
+    return n * per_month.get(m.group(2), 0.0)
+
+
+def _parse_youtube_video_results(data: dict, max_months: int = 12) -> list[dict]:
+    """Parse SerpAPI youtube-engine `video_results` into mention dicts, keeping ONLY
+    videos uploaded within the last `max_months`. Uses each video's REAL upload date
+    (`published_date`), not Google's web-search date filter (which is unreliable on
+    YouTube links — that's why an old 2024 review used to slip in). A video whose age
+    can't be determined is dropped, since we can't confirm it's recent."""
+    mentions = []
+    for item in data.get("video_results", []):
+        url = item.get("link", "")
+        if not url or not url.lower().startswith(("http://", "https://")):
+            continue
+
+        age_months = _months_ago_from_relative(item.get("published_date", ""))
+        if age_months is None or age_months > max_months:
+            continue  # undateable or older than the window → not a recent upload
+
+        title = item.get("title", "")
+        snippet = item.get("description", "") or item.get("snippet", "")
+        domain = "youtube.com"
+
+        if _is_ivisa_owned(url, domain):
+            continue
+        if not _mentions_ivisa(title) and not _mentions_ivisa(snippet):
+            continue
+
+        sentiment = _classify_mention(domain, title, snippet)
+        if sentiment == "excluded":
+            continue
+        mentions.append({
+            "title": title,
+            "url": url,
+            "source": "youtube",
+            "domain": domain,
+            "sentiment": sentiment,
+            "snippet": snippet,
+            "date": item.get("published_date") or None,
+        })
+    return mentions
+
+
 # ---------------------------------------------------------------------------
 # Source-specific fetchers
 # ---------------------------------------------------------------------------
@@ -441,22 +499,48 @@ def _fetch_reddit(date_range: tuple[str, str] | None = None) -> list[dict]:
     return _parse_organic_results(data, "reddit")
 
 
-def _fetch_youtube(date_range: tuple[str, str] | None = None) -> list[dict]:
-    """Fetch YouTube mentions/reviews of iVisa."""
-    params = {
+def _fetch_youtube(date_range: tuple[str, str] | None = None, gl: str = "us", hl: str = "en") -> list[dict]:
+    """YouTube mentions = a MIX of two complementary signals, de-duplicated by URL:
+
+      (a) PROMINENT — the top videos Google surfaces for 'iVisa review'
+          (relevance-ranked: what a searcher actually finds; can be older/evergreen).
+      (b) RECENT — new uploads from a DIRECT YouTube search, filtered to the last
+          12 months using each video's REAL upload date — so fresh mentions are never
+          missed even if they don't rank on Google yet. (Google's web-search date
+          filter is unreliable on YouTube links, hence the direct search.)
+
+    Combining both = we keep the influential videos people actually see AND catch
+    genuinely new uploads each week.
+    """
+    mentions: list[dict] = []
+
+    # (a) prominent — Google web search
+    g = _serpapi_search({
         "engine": "google",
         "q": "iVisa review site:youtube.com",
-        "gl": "us",
-        "hl": "en",
+        "gl": gl,
+        "hl": hl,
         "num": 10,
-    }
-    if date_range:
-        start_fmt = _date_to_google_fmt(date_range[0])
-        end_fmt   = _date_to_google_fmt(date_range[1])
-        params["tbs"] = f"cdr:1,cd_min:{start_fmt},cd_max:{end_fmt}"
+    })
+    mentions.extend(_parse_organic_results(g, "youtube"))
 
-    data = _serpapi_search(params)
-    return _parse_organic_results(data, "youtube")
+    # (b) recent uploads — direct YouTube search (true upload dates, last 12 months)
+    yt = _serpapi_search({
+        "engine": "youtube",
+        "search_query": "iVisa review",
+        "gl": gl,
+        "hl": hl,
+    })
+    mentions.extend(_parse_youtube_video_results(yt, max_months=12))
+
+    # De-duplicate by URL (a video can appear in both signals).
+    seen: set[str] = set()
+    unique: list[dict] = []
+    for m in mentions:
+        if m["url"] not in seen:
+            seen.add(m["url"])
+            unique.append(m)
+    return unique
 
 
 def _fetch_instagram(date_range: tuple[str, str] | None = None) -> list[dict]:
@@ -467,6 +551,8 @@ def _fetch_instagram(date_range: tuple[str, str] | None = None) -> list[dict]:
         "gl": "us",
         "hl": "en",
         "num": 10,
+        # Past 12 months — surface recent posts, not old evergreen ones.
+        "tbs": "qdr:y",
     }
     if date_range:
         start_fmt = _date_to_google_fmt(date_range[0])
@@ -485,6 +571,8 @@ def _fetch_tiktok(date_range: tuple[str, str] | None = None) -> list[dict]:
         "gl": "us",
         "hl": "en",
         "num": 10,
+        # Past 12 months — surface recent posts, not old evergreen ones.
+        "tbs": "qdr:y",
     }
     if date_range:
         start_fmt = _date_to_google_fmt(date_range[0])
@@ -720,17 +808,9 @@ def fetch_earned_media_by_country(countries: dict) -> dict:
             all_mentions.extend(_parse_organic_results(data, "reddit"))
             time.sleep(0.3)
 
-            # 4. YouTube
-            params = {
-                "engine": "google",
-                "q": "iVisa review site:youtube.com",
-                "gl": gl,
-                "hl": "en",
-                "num": 10,
-                "tbs": tbs,
-            }
-            data = _serpapi_search(params)
-            all_mentions.extend(_parse_organic_results(data, "youtube"))
+            # 4. YouTube — MIX: prominent (Google) + recent uploads (direct YouTube
+            # search, real upload dates, last 12 months), de-duplicated in the helper.
+            all_mentions.extend(_fetch_youtube(gl=gl))
             time.sleep(0.3)
 
         except Exception as exc:
