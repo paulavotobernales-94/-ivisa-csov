@@ -283,6 +283,18 @@ def _mentions_ivisa(text: str) -> bool:
     return bool(re.search(r'\bivisa\b', text, re.IGNORECASE))
 
 
+def _is_google_redirect(url: str) -> bool:
+    """True for Google redirect/tracking links (e.g. https://www.google.com/goto?url=CAES…).
+    These wrap the REAL destination in an encoded blob, so (a) the owned-account /
+    aggregator checks can't see the true URL inside (that's how an @ivisa_travel TikTok
+    slipped in), and (b) the link itself is unusable. We can't decode Google's blob, so
+    we drop these at ingestion rather than store a bad/unverifiable link."""
+    u = (url or "").lower()
+    if "/goto?url=" in u or "/url?" in u or "/aclk?" in u:
+        return True
+    return _extract_domain(u) == "google.com"
+
+
 def _fetch_article_body(url: str, timeout: int = 4) -> str:
     """Best-effort fetch of article body text. Returns '' on failure."""
     try:
@@ -380,6 +392,10 @@ def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
         # that would render as a GitHub Pages 404 in the report.
         if not url or not url.lower().startswith(("http://", "https://")):
             continue
+        # Drop Google redirect wrappers (google.com/goto?url=…) — they hide the true
+        # destination, evade the owned-account check, and aren't clickable-usable.
+        if _is_google_redirect(url):
+            continue
         domain = item.get("domain", "") or _extract_domain(url)
         title = item.get("title", "")
         snippet = item.get("snippet", "")
@@ -420,6 +436,8 @@ def _parse_news_results(data: dict, require_ivisa_mention: bool = True) -> list[
     for item in items:
         url = item.get("link", "")
         if not url:
+            continue
+        if _is_google_redirect(url):
             continue
         domain = _extract_domain(url)
         title = item.get("title", "")
@@ -516,20 +534,26 @@ def _parse_youtube_video_results(data: dict, max_months: int = 12) -> list[dict]
 # Source-specific fetchers
 # ---------------------------------------------------------------------------
 
-TRAVEL_BLOG_SITES = [
-    "site:lonelyplanet.com",
-    "site:nomadicmatt.com",
-    "site:thepointsguy.com",
-    "site:travelpulse.com",
-    "site:skift.com",
-    "site:forbes.com/travel",
-    "site:businessinsider.com",
-    "site:condénast.com OR site:cntraveler.com",
-    "site:afar.com",
-    "site:matadornetwork.com",
+# Reputable travel / press outlets counted as "blog" earned media. Curated (not any
+# random site) to keep content-farm spam out, but broad enough to catch real coverage.
+# Only 1 result before (TravelPulse) because the old list was 10 big sites; expanded
+# July 2026 so genuine iVisa blog/press coverage on more outlets is captured.
+_BLOG_SITES = [
+    "lonelyplanet.com", "nomadicmatt.com", "thepointsguy.com",
+    "travelpulse.com", "travelpulse.ca", "skift.com", "forbes.com",
+    "businessinsider.com", "cntraveler.com", "cntraveller.com", "afar.com",
+    "matadornetwork.com", "travelandtourworld.com", "travelweekly.com",
+    "phocuswire.com", "timeout.com", "thetraveler.org", "ftnnews.com",
+    "nomadlawyer.org", "travelmarketreport.com",
 ]
 
+
+def _blog_site_query() -> str:
+    """Build the `site:a OR site:b …` clause for the blog earned-media search."""
+    return " OR ".join(f"site:{s}" for s in _BLOG_SITES)
+
 EM_QUERIES = [
+    "iVisa",              # broad brand query → the general Google News page (~10 results)
     "iVisa review",
     "iVisa legit",
     "iVisa visa service",
@@ -562,19 +586,8 @@ def _fetch_google_news(query: str, date_range: tuple[str, str] | None = None) ->
 def _fetch_travel_blogs(date_range: tuple[str, str] | None = None) -> list[dict]:
     """Fetch iVisa mentions from top travel blog/press sites."""
     all_mentions = []
-    # Batch query across travel sites
-    sites_combined = " OR ".join([
-        "site:lonelyplanet.com",
-        "site:nomadicmatt.com",
-        "site:thepointsguy.com",
-        "site:travelpulse.com",
-        "site:skift.com",
-        "site:forbes.com",
-        "site:businessinsider.com",
-        "site:cntraveler.com",
-        "site:afar.com",
-        "site:matadornetwork.com",
-    ])
+    # Batch query across the curated travel/press site list.
+    sites_combined = _blog_site_query()
     params = {
         "engine": "google",
         "q": f"iVisa ({sites_combined})",
@@ -887,16 +900,10 @@ def fetch_earned_media_by_country(countries: dict) -> dict:
                 all_mentions.extend(_parse_news_results(data))
                 time.sleep(0.3)
 
-            # 2. Travel blogs
-            sites_combined = " OR ".join([
-                "site:lonelyplanet.com", "site:nomadicmatt.com",
-                "site:thepointsguy.com", "site:travelpulse.com",
-                "site:skift.com", "site:forbes.com", "site:businessinsider.com",
-                "site:cntraveler.com", "site:afar.com", "site:matadornetwork.com",
-            ])
+            # 2. Travel blogs (same curated site list as the global fetch)
             params = {
                 "engine": "google",
-                "q": f"iVisa ({sites_combined})",
+                "q": f"iVisa ({_blog_site_query()})",
                 "gl": gl,
                 "hl": "en",
                 "num": 20,
