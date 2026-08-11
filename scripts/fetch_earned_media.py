@@ -167,6 +167,39 @@ def _is_review_aggregator(domain: str) -> bool:
     return any(r in d for r in REVIEW_AGGREGATORS)
 
 
+# YouTube review videos routinely title themselves "Is iVisa legit | Is it a scam?"
+# as a neutral clickbait QUESTION, then give a balanced, informative review. The
+# generic classifier sees the bare word "scam"/"legit" and forces negative/positive,
+# which is wrong for these. So YouTube gets its own nuanced rule:
+#   • a real complaint (fraud, ripoff, avoid, lost money, declarative "is a scam"…)
+#     → negative
+#   • genuine endorsement (worth it, recommend, saved us, stress-free…) → positive
+#   • otherwise (a balanced "is it a scam?/legit?" review) → NEUTRAL
+_YT_HARD_NEG = [
+    "fraud", "fake", "ripoff", "rip off", "scammed", "stole", "stolen", "steal",
+    "avoid ivisa", "avoid using", "lost money", "refund denied", "overcharged",
+    "do not use", "don't use", "stay away", "terrible", "worst", "never again",
+    "waste of", "disappointed", "unresponsive", "shady", "beware",
+    "not legit", "not safe", "not worth",
+    # declarative scam ACCUSATIONS (not the "is it a scam?" question)
+    "is a scam", "it's a scam", "its a scam", "total scam", "biggest scam",
+    "complete scam", "such a scam", "huge scam",
+]
+_YT_STRONG_POS = [
+    "worth it", "recommend", "excellent", "great", "amazing", "fantastic", "love",
+    "helped", "saved", "stress-free", "stress free", "seamless", "lifesaver",
+    "five star", "5 star", "perfect", "smooth", "highly recommend", "best experience",
+]
+
+
+def _classify_youtube_review(text: str) -> str:
+    if any(h in text for h in _YT_HARD_NEG):
+        return "negative"
+    if any(p in text for p in _YT_STRONG_POS):
+        return "positive"
+    return "neutral"
+
+
 def _classify_mention(domain: str, title: str, snippet: str = "") -> str:
     """Return 'positive', 'negative', or 'neutral' for a mention."""
     domain_lower = domain.lower().strip()
@@ -179,6 +212,10 @@ def _classify_mention(domain: str, title: str, snippet: str = "") -> str:
     for d in NEGATIVE_DOMAINS_EM:
         if d in domain_lower:
             return "negative"
+
+    # YouTube review videos use the nuanced rule above (see note).
+    if "youtube.com" in domain_lower:
+        return _classify_youtube_review(text)
 
     for signal in NEGATIVE_SIGNALS:
         if signal in text:
@@ -514,7 +551,18 @@ def _fetch_youtube(date_range: tuple[str, str] | None = None, gl: str = "us", hl
     """
     mentions: list[dict] = []
 
-    # (a) prominent — Google web search
+    # (b) recent uploads FIRST — direct YouTube search (true upload dates, last 12
+    # months). Added before the Google set so that when a video appears in both, the
+    # de-dup below keeps THIS dated copy (Google web results usually have no date).
+    yt = _serpapi_search({
+        "engine": "youtube",
+        "search_query": "iVisa review",
+        "gl": gl,
+        "hl": hl,
+    })
+    mentions.extend(_parse_youtube_video_results(yt, max_months=12))
+
+    # (a) prominent — Google web search (what a searcher actually finds; can be older)
     g = _serpapi_search({
         "engine": "google",
         "q": "iVisa review site:youtube.com",
@@ -523,15 +571,6 @@ def _fetch_youtube(date_range: tuple[str, str] | None = None, gl: str = "us", hl
         "num": 10,
     })
     mentions.extend(_parse_organic_results(g, "youtube"))
-
-    # (b) recent uploads — direct YouTube search (true upload dates, last 12 months)
-    yt = _serpapi_search({
-        "engine": "youtube",
-        "search_query": "iVisa review",
-        "gl": gl,
-        "hl": hl,
-    })
-    mentions.extend(_parse_youtube_video_results(yt, max_months=12))
 
     # De-duplicate by URL (a video can appear in both signals).
     seen: set[str] = set()

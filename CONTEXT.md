@@ -155,6 +155,10 @@ docs/ivisa_logo.png              Real iVisa logo (transparent background PNG)
 | June 3 2026 | 55.7 | — | — | — | — | |
 | June 4 2026 | 56.0 | — | — | — | — | |
 | June 8 2026 | **55.7** | 59.9 | 49.2 | 49.5 | 67.3 | **Canonical score.** Two runs happened (9:53 AM manual + 8:30 PM delayed cron). 8:30 PM run overwrote the JSON and HTML. 55.7 is the stored, accepted baseline. |
+| June 15 2026 | — | — | — | — | — | First final-version run (trend chart start). |
+| June 22 2026 | — | — | — | — | — | (3 duplicate runs — concurrency fix followed.) |
+| June 29 2026 | **59.39** | — | — | — | — | Live/accepted. |
+| July 6 2026 | **59.47** | 65.81 | 50.09 | 51.85 | 73.08 | **Canonical (commit 8b27b44, the live page).** A duplicate run (632abd7 = 58.95) also fired — see July 6 update-log for the stale-checkout root cause + fix. Difference was pure LLM sampling noise; `temperature=0` added same day to stop it. |
 
 ---
 
@@ -366,21 +370,29 @@ Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
 
 **Steps:**
 1. Checkout repo
-2. Set up Python 3.11
-3. Install dependencies
-4. **Pre-flight health check** (warns in CI for API issues, hard-fails only for config errors)
-5. Run CSOV pipeline — scheduled cron uses `python main.py --slack`, manual trigger uses `python main.py --slack --force`
-6. Commit and push report to `docs/` and `data/historical/`
-7. Deploy `docs/` to GitHub Pages
+2. **Sync working copy to latest main** (`git fetch origin main && git reset --hard origin/main`) — added July 6 2026; makes the idempotency guard see the true latest main so clustered/late crons can't produce duplicates (see below).
+3. Set up Python 3.11
+4. Install dependencies
+5. **Pre-flight health check** (warns in CI for API issues, hard-fails only for config errors)
+6. Install render-check browser (Puppeteer) — for the headless render check
+7. Run CSOV pipeline — see the trigger table below for the exact command per trigger
+8. Commit and push report to `docs/` and `data/historical/` (conflict-resilient rebase `-X theirs` + retry loop, June 29 2026)
+9. Deploy `docs/` to GitHub Pages (`deploy-pages` job, `needs: generate-report`)
 
-**Idempotency guard (added June 9 2026):** `main.py` checks if `data/historical/YYYY-MM-DD.json` already exists before running. If it does AND the run is a scheduled cron (no `--force`), it exits immediately without fetching data or sending Slack. This prevents duplicate reports when GitHub's delayed cron fires after a manual run.
+**Idempotency guard (June 9 2026; hardened July 6 2026):** `main.py` checks if `data/historical/YYYY-MM-DD.json` already exists before running. If it does AND the run isn't `--force`, it exits immediately without fetching data or sending Slack. **The July 6 sync-to-latest-main step is what makes this reliable** — before it, a queued run checked out its stale trigger-time SHA and missed an earlier run's just-pushed snapshot, producing duplicates (the "2–3 reports" bug). Now every run resets to true latest main first, so the guard always sees a prior run's report and skips.
 
-| How triggered | Blocked if already ran today? |
-|---|---|
-| Automated Monday cron | ✅ Yes — no duplicate |
-| "Run workflow" button in GitHub | ❌ No — always runs (passes `--force`) |
-| `python3 main.py --slack` locally | ❌ No — always runs |
-| `python3 main.py --slack --force` | ❌ No — always runs |
+**Dispatch routing (July 6 2026):** the `Run CSOV pipeline` step branches:
+- `dry_run=true` → `python main.py --dry-run`
+- `workflow_dispatch` **with `force=true`** → `python main.py --slack --force` (deliberate human re-run)
+- everything else (external trigger with force=false, AND all scheduled crons) → `python main.py --slack` (guard ACTIVE)
+
+| How triggered | Command | Blocked if already ran today? |
+|---|---|---|
+| Automated Monday cron | `--slack` | ✅ Yes — guard active |
+| External 9am trigger (workflow_dispatch, force=false) | `--slack` | ✅ Yes — guard active |
+| "Run workflow" button with **force=true** | `--slack --force` | ❌ No — always runs (for deliberate re-runs) |
+| `python3 main.py --slack` locally | `--slack` | ✅ Yes — guard active |
+| `python3 main.py --slack --force` locally | `--slack --force` | ❌ No — always runs |
 
 ---
 
@@ -396,7 +408,8 @@ Can be triggered manually via `workflow_dispatch` with optional `dry_run` input.
 | heise.de "warns of scam" not classifying negative | Fixed — "warns of" added to NEGATIVE_TEXT_SIGNALS |
 | Germany / non-English SERP mismatch | Partially fixed by snippet coverage fallback. Full fix pending: localized keywords + `hl=` parameter |
 | Non-English countries use English keywords | **PENDING** — Paula to provide localized keyword lists for DE, FR, JP, NL, IT, CH |
-| Duplicate Slack reports (cron fires late after manual run) | Fixed June 9 2026 — idempotency guard in main.py, `--force` flag added |
+| Duplicate Slack reports (cron fires late after manual run) | Fixed June 9 2026 (guard) + June 23 (concurrency) + **July 6 2026 (sync-to-latest-main — the real root cause; queued runs checked out a stale SHA and missed the guard). Now exactly one report per Monday even on clustered/late crons.** |
+| LLM component wobbles ~2pts between back-to-back runs | Fixed July 6 2026 — `temperature=0` in `_ask_claude()` makes Claude sentiment scoring deterministic. Removes noise, not real week-to-week signal. |
 | Main dashboard trend chart shows backfilled May data | **FIXED June 12 2026** — `TREND_CHART_START_DATE = "2026-06-15"` in `config.py`; `main.py` filters history to that date onward. All pre-cutoff snapshots stay on disk, just not plotted. First chart point = Mon June 15 2026 (first final-version run). |
 
 ---
@@ -439,9 +452,17 @@ No API available on current plan. Deferred indefinitely.
 | June 15 2026 | **Gemini disabled → Claude-only LLM** (`USE_GEMINI=False`). Free tier refused every call (RESOURCE_EXHAUSTED, even non-grounded) — Google gives this key ~zero quota. Report hides the Gemini column (`.gemini-col`/`hasGemini`), copy says "Scored by Claude", completeness treats Claude-only as OK. No score change (Gemini was already empty). Re-enable by setting `USE_GEMINI=True` after enabling Google Cloud billing. **Also:** earned media now excludes iVisa-owned social accounts (`IVISA_OWNED_SOCIAL`: @ivisa_travel IG/TikTok/YouTube, /iVisaTravel FB, /iVisa__Travel Pinterest, /company/ivisa LinkedIn). |
 | June 15 2026 | **Missing-snippet / generic-homepage-title fix** (the "travelsloth / Lakeland Currents" issue — title shows but no snippet, or a generic site homepage title). Root cause: SEMrush returns many results domain-only (no title/snippet); when enrichment can't match them to live Google organic it fetched the site HOMEPAGE `<title>` or a canned platform title, with no snippet. Fixes: (1) `_PLATFORM_SNIPPETS` in `fetch_serp.py` — neutral one-line descriptors for facebook/instagram/linkedin/youtube/x/reddit/quora/tripadvisor/trustpilot/sitejabber/bbb/yelp/glassdoor/indeed/ivisa.com, filled DISPLAY-ONLY in the report gate (no reclassify, no score change); cut title-but-no-snippet results 103→33 on June 12 data. (2) `_fetch_page_title` now REJECTS a fetched title if neither title nor body mentions "ivisa" — stops generic homepages ("News - Lakeland Currents", "Travelsloth - …", "Home - Adventures & Sunsets") from attaching. Remaining blanks are real titles w/o snippet (YouTube videos, forum posts) which is acceptable. NOTE: there was NO prior travelsloth fix in this file — the app-store fix only covered Google Play/App Store. |
 | June 12 2026 | **Data completeness gate** added — `scripts/check_completeness.py` + wired into `main.py`. Detects silently-missing components (esp. LLM: if both Claude+Gemini fail → MISSING/block; if one fails → PARTIAL/warn). Logs a completeness summary every run, refuses Slack when a core component is MISSING, and exits non-zero so the Monday automation can't publish a hollow report. **Also fixed a junk-detector false positive**: the structural bracket/symbol density check flagged real titles like "[UK] iVisa.com UK-ETA is a scam" as junk — removed it (the specific `{}`/tag/operator checks still catch real code). First live test run June 12: CSOV 58.5 (+2.8); SERP 109/109 combos, EM 30 mentions, AIO 46/109; **Gemini free-tier quota exhausted → LLM ran Claude-only (valid, flagged PARTIAL)**; safety gate blanked junk before render; report clean. |
+| July 6 2026 | **ROOT CAUSE of the recurring "2–3 reports in one day" bug found & fixed (the real "why does Monday keep breaking" answer).** July 6 produced TWO reports (commits 632abd7 = CSOV 58.95 @12:09, 8b27b44 = CSOV 59.47 @12:23) with Paula triggering nothing — pure scheduled crons. The concurrency lock (June 23) stopped *parallel* runs but NOT this: when GitHub fires the staggered crons clustered/late, a queued run's `actions/checkout` checks out the commit SHA **from when it was triggered**, which can predate an earlier run's just-pushed snapshot. main.py's "already ran today" guard then doesn't see today's `data/historical/*.json` and generates a DUPLICATE. **Fix:** new workflow step right after Checkout — `git fetch origin main && git reset --hard origin/main` — hard-syncs each run to the true latest main at RUN time (not trigger time), so a later run always sees the prior run's snapshot and skips. This is what the concurrency lock alone couldn't do (it was also behind the June 22 "3 reports"). |
+| July 6 2026 | **`force` input added to `workflow_dispatch` + dispatch routing changed.** Old behaviour: ANY manual/external `workflow_dispatch` ran `--force`, bypassing the guard → a manual re-run or external trigger could double-post alongside a cron. New: only a human choosing `force=true` in the Run-workflow dialog runs `--force`; a plain `workflow_dispatch` (force=false, e.g. from the planned external 9am trigger) and all crons run `--slack` with the guard ACTIVE. So the external trigger can be the reliable primary and the GitHub crons stay as harmless guarded backups. |
+| July 6 2026 | **LLM sentiment made reproducible — `temperature=0`** on the single `client.messages.create` in `_ask_claude()` (`fetch_llm.py`), through which ALL Claude calls route. Why: the two July 6 duplicate runs differed by ~0.5 CSOV, and the breakdown showed SERP/AIO barely moved (±0.1–0.2 = noise) while the LLM component swung 49.72→51.85 (+2.13 × 0.25 = the whole delta) purely from Claude re-scoring the same 20 brand queries with sampling noise. temperature=0 = greedy decoding → same input scores the same every run, killing the wobble. **Not a freeze:** week-to-week movement is preserved because the live inputs (SERP/AIO/earned media, 75% of the score) are re-pulled each run. **Design decision (Paula, July 6):** the LLM call is deliberately NOT web-grounded — Paula wants Claude to answer "as it would to any potential customer asking about iVisa," i.e. from its own trained knowledge. So the LLM component is a slow-moving baseline (only changes when the model itself changes), and new live mentions (e.g. a wave of positive Reddit threads) show up FAST in SERP/AIO/earned media, NOT in the LLM component. Do not add a web-search tool to the Claude call without Paula's explicit sign-off. |
+| July 6 2026 | **Decision: HELD the "Slack-after-publish" refactor** (moving the Slack send into a separate `notify-slack` job that runs only after `deploy-pages`). Rationale: the Slack-vs-page number mismatch was caused by racing runs, which the concurrency lock + conflict-resilient push (June 23/29) + the July 6 stale-checkout fix now largely prevent; adding a new workflow job is exactly the kind of churn that has caused past Monday breakages. Revisit ONLY if a real Slack-vs-page mismatch recurs. |
+| July 6 2026 | **PENDING (Paula's side): external 9am trigger** to stop relying on GitHub's flaky cron for on-time firing. Plan: a free cron-job.org job POSTs to `https://api.github.com/repos/paulavotobernales-94/-ivisa-csov/actions/workflows/weekly-report.yml/dispatches` every Monday 09:00 Europe/Madrid, body `{"ref":"main"}`, headers `Accept: application/vnd.github+json` / `Authorization: Bearer <fine-grained PAT with Actions:read&write on -ivisa-csov>` / `X-GitHub-Api-Version: 2022-11-28`. Because it dispatches with force=false, it respects the guard (no duplicate); the 3 GitHub crons remain as backups. Not yet set up. |
+| July 6 2026 | **Slack cleanup note:** Paula (channel owner) can't delete the webhook-posted report messages because Slack message-deletion is a WORKSPACE-level permission (Admin → Settings → Message deletion), not a channel-owner right, and webhook/app messages aren't "owned" by any user. A Workspace Owner/Admin must delete them or enable member deletion. Our Slack tools can read/post but not delete. |
 
 ---
 
-*Last updated: June 23, 2026. Update this file any time significant decisions are made, new bugs are fixed, or new features are built.*
+*Last updated: July 6, 2026. Update this file any time significant decisions are made, new bugs are fixed, or new features are built.*
 
 > **Session summary — June 12–23, 2026 (for the next Claude):** Big work block. Done & live: localized per-country keywords + Switzerland→Spain (3%); durable structural junk fix + report safety gate + CI tripwire; app-store/platform title+snippet fallbacks; content-less SERP rows hidden; generic-homepage-title rejection; 404/relative-link fix; award/recognition language scores positive; iVisa-owned social excluded from earned media; **Gemini OFF (`USE_GEMINI=False`) → Claude-only LLM** (free tier gives this key ~0 quota; re-enable after billing); data-completeness gate; payload-shape + score-sanity validators; **JS syntax (`node --check`) + headless render (`scripts/check_render.js`) checks** so a broken page can't publish; trend chart starts 2026-06-15; workflow concurrency + 3 staggered Monday crons. Two rules added to Code Rules: no apostrophes in single-quoted JS strings in the template, and always validate the rendered JS (not just that HTML generated). All changes are in the update-log above with file/function names.*
+
+> **Session summary — July 6, 2026 (for the next Claude):** Found & fixed the REAL recurring "2–3 reports every Monday" root cause: queued cron runs checked out a stale trigger-time SHA, so the idempotency guard missed an earlier run's just-pushed snapshot → duplicate. Fix = a `git fetch origin main && git reset --hard origin/main` step right after Checkout (syncs to true latest main at run time). Also: added a `force` input to `workflow_dispatch` so only a deliberate human re-run (force=true) bypasses the guard — plain dispatch + crons now respect it (lets a planned external 9am trigger be primary, crons as backups). Also: set Claude sentiment to `temperature=0` (`_ask_claude`) to kill the ~2pt LLM wobble between runs — the July 6 duplicates differed by 0.5 CSOV, all from LLM sampling noise. **Decisions:** HELD the Slack-after-publish refactor (races already mitigated; avoid workflow churn). Confirmed the LLM call stays NON-grounded on purpose (Paula wants Claude answering as it would to a real customer) — so LLM is a slow baseline; live mentions surface via SERP/AIO/earned media. **Pending on Paula's side:** set up the cron-job.org external 9am trigger (details in the update log). Three commits pushed: `e79b5f8` (force input), the sync-step fix, and the temperature=0 change.*
