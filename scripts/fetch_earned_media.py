@@ -296,6 +296,81 @@ def _fetch_article_body(url: str, timeout: int = 4) -> str:
         return ""
 
 
+# --- Real publication/upload dates from the source ---------------------------
+# Reddit posts and YouTube videos always HAVE a date, but when we discover them via
+# a Google web search the date field is usually missing. These read the real date
+# from the platform itself. Cached per-URL so a post shared across many countries is
+# fetched only once per run; best-effort (leaves the date blank if the source can't
+# be reached — e.g. Reddit rate-limits).
+_REDDIT_DATE_CACHE: dict = {}
+_YT_DATE_CACHE: dict = {}
+
+
+def _reddit_post_date(url: str) -> str | None:
+    if url in _REDDIT_DATE_CACHE:
+        return _REDDIT_DATE_CACHE[url]
+    from datetime import datetime
+    result = None
+    m = re.search(r'/comments/([a-z0-9]+)', url, re.IGNORECASE)
+    if m:
+        try:
+            r = requests.get(
+                f"https://www.reddit.com/comments/{m.group(1)}.json",
+                headers={"User-Agent": "iVisaCSOV/1.0 (brand reputation monitor)"},
+                timeout=6,
+            )
+            r.raise_for_status()
+            payload = r.json()
+            created = payload[0]["data"]["children"][0]["data"]["created_utc"]
+            result = datetime.utcfromtimestamp(float(created)).strftime("%b %d, %Y")
+        except Exception:
+            result = None
+    _REDDIT_DATE_CACHE[url] = result
+    return result
+
+
+def _youtube_video_date(url: str) -> str | None:
+    if url in _YT_DATE_CACHE:
+        return _YT_DATE_CACHE[url]
+    from datetime import datetime
+    result = None
+    try:
+        r = requests.get(
+            url,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; iVisaCSOV/1.0)"},
+            timeout=6,
+        )
+        html = r.text
+        m = (re.search(r'"uploadDate":"(\d{4}-\d{2}-\d{2})', html)
+             or re.search(r'itemprop="datePublished"\s+content="(\d{4}-\d{2}-\d{2})', html)
+             or re.search(r'"publishDate":"(\d{4}-\d{2}-\d{2})', html))
+        if m:
+            result = datetime.strptime(m.group(1), "%Y-%m-%d").strftime("%b %d, %Y")
+    except Exception:
+        result = None
+    _YT_DATE_CACHE[url] = result
+    return result
+
+
+def _enrich_dates(mentions: list[dict]) -> None:
+    """Fill a real date on any mention that has none, reading it from the source
+    (Reddit post JSON / YouTube watch page). In place; best-effort. Instagram and
+    TikTok are not fetched here — they block automated reads, so those stay blank."""
+    for m in mentions:
+        if m.get("date"):
+            continue
+        dom = (m.get("domain") or "").lower()
+        url = m.get("url") or ""
+        if "reddit.com" in dom:
+            d = _reddit_post_date(url)
+        elif "youtube.com" in dom or "youtu.be" in dom:
+            d = _youtube_video_date(url)
+        else:
+            d = None
+        if d:
+            m["date"] = d
+
+
 def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
     """Parse organic_results from SerpAPI response into mention dicts."""
     mentions = []
@@ -582,44 +657,38 @@ def _fetch_youtube(date_range: tuple[str, str] | None = None, gl: str = "us", hl
     return unique
 
 
-def _fetch_instagram(date_range: tuple[str, str] | None = None) -> list[dict]:
-    """Fetch Instagram third-party mentions of iVisa."""
-    params = {
-        "engine": "google",
-        "q": "iVisa site:instagram.com -site:instagram.com/ivisa",
-        "gl": "us",
-        "hl": "en",
-        "num": 10,
-        # Past 12 months — surface recent posts, not old evergreen ones.
-        "tbs": "qdr:y",
-    }
-    if date_range:
-        start_fmt = _date_to_google_fmt(date_range[0])
-        end_fmt   = _date_to_google_fmt(date_range[1])
-        params["tbs"] = f"cdr:1,cd_min:{start_fmt},cd_max:{end_fmt}"
+def _mix_prominent_and_recent(query: str, source_label: str) -> list[dict]:
+    """Instagram/TikTok mentions = a MIX of prominent + recent, de-duplicated:
+      (a) PROMINENT — top Google results (all-time relevance: what people find).
+      (b) RECENT — the same search with Google's past-12-months filter.
+    NOTE: unlike YouTube, there is no dated Instagram/TikTok search we can query, so
+    'recent' here is Google's best-effort date filter (not exact upload dates), and
+    these platforms rarely expose a per-post date — so many cards will have no date."""
+    base = {"engine": "google", "q": query, "gl": "us", "hl": "en", "num": 10}
+    mentions: list[dict] = []
+    mentions.extend(_parse_organic_results(_serpapi_search(dict(base)), source_label))
+    mentions.extend(_parse_organic_results(_serpapi_search({**base, "tbs": "qdr:y"}), source_label))
+    seen: set[str] = set()
+    unique: list[dict] = []
+    for m in mentions:
+        if m["url"] not in seen:
+            seen.add(m["url"])
+            unique.append(m)
+    return unique
 
-    data = _serpapi_search(params)
-    return _parse_organic_results(data, "instagram")
+
+def _fetch_instagram(date_range: tuple[str, str] | None = None) -> list[dict]:
+    """Fetch Instagram third-party mentions of iVisa (prominent + recent mix)."""
+    return _mix_prominent_and_recent(
+        "iVisa site:instagram.com -site:instagram.com/ivisa", "instagram"
+    )
 
 
 def _fetch_tiktok(date_range: tuple[str, str] | None = None) -> list[dict]:
-    """Fetch TikTok third-party mentions of iVisa."""
-    params = {
-        "engine": "google",
-        "q": "iVisa site:tiktok.com -site:tiktok.com/@ivisa",
-        "gl": "us",
-        "hl": "en",
-        "num": 10,
-        # Past 12 months — surface recent posts, not old evergreen ones.
-        "tbs": "qdr:y",
-    }
-    if date_range:
-        start_fmt = _date_to_google_fmt(date_range[0])
-        end_fmt   = _date_to_google_fmt(date_range[1])
-        params["tbs"] = f"cdr:1,cd_min:{start_fmt},cd_max:{end_fmt}"
-
-    data = _serpapi_search(params)
-    return _parse_organic_results(data, "tiktok")
+    """Fetch TikTok third-party mentions of iVisa (prominent + recent mix)."""
+    return _mix_prominent_and_recent(
+        "iVisa site:tiktok.com -site:tiktok.com/@ivisa", "tiktok"
+    )
 
 
 def _date_to_google_fmt(iso_date: str) -> str:
@@ -729,6 +798,9 @@ def fetch_earned_media_data(date_range: tuple[str, str] | None = None) -> dict[s
         if m["url"] not in seen_urls:
             seen_urls.add(m["url"])
             unique_mentions.append(m)
+
+    # Fill real dates from the source (Reddit/YouTube) for any card missing one.
+    _enrich_dates(unique_mentions)
 
     # Sort: newest first (date desc), then by source type
     SOURCE_ORDER = {"news": 0, "blog": 1, "reddit": 2, "youtube": 3, "instagram": 4, "tiktok": 5}
@@ -862,6 +934,9 @@ def fetch_earned_media_by_country(countries: dict) -> dict:
             if m["url"] not in seen:
                 seen.add(m["url"])
                 unique.append(m)
+
+        # Fill real dates from the source (Reddit/YouTube) where missing.
+        _enrich_dates(unique)
 
         counts = {"total": len(unique), "positive": 0, "neutral": 0, "negative": 0}
         for m in unique:
