@@ -374,6 +374,23 @@ def run(dry_run: bool = False, send_slack: bool = False, force: bool = False) ->
             llm_by_country           = llm_by_country,
         )
 
+        # ── Upgrade action items to Claude-analyzed recommendations ─────────
+        # Replace the rule-based/templated action items with a genuine weekly
+        # analysis grounded in THIS run's real evidence (negative SERP snippets,
+        # AI-Overview concerns, low LLM answers, earned-media picture, WoW move).
+        # Safe: if Claude is unavailable or the output can't be parsed, the
+        # rule-based items already in the payload are kept.
+        try:
+            from scripts.generate_recommendations import generate_smart_action_items
+            smart = generate_smart_action_items(report_payload)
+            if smart:
+                report_payload["action_items"] = smart
+                logger.info("  Recommendations: Claude-analyzed (%d items).", len(smart))
+            else:
+                logger.info("  Recommendations: rule-based fallback (Claude unavailable).")
+        except Exception as exc:
+            logger.warning("  Smart recommendations skipped (%s) — using rule-based.", exc)
+
     # ── Data completeness gate ──────────────────────────────────────────────
     # Detect silently-missing components (e.g. Gemini quota + Claude hiccup
     # leaving the LLM score a hollow default) BEFORE the report ships.
