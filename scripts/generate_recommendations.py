@@ -11,7 +11,6 @@ Brand Reputation & PR — producing a small set of prioritized, evidence-grounde
 specific recommendations in iVisa's voice.
 
 Design safeguards:
-  • temperature=0 → stable, reproducible output (same data ⇒ same plan).
   • Grounded ONLY in the evidence passed in; the prompt forbids invented facts.
   • Pure add-on: if Claude is unavailable or the output can't be parsed, the caller
     falls back to the existing rule-based generate_action_items(). Nothing breaks.
@@ -48,7 +47,6 @@ def _ask_claude(prompt: str, max_tokens: int = 1600) -> str | None:
         msg = client.messages.create(
             model=CLAUDE_MODEL,
             max_tokens=max_tokens,
-            temperature=0,  # deterministic — same data ⇒ same recommendations
             messages=[{"role": "user", "content": prompt}],
         )
         return msg.content[0].text.strip() if msg.content else None
