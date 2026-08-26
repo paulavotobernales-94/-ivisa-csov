@@ -702,19 +702,23 @@ def check_historical_data():
     if not (0 <= score <= 100):
         raise Exception(f"{latest.name} has invalid csov_score={score} (must be 0–100)")
 
-    # Warn if latest file is older than 8 days (missed a Monday run)
+    # Note (do NOT fail) if the latest file is old — a stale snapshot means a
+    # Monday run was missed/failed, which is exactly when we NEED this run to
+    # proceed. Hard-failing here created a catch-22 that blocked the recovery run
+    # (Aug 2026). Corruption above still hard-fails; staleness is informational.
+    stale_note = ""
     try:
         file_date = date.fromisoformat(latest.stem)
         days_old = (date.today() - file_date).days
         if days_old > 8:
-            raise Exception(
-                f"Latest snapshot is {days_old} days old ({latest.name}) — "
-                f"a Monday run may have been missed or failed silently."
+            stale_note = (
+                f"  ⚠️ latest snapshot is {days_old} days old — a Monday run was "
+                f"likely missed/failed; this run will create a fresh one (non-blocking)"
             )
     except ValueError:
         pass  # filename isn't a date — skip age check
 
-    return f"{len(files)} snapshots, latest={latest.name}, score={score}"
+    return f"{len(files)} snapshots, latest={latest.name}, score={score}{stale_note}"
 
 check("Historical data integrity", check_historical_data)
 
