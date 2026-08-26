@@ -360,17 +360,24 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
         if d in domain_lower:
             return "negative"
 
-    # 2. iVisa-owned / branded official channels — positive by default
-    # unless snippet/title contains explicit complaint language
+    # 2. iVisa-owned / branded official channels — positive by default.
+    # iVisa's OWN pages are protective/reassuring and NATURALLY contain the word
+    # "scam" ("Is iVisa legit? … avoid scams", "spot real visa sites", "iVisa isn't
+    # a scam", "we are a legitimate third-party service"). The old check flagged ANY
+    # negative signal — so the bare word "scam" in iVisa's own anti-scam content
+    # wrongly flipped these to negative. Now only a GENUINE bad-experience / complaint
+    # phrase flips an owned page; protective/debunking uses of "scam" stay positive.
     is_ivisa_owned = any(d in domain_lower for d in IVISA_OWNED_DOMAINS)
     if is_ivisa_owned:
-        has_complaint = any(c in full_text for c in COMPLAINT_SIGNALS)
-        # Also check hard negative signals (stolen, scammed, etc.)
-        hard_neg = sum(1 for s in NEGATIVE_TEXT_SIGNALS if s in full_text)
-        if not has_complaint and hard_neg == 0:
-            return "positive"
-        # If complaint/hard negative present even on owned domain → negative
-        return "negative"
+        OWNED_HARD_COMPLAINT = [
+            "scammed", "got scammed", "stole", "stolen", "ripped off", "rip off",
+            "lost money", "refund denied", "do not use ivisa", "don't use ivisa",
+            "avoid ivisa", "fraudulent", "waste of money", "never again",
+            "terrible experience", "worst experience", "overcharged",
+        ]
+        if any(c in full_text for c in OWNED_HARD_COMPLAINT):
+            return "negative"
+        return "positive"
 
     # 3. Debunking articles — title asks "is ivisa a scam?" but snippet answers "no"
     title_has_scam_question = (
