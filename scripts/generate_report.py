@@ -1681,14 +1681,20 @@ def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], 
                 o["title"] = ""
             if domain:
                 _apply_app_store_fallbacks(o)
-                # Fill a blank snippet/title for known social/review/owned domains
-                # (SEMrush ranks these domain-level with no body). Display-only —
-                # sentiment/score are NOT touched.
-                if "snippet" in o and not (o.get("snippet") or "").strip():
+                # Fill a MISSING title/snippet for known social/review domains, but
+                # ONLY when the OTHER field has REAL content. Never manufacture a
+                # fully-canned row from a bare domain-only result — that produced
+                # misleading placeholders like "iVisa — Traveler Q&A on Quora" whose
+                # link just went to quora.com's homepage, not a real iVisa result.
+                # A row with neither a real title nor a real snippet is left empty and
+                # dropped by the content-less filter below. Display-only — scores untouched.
+                real_title = bool((o.get("title") or "").strip())
+                real_snippet = bool((o.get("snippet") or "").strip())
+                if "snippet" in o and not real_snippet and real_title:
                     ps = _platform_snippet(domain)
                     if ps:
                         o["snippet"] = ps
-                if "title" in o and not (o.get("title") or "").strip():
+                if "title" in o and not real_title and real_snippet:
                     pt = _platform_title(domain)
                     if pt:
                         o["title"] = pt
@@ -1728,6 +1734,37 @@ def _sanitize_report_data(report_data: dict[str, Any]) -> tuple[dict[str, Any], 
                 rows[:] = kept
     if dropped:
         logger.info("  Report gate: hid %d content-less SERP row(s) (bare domain, no snippet).", dropped)
+
+    # ── De-duplicate SERP rows per keyword ───────────────────────────────────
+    # SEMrush + Ahrefs + organic enrichment can leave the SAME result at two
+    # positions — e.g. ivisa.com filled with the identical title/snippet at pos 1
+    # AND pos 5, or a forum thread listed twice. Collapse rows that are identical by
+    # URL, or by domain+title+snippet, keeping the LOWEST position. Display-only —
+    # scores are already computed upstream and are not touched.
+    deduped = 0
+    for _cc, kws in serp_results.items():
+        for _kw, rows in kws.items():
+            if not isinstance(rows, list):
+                continue
+            rows.sort(key=lambda r: r.get("position", 99))
+            seen_sig: set = set()
+            unique: list = []
+            for r in rows:
+                url = (r.get("url") or "").strip().rstrip("/").lower()
+                sig_url = ("u", url) if url else None
+                sig_content = ("c", (r.get("domain") or "").lower(),
+                               (r.get("title") or "").strip().lower(),
+                               (r.get("snippet") or "").strip().lower())
+                if (sig_url and sig_url in seen_sig) or sig_content in seen_sig:
+                    deduped += 1
+                    continue
+                if sig_url:
+                    seen_sig.add(sig_url)
+                seen_sig.add(sig_content)
+                unique.append(r)
+            rows[:] = unique
+    if deduped:
+        logger.info("  Report gate: collapsed %d duplicate SERP row(s).", deduped)
 
     return report_data, blanked
 

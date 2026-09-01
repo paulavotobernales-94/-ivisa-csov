@@ -157,6 +157,21 @@ def _extract_organic_results(data: dict) -> list[dict]:
             results.append(r)
             seen_urls.add(r["url"])
 
+    # Google's "Discussions and forums" pack (Reddit / Quora / Tripadvisor threads).
+    # Google groups these into a SEPARATE block that is NOT in organic_results — so
+    # without this we miss real forum threads users actually see for the keyword, and
+    # SEMrush's bare-domain entry (e.g. "quora.com") ends up as a hollow placeholder.
+    # Captured BEFORE the video backfill so real discussions take priority over videos.
+    df_pos = max((r["position"] for r in results), default=0) + 1
+    for item in data.get("discussions_and_forums", []):
+        if len(results) >= 10:
+            break
+        r = parse_item(item, pos_override=df_pos)
+        if r["url"] and r["url"] not in seen_urls:
+            results.append(r)
+            seen_urls.add(r["url"])
+            df_pos += 1
+
     # Backfill from video results if we have fewer than 10
     if len(results) < 10:
         next_pos = max((r["position"] for r in results), default=0) + 1

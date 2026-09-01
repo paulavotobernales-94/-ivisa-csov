@@ -887,6 +887,18 @@ def _fetch_page_title(url: str, timeout: int = 4) -> tuple[str, str]:
 
 # ---------------------------------------------------------------------------
 
+def _is_bare_domain_url(url: str) -> bool:
+    """True if the URL is just a domain root with no page path (e.g. https://quora.com/)."""
+    if not url:
+        return True
+    try:
+        from urllib.parse import urlparse
+        p = urlparse(url if "://" in url else "https://" + url)
+        return (p.path or "").strip("/") == "" and not p.query
+    except Exception:
+        return False
+
+
 def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
     """
     Enrich SERP results using organic data already fetched by fetch_ai_overviews.
@@ -961,8 +973,16 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                             item["title"] = organic_match.get("title", "")
                         if not item.get("snippet"):
                             item["snippet"] = organic_match.get("snippet", "")
-                        if not item.get("url") and organic_match.get("url"):
-                            item["url"] = organic_match.get("url", "")
+                        # Adopt the real result URL when ours is missing OR just a
+                        # bare domain root — e.g. SEMrush gave "quora.com" but the
+                        # real ranking page is a specific thread. Makes the link go
+                        # to the actual result users see. Only adopt a real
+                        # (path-bearing) organic URL, never overwrite a real one.
+                        om_url = organic_match.get("url", "")
+                        if om_url and not _is_bare_domain_url(om_url) and (
+                            not item.get("url") or _is_bare_domain_url(item.get("url", ""))
+                        ):
+                            item["url"] = om_url
 
                     # Fallback 1: platform title map for known social/app domains
                     if not item.get("title"):
