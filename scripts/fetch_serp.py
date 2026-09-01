@@ -504,9 +504,12 @@ def _classify_with_claude(title: str, snippet: str) -> str | None:
         "This is a Google search result about iVisa, an online visa / travel-document "
         "service. The text may be in any language. Classify how it reflects on iVisa's "
         "reputation. Reply with EXACTLY one word: positive, negative, or neutral.\n"
-        "- positive: defends, recommends, praises, or is iVisa's own official listing\n"
-        "- negative: scam/fraud accusation, complaint, warning, regret, or strong criticism\n"
-        "- neutral: mixed pros and cons, purely factual, or not really about iVisa\n\n"
+        "- positive: defends, recommends, praises iVisa, or is iVisa's own official listing\n"
+        "- negative: a real scam/fraud ACCUSATION or complaint ABOUT iVisa, a warning to "
+        "avoid it, regret after using it, or strong criticism of iVisa itself\n"
+        "- neutral: someone simply ASKING whether iVisa is legit/safe/worth it (a question, "
+        "no accusation), a discussion with mixed pros and cons, purely factual info, or text "
+        "not really about iVisa. General travel stress or doubt is NOT itself a complaint.\n\n"
         f"Result:\n{text[:1200]}"
     )
     try:
@@ -1035,10 +1038,27 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                 # to live SerpAPI organic results which have real snippet text.
                 if organic_list:
                     has_snip = sum(1 for it in existing if it.get("snippet", "").strip())
-                    if existing and has_snip / len(existing) < 0.40:
-                        logger.debug(
-                            "  Low snippet coverage (%d/%d) for '%s' (%s) — using live SerpAPI organic",
-                            has_snip, len(existing), keyword, country_code,
+                    low_snippet = bool(existing) and has_snip / len(existing) < 0.40
+
+                    # Off-topic guard: SEMrush sometimes returns results for the WRONG
+                    # query — e.g. "que es ivisa" (ES) came back as dictionary results
+                    # for the word "qué", none mentioning iVisa. Snippet coverage was
+                    # fine, so the check above missed it. If our rows barely mention
+                    # iVisa but the live organic rows do, the live ones are what users
+                    # actually see — use them.
+                    def _mentions_ivisa_row(it: dict) -> bool:
+                        blob = f"{it.get('title','')} {it.get('snippet','')} {it.get('domain','')}".lower()
+                        return "ivisa" in blob
+                    ex_rel = (sum(1 for it in existing if _mentions_ivisa_row(it)) / len(existing)) if existing else 0.0
+                    org_rel = (sum(1 for r in organic_list if _mentions_ivisa_row(r)) / len(organic_list)) if organic_list else 0.0
+                    off_topic = bool(existing) and ex_rel < 0.30 and org_rel >= 0.50
+
+                    if low_snippet or off_topic:
+                        logger.info(
+                            "  SERP fallback for '%s' (%s): %s — using live SerpAPI organic",
+                            keyword, country_code,
+                            ("OFF-TOPIC (iVisa in %.0f%% of our rows vs %.0f%% live)"
+                             % (ex_rel * 100, org_rel * 100)) if off_topic else "low snippet coverage",
                         )
                         fallback_results = []
                         for r in organic_list:
