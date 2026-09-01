@@ -178,6 +178,17 @@ IVISA_OWNED_DOMAINS = [
     "youtube.com",       # iVisa YouTube channel
 ]
 
+# App-store listings are iVisa-owned PAGES, but the snippet Google shows is a USER
+# REVIEW, which is a real reputation signal. So these are NOT auto-positive like the
+# other owned domains — they're classified by their review content (incl. non-English
+# via the Claude multilingual fallback). A scathing review must read negative.
+_APP_STORE_DOMAINS = ("apps.apple.com", "play.google.com")
+
+
+def _is_app_store_domain(domain_lower: str) -> bool:
+    return any(d in domain_lower for d in _APP_STORE_DOMAINS)
+
+
 # Debunking article signals — when these appear in the snippet alongside
 # a "scam?" style title, the "scam" in the title is the question not the claim
 DEBUNKING_SIGNALS = [
@@ -367,8 +378,10 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
     # negative signal — so the bare word "scam" in iVisa's own anti-scam content
     # wrongly flipped these to negative. Now only a GENUINE bad-experience / complaint
     # phrase flips an owned page; protective/debunking uses of "scam" stay positive.
+    # App-store pages are owned, but their snippet is a USER REVIEW — classify by
+    # content (below / via multilingual fallback), never auto-positive.
     is_ivisa_owned = any(d in domain_lower for d in IVISA_OWNED_DOMAINS)
-    if is_ivisa_owned:
+    if is_ivisa_owned and not _is_app_store_domain(domain_lower):
         OWNED_HARD_COMPLAINT = [
             "scammed", "got scammed", "stole", "stolen", "ripped off", "rip off",
             "lost money", "refund denied", "do not use ivisa", "don't use ivisa",
@@ -466,7 +479,10 @@ def _rule_signals_inconclusive(domain: str, title: str, snippet: str) -> bool:
     domain_lower = domain.lower()
     if any(d in domain_lower for d in ALWAYS_NEGATIVE_DOMAINS):
         return False
-    if any(d in domain_lower for d in IVISA_OWNED_DOMAINS):
+    # App-store review snippets ARE worth a multilingual LLM check (a Spanish/German
+    # negative review must not be whitewashed), so they are NOT excluded here even
+    # though the app-store page itself is iVisa-owned.
+    if not _is_app_store_domain(domain_lower) and any(d in domain_lower for d in IVISA_OWNED_DOMAINS):
         return False
     if any(d in domain_lower for d in EDITORIAL_DOMAINS):
         return False
