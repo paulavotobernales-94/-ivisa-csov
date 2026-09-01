@@ -580,7 +580,19 @@ def _fetch_google_news(query: str, date_range: tuple[str, str] | None = None) ->
         params["tbs"] = f"cdr:1,cd_min:{start_fmt},cd_max:{end_fmt}"
 
     data = _serpapi_search(params)
-    return _parse_news_results(data)
+    mentions = _parse_news_results(data)
+
+    # RELIABILITY: Google News + a custom date range (cdr) frequently returns NOTHING
+    # for reasons on Google's side — which is why some weeks the News tab is empty and
+    # recent brand news (e.g. the HelloGov/iVisa merger) disappears. If the date-filtered
+    # query came back empty, retry WITHOUT the filter — Google News is recency-ranked by
+    # default, so this still returns recent articles.
+    if not mentions and date_range:
+        params.pop("tbs", None)
+        data = _serpapi_search(params)
+        mentions = _parse_news_results(data)
+
+    return mentions
 
 
 def _fetch_travel_blogs(date_range: tuple[str, str] | None = None) -> list[dict]:
