@@ -346,11 +346,14 @@ SENTIMENT_TESTS = [
      '{"@context":"https://schema.org","@type":"WebSite","name":"iVisa Help Center"}',
      "positive", "help.ivisa.com with JSON-LD snippet → cleared → owned domain → positive"),
 
-    # play.google.com WIZ blob cleared → owned domain → positive
+    # play.google.com is an APP-STORE domain → classified by review content now (not
+    # auto-positive), so an app listing with the junk blob cleared and no review text
+    # lands on neutral at the rule stage. (In production the multilingual LLM upgrades
+    # iVisa's own listing to positive; a negative review is caught as negative.)
     ("play.google.com",
      "iVisa: ETA, eVisa, ESTA, Visa - Apps on Google Play",
      'window.WIZ_global_data = {"AfY8Hf":false,"DMjf6c":false}',
-     "positive", "play.google.com WIZ blob → cleared → owned domain → positive"),
+     "neutral", "play.google.com app listing, junk cleared, no review text → neutral (app-store content-classified)"),
 
     # ── Existing regression cases ────────────────────────────────────────────
     ("tripadvisor.com",
