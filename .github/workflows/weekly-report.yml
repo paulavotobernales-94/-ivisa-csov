@@ -50,7 +50,10 @@ permissions:
 jobs:
   generate-report:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60   # raised from 45 (Sep 2026): slow-SerpAPI days pushed the
+                          # heavier pipeline past 45m and it got killed. Public repo →
+                          # Actions minutes are free, so a higher ceiling is safe. The
+                          # per-country query cut also brings typical runtime back down.
 
     steps:
       - name: Checkout repository
