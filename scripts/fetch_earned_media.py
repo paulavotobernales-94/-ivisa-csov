@@ -263,7 +263,10 @@ def _serpapi_search(params: dict) -> list[dict]:
         return []
     params["api_key"] = SERPAPI_KEY
     try:
-        resp = requests.get(SERPAPI_URL, params=params, timeout=25)
+        # 15s read timeout: successful SerpAPI calls return in a few seconds; a hanging
+        # call used to waste the full 25s each, and with many of them the run crept
+        # toward the 45-min ceiling. Fail faster so one slow SerpAPI day can't stall it.
+        resp = requests.get(SERPAPI_URL, params=params, timeout=15)
         resp.raise_for_status()
         return resp.json()
     except requests.RequestException as exc:
@@ -897,8 +900,12 @@ def fetch_earned_media_by_country(countries: dict) -> dict:
         all_mentions: list[dict] = []
 
         try:
-            # 1. Google News for each EM query
-            for query in EM_QUERIES:
+            # 1. Google News — per-country uses ONLY the broad "iVisa" query (not all
+            # of EM_QUERIES) to keep SerpAPI call volume down. The country tabs are a
+            # snapshot; the full query set runs in the GLOBAL earned-media fetch. This
+            # cut per-country news from 6 calls to 1 (×10 countries) after runs were
+            # ballooning toward the 45-min timeout on SerpAPI read-timeouts (Sep 2026).
+            for query in EM_QUERIES[:1]:
                 params = {
                     "engine": "google",
                     "q": query,
