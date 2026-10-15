@@ -856,16 +856,26 @@ _BAD_TITLES = {
 }
 
 
-def _fetch_page_title(url: str, timeout: int = 4) -> tuple[str, str]:
+def _fetch_page_title(url: str, timeout: int = 4, hl: str = "en") -> tuple[str, str]:
     """
     Last-resort: fetch a page and extract its <title> tag and a short body snippet.
     Returns (title, body_snippet) — empty strings on any error or bad page.
     Filters out Cloudflare challenge pages, error pages, etc.
+
+    `hl` is the market's interface language (COUNTRIES[...]['serpapi_hl']). We send
+    it as an Accept-Language header so language-localized sites (like ivisa.com)
+    serve the version a searcher in THAT market would see. Without this header the
+    server geo-guesses from the runner's cloud IP and can return the wrong language
+    — that's why a US row once came back in Korean.
     """
     if not url:
         return "", ""
     try:
-        headers = {"User-Agent": "Mozilla/5.0 (compatible; iVisaBot/1.0)"}
+        accept_language = "en-US,en;q=0.9" if hl == "en" else f"{hl},{hl};q=0.9,en;q=0.5"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (compatible; iVisaBot/1.0)",
+            "Accept-Language": accept_language,
+        }
         resp = requests.get(url, headers=headers, timeout=timeout, allow_redirects=True)
         html = resp.text
 
@@ -905,6 +915,22 @@ def _fetch_page_title(url: str, timeout: int = 4) -> tuple[str, str]:
 
 
 # ---------------------------------------------------------------------------
+
+def _is_mostly_non_latin(text: str) -> bool:
+    """True if `text` is predominantly non-Latin script (CJK, Hangul, Cyrillic,
+    Arabic, etc.). Used as a backstop for ENGLISH markets: if a title/snippet in
+    one of those markets comes back in a foreign script (as happened once when a
+    US row rendered in Korean), it's wrong for that tab and we blank it rather
+    than show the wrong language. Ignores digits/punctuation/whitespace; only
+    judges actual letters."""
+    if not text:
+        return False
+    letters = [c for c in text if c.isalpha()]
+    if not letters:
+        return False
+    non_latin = sum(1 for c in letters if ord(c) > 0x024F)  # beyond Latin Extended-B
+    return non_latin / len(letters) > 0.30
+
 
 def _is_bare_domain_url(url: str) -> bool:
     """True if the URL is just a domain root with no page path (e.g. https://quora.com/)."""
@@ -1015,7 +1041,8 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                     if not item.get("title"):
                         fetch_url = item.get("url") or f"https://{item.get('domain', '').lstrip('www.').lstrip('.')}"
                         if fetch_url and fetch_url != "https://":
-                            fetched_title, fetched_body = _fetch_page_title(fetch_url)
+                            market_hl = COUNTRIES.get(country_code, {}).get("serpapi_hl", "en")
+                            fetched_title, fetched_body = _fetch_page_title(fetch_url, hl=market_hl)
                             if fetched_title:
                                 item["title"] = fetched_title
                                 if not item.get("url"):
@@ -1023,6 +1050,16 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                             # Use body snippet for sentiment even if title was already known
                             if fetched_body and not item.get("snippet"):
                                 item["snippet"] = fetched_body[:300]
+
+                    # Backstop: on ENGLISH markets, blank any title/snippet that
+                    # still came back in a non-Latin script (wrong-language page
+                    # served despite the Accept-Language header). Better an empty
+                    # cell than a Korean/Japanese snippet in the US/UK/AU/CA tab.
+                    if COUNTRIES.get(country_code, {}).get("serpapi_hl", "en") == "en":
+                        if _is_mostly_non_latin(item.get("title", "")):
+                            item["title"] = ""
+                        if _is_mostly_non_latin(item.get("snippet", "")):
+                            item["snippet"] = ""
 
                     # Re-classify with title + snippet now that both are available
                     item["sentiment"] = _classify_result(
