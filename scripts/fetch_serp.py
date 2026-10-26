@@ -214,6 +214,49 @@ def _is_owned_social_account(url_lower: str) -> bool:
     return any(h in url_lower for h in _OWNED_SOCIAL_ACCOUNT_MARKERS)
 
 
+# YouTube review sentiment — mirrors _classify_youtube_review in fetch_earned_media.
+# YouTube is in IVISA_OWNED_DOMAINS, which blanket-positived EVERY video (all 74 rows
+# positive, blind to a real "iVisa is a scam – stole my money" video). But we also must
+# NOT use the generic signal counter, because the single most common review title is a
+# clickbait QUESTION — "iVisa Review: Is iVisa Legit | Is It A Scam?" — which is NOT
+# negative. So: a DECLARATIVE accusation / real complaint → negative, a genuine
+# endorsement → positive, a balanced "is it a scam?/legit?" question → NEUTRAL.
+_YT_HARD_NEG = [
+    "fraud", "fake", "ripoff", "rip off", "scammed", "stole", "stolen", "steal",
+    "avoid ivisa", "avoid using", "lost money", "refund denied", "overcharged",
+    "do not use", "don't use", "stay away", "terrible", "worst", "never again",
+    "waste of", "disappointed", "unresponsive", "shady", "beware",
+    "not legit", "not safe", "not worth",
+    # declarative scam ACCUSATIONS (not the "is it a scam?" question)
+    "is a scam", "it's a scam", "its a scam", "total scam", "biggest scam",
+    "complete scam", "such a scam", "huge scam",
+]
+_YT_STRONG_POS = [
+    "worth it", "recommend", "excellent", "great", "amazing", "fantastic", "love",
+    "helped", "saved", "stress-free", "stress free", "seamless", "lifesaver",
+    "five star", "5 star", "perfect", "smooth", "highly recommend", "best experience",
+    # Affirmative content phrases — a review whose body actually vouches for iVisa.
+    # Multi-word so they do NOT fire on a bare "Is iVisa reliable?/legit?" QUESTION
+    # title; and hard-negatives are checked FIRST, so a real complaint still wins.
+    "legitimate service", "is legitimate", "legitimate company", "legit service",
+    "simplifies", "step-by-step", "24/7 support", "24/7 customer", "approval rate",
+    "high approval", "hassle-free", "hassle free", "convenient", "straightforward",
+    "worked great", "worked well", "went smoothly", "highly rated", "reliable service",
+    "trusted service", "easy to use", "easy process",
+]
+# iVisa's own YouTube channel URL fragments (channel pages only — individual watch
+# URLs carry no handle, so those are read by content like any other review).
+_OWNED_YT_MARKERS = ("youtube.com/@ivisa_travel", "youtube.com/@ivisa", "youtube.com/ivisa_travel")
+
+
+def _youtube_sentiment(text: str) -> str:
+    if any(h in text for h in _YT_HARD_NEG):
+        return "negative"
+    if any(p in text for p in _YT_STRONG_POS):
+        return "positive"
+    return "neutral"
+
+
 # Debunking article signals — when these appear in the snippet alongside
 # a "scam?" style title, the "scam" in the title is the question not the claim
 DEBUNKING_SIGNALS = [
@@ -395,6 +438,15 @@ def _classify_result(domain: str, title: str, snippet: str = "", url: str = "") 
     for d in ALWAYS_NEGATIVE_DOMAINS:
         if d in domain_lower:
             return "negative"
+
+    # 1b. YouTube — read by the nuanced review rule, NOT owned-default-positive and NOT
+    # the generic signal counter. iVisa's own channel URL stays positive; every other
+    # video is judged by content so a clickbait "is it a scam?" QUESTION is neutral, a
+    # declarative accusation/complaint is negative, and an endorsement is positive.
+    if "youtube.com" in domain_lower or "youtu.be" in domain_lower:
+        if any(m in (url or "").lower() for m in _OWNED_YT_MARKERS):
+            return "positive"
+        return _youtube_sentiment(full_text)
 
     # 2. iVisa-owned / branded official channels — positive by default.
     # iVisa's OWN pages are protective/reassuring and NATURALLY contain the word
