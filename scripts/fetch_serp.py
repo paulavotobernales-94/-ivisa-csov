@@ -189,6 +189,26 @@ def _is_app_store_domain(domain_lower: str) -> bool:
     return any(d in domain_lower for d in _APP_STORE_DOMAINS)
 
 
+# Social domains where iVisa owns an ACCOUNT but the domain ALSO hosts user/third-party
+# content (group posts, personal posts, Q&A pages). On these, "iVisa-owned → positive"
+# must apply ONLY to iVisa's real account URL — otherwise a complaint posted in a group
+# ("iVisa … is a Scam", "Beware of iVisa fees") gets auto-classified positive.
+_USER_CONTENT_SOCIAL_DOMAINS = ("facebook.com", "linkedin.com", "twitter.com", "x.com")
+# The specific owned-account URL fragments (lowercased, path-level).
+_OWNED_SOCIAL_ACCOUNT_MARKERS = (
+    "facebook.com/ivisatravel", "linkedin.com/company/ivisa",
+    "twitter.com/ivisa", "x.com/ivisa",
+)
+
+
+def _is_user_content_social_domain(domain_lower: str) -> bool:
+    return any(d in domain_lower for d in _USER_CONTENT_SOCIAL_DOMAINS)
+
+
+def _is_owned_social_account(url_lower: str) -> bool:
+    return any(h in url_lower for h in _OWNED_SOCIAL_ACCOUNT_MARKERS)
+
+
 # Debunking article signals — when these appear in the snippet alongside
 # a "scam?" style title, the "scam" in the title is the question not the claim
 DEBUNKING_SIGNALS = [
@@ -345,7 +365,7 @@ def _is_junk_snippet(snippet: str) -> bool:
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _classify_result(domain: str, title: str, snippet: str = "") -> str:
+def _classify_result(domain: str, title: str, snippet: str = "", url: str = "") -> str:
     """
     Return 'positive', 'negative', or 'neutral' for a SERP result.
 
@@ -381,6 +401,14 @@ def _classify_result(domain: str, title: str, snippet: str = "") -> str:
     # App-store pages are owned, but their snippet is a USER REVIEW — classify by
     # content (below / via multilingual fallback), never auto-positive.
     is_ivisa_owned = any(d in domain_lower for d in IVISA_OWNED_DOMAINS)
+    # On social domains iVisa owns an account on, "owned" applies ONLY to iVisa's real
+    # account URL (or a bare brand-presence row with no URL — that's SEMrush tracking
+    # the brand's own page). A group/personal/Q&A page on the same domain is NOT owned,
+    # so it falls through to content classification and a complaint reads as negative.
+    if is_ivisa_owned and _is_user_content_social_domain(domain_lower):
+        url_lower = (url or "").lower()
+        if url_lower and not _is_owned_social_account(url_lower):
+            is_ivisa_owned = False
     if is_ivisa_owned and not _is_app_store_domain(domain_lower):
         OWNED_HARD_COMPLAINT = [
             "scammed", "got scammed", "stole", "stolen", "ripped off", "rip off",
@@ -631,7 +659,7 @@ def _fetch_semrush_keyword(keyword: str, database: str) -> list[dict]:
             "title": title,
             "snippet": snippet,
             "is_ivisa": _is_ivisa(domain),
-            "sentiment": _classify_result(domain, title, snippet),
+            "sentiment": _classify_result(domain, title, snippet, url=row.get("URL", "").strip()),
             "source": "semrush",
         })
     return results
@@ -686,7 +714,7 @@ def _fetch_ahrefs_keyword(keyword: str, country: str) -> list[dict]:
             "title": title,
             "snippet": snippet,
             "is_ivisa": _is_ivisa(domain),
-            "sentiment": _classify_result(domain, title, snippet),
+            "sentiment": _classify_result(domain, title, snippet, url=item.get("url", "").strip()),
             "source": "ahrefs",
         })
     return results
@@ -1083,7 +1111,7 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                         "snippet": snippet_clean,
                         "is_ivisa": _is_ivisa(r["domain"]),
                         "sentiment": _classify_result(
-                            r["domain"], title_clean, snippet_clean
+                            r["domain"], title_clean, snippet_clean, url=r.get("url", "")
                         ),
                         "source": "serpapi",
                     })
@@ -1164,6 +1192,7 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                         item.get("domain", ""),
                         item.get("title", ""),
                         item.get("snippet", ""),
+                        url=item.get("url", ""),
                     )
 
                 # ── Snippet coverage check ────────────────────────────────────
@@ -1214,7 +1243,7 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                                 "snippet":   snippet_clean,
                                 "is_ivisa":  _is_ivisa(r["domain"]),
                                 "sentiment": _classify_result(
-                                    r["domain"], title_clean, snippet_clean
+                                    r["domain"], title_clean, snippet_clean, url=r.get("url", "")
                                 ),
                                 "source":    "serpapi",
                             })
@@ -1230,6 +1259,7 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                     item.get("domain", ""),
                     item.get("title", ""),
                     item.get("snippet", ""),
+                    url=item.get("url", ""),
                 )
 
     # Multilingual sentiment fallback — for non-English markets, upgrade the
