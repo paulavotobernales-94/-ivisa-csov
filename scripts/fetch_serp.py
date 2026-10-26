@@ -723,8 +723,10 @@ def _merge_results(semrush: list[dict], ahrefs: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 def _country_serp_score(keyword_results: dict[str, list[dict]]) -> float:
-    """Average keyword scores across all keywords for one country."""
-    scores = [_position_score(results) for results in keyword_results.values()]
+    """Average keyword scores across all keywords for one country. Keywords with NO
+    results (e.g. an off-topic keyword whose junk rows were all dropped) are excluded,
+    so they can't inject a fabricated neutral score into the average."""
+    scores = [_position_score(results) for results in keyword_results.values() if results]
     return round(sum(scores) / len(scores), 2) if scores else 0.0
 
 
@@ -944,6 +946,93 @@ def _is_bare_domain_url(url: str) -> bool:
         return False
 
 
+_REVIEW_AGGREGATOR_DOMAINS = (
+    "trustpilot.com", "sitejabber.com", "pissedconsumer.com", "bbb.org", "yelp.com",
+)
+
+
+def _aggregator_dedup_key(url: str) -> str | None:
+    """For a review-aggregator URL, return a key that IGNORES the country subdomain
+    and query string, so the SAME review page served as www./ca./uk./de.…trustpilot.com
+    /review/ivisa.com?page=N all collapse to one key. Returns None for non-aggregator
+    URLs (those are left untouched). Note: trustpilot.com/review/ivisa.com and
+    .../ivisaviajes.com stay DISTINCT — different companies, different path."""
+    if not url:
+        return None
+    try:
+        from urllib.parse import urlparse
+        p = urlparse(url if "://" in url else "https://" + url)
+        host = (p.netloc or "").lower().split(":")[0]
+        base = ".".join(host.split(".")[-2:]) if host else ""
+        if base not in _REVIEW_AGGREGATOR_DOMAINS:
+            return None
+        path = (p.path or "").rstrip("/").lower()
+        return f"{base}{path}"
+    except Exception:
+        return None
+
+
+def _collapse_aggregator_dupes(results: dict) -> int:
+    """Collapse duplicate review-aggregator rows (the same review page surfaced under
+    many country subdomains / ?page= params) to ONE per keyword, keeping the best
+    (lowest) position. A real Google SERP shows ~1 such result; SEMrush/SerpAPI can
+    return 7–9 copies of iVisa's Trustpilot page, which otherwise dominate that
+    keyword's score — e.g. a Japanese review query where 9 of 10 'results' are the
+    same Trustpilot page scored as pure Trustpilot sentiment. Runs BEFORE scoring so
+    both the score and the displayed rows reflect reality."""
+    collapsed = 0
+    for _cc, kwmap in (results or {}).items():
+        if not isinstance(kwmap, dict):
+            continue
+        for _kw, rows in kwmap.items():
+            if not isinstance(rows, list) or not rows:
+                continue
+            rows.sort(key=lambda r: r.get("position", 99))
+            seen: set = set()
+            out: list = []
+            for r in rows:
+                k = _aggregator_dedup_key(r.get("url", ""))
+                if k is not None:
+                    if k in seen:
+                        collapsed += 1
+                        continue
+                    seen.add(k)
+                out.append(r)
+            rows[:] = out
+    return collapsed
+
+
+def _drop_off_topic_rows(results: dict) -> int:
+    """HARD off-topic guard. For each branded keyword, if the result set is
+    DOMINANTLY not about iVisa (<20% of rows mention 'ivisa' anywhere), the rows are
+    for the WRONG term — e.g. SEMrush returning 'SAFE' results (Scaled Agile Framework,
+    EU defence, safe.global…) for the query 'is ivisa safe'. Keep ONLY the rows that
+    mention iVisa, drop the rest.
+
+    Unlike the live-organic fallback inside enrich_with_serpapi_organic (which needs
+    SerpAPI organic rows to swap in), this needs NO replacement data — so it still
+    fires on a run where the live organic fetch came back empty for that keyword,
+    which is exactly how the 'SAFE' junk slipped through. If nothing iVisa-related
+    remains, the keyword is left empty and excluded from the country average by
+    _country_serp_score (so it can't inject a fabricated score)."""
+    def _mentions(it: dict) -> bool:
+        blob = f"{it.get('title','')} {it.get('snippet','')} {it.get('domain','')} {it.get('url','')}".lower()
+        return "ivisa" in blob
+    dropped = 0
+    for _cc, kwmap in (results or {}).items():
+        if not isinstance(kwmap, dict):
+            continue
+        for _kw, rows in kwmap.items():
+            if not isinstance(rows, list) or not rows:
+                continue
+            rel = sum(1 for r in rows if _mentions(r)) / len(rows)
+            if rel < 0.20:
+                kept = [r for r in rows if _mentions(r)]
+                dropped += len(rows) - len(kept)
+                rows[:] = kept
+    return dropped
+
+
 def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
     """
     Enrich SERP results using organic data already fetched by fetch_ai_overviews.
@@ -1156,6 +1245,20 @@ def enrich_with_serpapi_organic(serp_data: dict, organic_data: dict) -> dict:
                         llm_upgraded += 1
     if llm_upgraded:
         logger.info("  → Multilingual fallback: Claude re-classified %d non-English result(s).", llm_upgraded)
+
+    # Hard off-topic guard: drop results for a keyword that is dominantly NOT about
+    # iVisa (e.g. SEMrush returned 'SAFE'/Scaled-Agile results for 'is ivisa safe').
+    # Fires even when the live-organic fallback above had no data to swap in.
+    _off = _drop_off_topic_rows(results)
+    if _off:
+        logger.info("  → Dropped %d off-topic (non-iVisa) SERP row(s) before scoring.", _off)
+
+    # Collapse duplicate review-aggregator rows (same Trustpilot review page under many
+    # country subdomains / ?page= params) to ONE per keyword BEFORE scoring — otherwise
+    # a keyword with 7–9 Trustpilot copies scores as pure Trustpilot sentiment.
+    _agg_collapsed = _collapse_aggregator_dupes(results)
+    if _agg_collapsed:
+        logger.info("  → Collapsed %d duplicate review-aggregator row(s) before scoring.", _agg_collapsed)
 
     # Recompute scores with enriched data
     for country_code in list(results.keys()):

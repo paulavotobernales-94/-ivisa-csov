@@ -504,6 +504,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <ul class="actions-list" id="actionsList"></ul>
   </div>
 
+  <!-- SOCIAL & FORUMS IN SERPS (visibility only — NOT part of the CSOV score) -->
+  <div class="chart-card" style="margin-bottom:32px;">
+    <div class="section-title">📱 Social &amp; Forums in Your SERPs</div>
+    <p style="font-size:.78rem;color:var(--muted);margin:-6px 0 14px;">
+      Visibility only — <strong>not part of the CSOV score.</strong> How many of your tracked branded search
+      results come from each platform, and how many are individual <em>posts</em> vs. the brand profile / other pages.
+      (Tip: YouTube videos and Reddit threads rank as individual posts; Instagram posts rarely do — its value is profile presence.)
+    </p>
+    <div id="socialSerpPanel"></div>
+  </div>
+
 </div>
 
 <!-- FOOTER -->
@@ -619,6 +630,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Actions
   buildActions(D.action_items);
+
+  // Social & forums in SERPs (visibility only — never affects the score)
+  buildSocialSerp(D);
 
   // Select first country by default
   const firstCode = Object.keys(D.country_data)[0];
@@ -1123,6 +1137,9 @@ function buildSerpTable(countryResults) {
   }
 
   Object.entries(countryResults).forEach(([kw, results]) => {
+    // Hide keywords left with no results (e.g. off-topic rows all dropped) — showing
+    // an empty "is ivisa safe — No data" block is worse than omitting it.
+    if (!results || !results.length) return;
     const score = kwScore(results);
     const scoreColor = score >= 70 ? 'var(--green)' : score >= 45 ? 'var(--yellow)' : 'var(--red)';
 
@@ -1611,6 +1628,31 @@ function buildScoreAnalysis(D) {
       <span>${text}</span>
     </li>`;
   });
+}
+
+// ── Social & Forums in SERPs (visibility-only panel; never affects the score) ──
+function buildSocialSerp(D) {
+  const el = document.getElementById('socialSerpPanel');
+  if (!el) return;
+  const sp = (D && D.social_serp_presence) || {};
+  const labels = {
+    youtube: 'YouTube', reddit: 'Reddit', facebook: 'Facebook',
+    instagram: 'Instagram', linkedin: 'LinkedIn', tiktok: 'TikTok',
+    x: 'X / Twitter', pinterest: 'Pinterest'
+  };
+  const order = ['youtube','reddit','facebook','instagram','linkedin','tiktok','x','pinterest'];
+  let rows = '';
+  order.forEach(function(p) {
+    const rec = sp[p];
+    if (!rec || !rec.total) return;
+    const profile = rec.total - (rec.posts || 0);
+    rows += `<tr><td style="font-weight:600;">${labels[p] || p}</td><td style="text-align:right;">${rec.total}</td><td style="text-align:right;">${rec.posts || 0}</td><td style="text-align:right;color:var(--muted);">${profile}</td></tr>`;
+  });
+  if (!rows) {
+    el.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">No social or forum results in the tracked SERPs this week.</p>`;
+    return;
+  }
+  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Platform</th><th style="text-align:right;">In SERPs</th><th style="text-align:right;">Individual posts</th><th style="text-align:right;">Profile / other</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 // ── Action Items ───────────────────────────────────────────────────────────

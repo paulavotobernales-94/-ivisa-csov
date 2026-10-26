@@ -90,6 +90,60 @@ def _check_render(html_path: str) -> str | None:
     return "; ".join((proc.stderr.strip().splitlines() or ["page did not populate"])[:3])
 
 
+def _count_social_in_serp(serp_data: dict) -> dict:
+    """Count how many of our tracked branded SERP results come from each social
+    platform, and — crucially — split individual POSTS from profile/other pages.
+    (Paula's question: "how many Instagram posts show in the SERPs?" The finding was
+    that the PROFILE ranks widely but individual posts rarely do; this metric tracks
+    both over time so we can see posts start to surface as we target keywords.)
+
+    Stored on the weekly snapshot, so it becomes a trackable series with no extra
+    fetch cost. Read-only — never touches any score.
+    """
+    # platform → (domain substrings, url markers that mean an INDIVIDUAL post)
+    PLATFORMS = {
+        "instagram": (("instagram.com",),            ("/p/", "/reel/", "/reels/", "/tv/")),
+        "youtube":   (("youtube.com", "youtu.be"),   ("/watch", "/shorts/", "youtu.be/")),
+        "tiktok":    (("tiktok.com",),               ("/video/",)),
+        "facebook":  (("facebook.com", "fb.com"),    ("/posts/", "/videos/", "/photo", "/reel/")),
+        "linkedin":  (("linkedin.com",),             ("/posts/", "/pulse/", "/feed/update")),
+        "x":         (("x.com", "twitter.com"),      ("/status/",)),
+        "reddit":    (("reddit.com",),               ("/comments/",)),
+        "pinterest": (("pinterest.com", "pin.it"),   ("/pin/",)),
+    }
+    out = {p: {"total": 0, "posts": 0, "by_country": {}, "examples": []} for p in PLATFORMS}
+    results = (serp_data or {}).get("results", {}) or {}
+    for country, kwmap in results.items():
+        if not isinstance(kwmap, dict):
+            continue
+        for keyword, rows in kwmap.items():
+            if not isinstance(rows, list):
+                continue
+            for r in rows:
+                blob = f"{(r.get('url') or '')} {(r.get('domain') or '')}".lower()
+                url  = (r.get("url") or "").lower()
+                for p, (domains, post_markers) in PLATFORMS.items():
+                    if any(d in blob for d in domains):
+                        rec = out[p]
+                        rec["total"] += 1
+                        rec["by_country"][country] = rec["by_country"].get(country, 0) + 1
+                        if any(m in url for m in post_markers):
+                            rec["posts"] += 1
+                        if len(rec["examples"]) < 5 and r.get("url"):
+                            rec["examples"].append(
+                                {"country": country, "keyword": keyword,
+                                 "url": r.get("url"), "position": r.get("position"),
+                                 "sentiment": r.get("sentiment")}
+                            )
+                        break
+    out["_summary"] = {
+        "total_social_results": sum(out[p]["total"] for p in PLATFORMS),
+        "instagram_total":      out["instagram"]["total"],
+        "instagram_posts":      out["instagram"]["posts"],
+    }
+    return out
+
+
 def _build_report_payload(
     serp_data: dict,
     ai_overview_data: dict,
@@ -206,6 +260,7 @@ def _build_report_payload(
         "formula":                  csov_result.get("formula", ""),
         "period1_baseline":         period1_baseline,
         "scoring_version":          SCORING_VERSION,
+        "social_serp_presence":     _count_social_in_serp(serp_data),
     }
 
 

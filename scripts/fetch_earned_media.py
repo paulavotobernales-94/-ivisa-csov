@@ -236,9 +236,20 @@ def _classify_mention(domain: str, title: str, snippet: str = "") -> str:
     return "neutral"
 
 
-def _is_ivisa_owned(url: str, domain: str) -> bool:
-    """Return True if this result is from an iVisa-owned channel (website,
-    blog, owned subreddit, OR an official iVisa social-media account)."""
+# Unmistakable "this is iVisa's OWN YouTube channel" title signals. Individual
+# YouTube watch URLs don't carry the @handle, so an owned video (e.g. the channel
+# trailer) slips past the handle check and lands in EARNED media. These catch it.
+_OWNED_YT_TITLE_SIGNALS = (
+    "the ivisa channel", "ivisa channel trailer", "official ivisa channel",
+    "ivisa - official",
+)
+
+
+def _is_ivisa_owned(url: str, domain: str, title: str = "", channel: str = "") -> bool:
+    """Return True if this result is from an iVisa-owned channel (website, blog,
+    owned subreddit, OR an official iVisa social-media account). `channel` (a YouTube
+    channel name and/or link, when available) and `title` let us catch iVisa's own
+    YouTube videos, whose individual watch URLs don't contain the @handle."""
     domain_lower = domain.lower().strip()
     for owned in IVISA_OWNED_DOMAINS:
         if owned in domain_lower:
@@ -249,6 +260,19 @@ def _is_ivisa_owned(url: str, domain: str) -> bool:
             return True
     for handle in IVISA_OWNED_SOCIAL:
         if handle in url_lower:
+            return True
+    # YouTube: match the uploading channel (name or link) when we have it …
+    ch = (channel or "").lower()
+    if ch:
+        for handle in IVISA_OWNED_SOCIAL:
+            if handle in ch:
+                return True
+        if ch.strip() in ("ivisa", "ivisa travel", "@ivisa_travel", "ivisa_travel"):
+            return True
+    # … or an unmistakable owned-channel title (watch URLs carry no handle).
+    t = (title or "").lower()
+    for sig in _OWNED_YT_TITLE_SIGNALS:
+        if sig in t:
             return True
     return False
 
@@ -404,7 +428,7 @@ def _parse_organic_results(data: dict, source_label: str) -> list[dict]:
         snippet = item.get("snippet", "")
         date_str = item.get("date", None)
 
-        if _is_ivisa_owned(url, domain):
+        if _is_ivisa_owned(url, domain, title=title):
             continue
         if _is_review_aggregator(domain):
             continue
@@ -447,7 +471,7 @@ def _parse_news_results(data: dict, require_ivisa_mention: bool = True) -> list[
         snippet = item.get("snippet", "")
         date_str = item.get("date", None)
 
-        if _is_ivisa_owned(url, domain):
+        if _is_ivisa_owned(url, domain, title=title):
             continue
         if _is_review_aggregator(domain):
             continue
@@ -512,8 +536,11 @@ def _parse_youtube_video_results(data: dict, max_months: int = 12) -> list[dict]
         title = item.get("title", "")
         snippet = item.get("description", "") or item.get("snippet", "")
         domain = "youtube.com"
+        _ch = item.get("channel") or {}
+        channel = (f"{_ch.get('name','')} {_ch.get('link','')}"
+                   if isinstance(_ch, dict) else str(_ch))
 
-        if _is_ivisa_owned(url, domain):
+        if _is_ivisa_owned(url, domain, title=title, channel=channel):
             continue
         if not _mentions_ivisa(title) and not _mentions_ivisa(snippet):
             continue
