@@ -1026,10 +1026,19 @@ def _drop_off_topic_rows(results: dict) -> int:
             if not isinstance(rows, list) or not rows:
                 continue
             rel = sum(1 for r in rows if _mentions(r)) / len(rows)
-            if rel < 0.20:
+            # <40%: a branded keyword where most rows don't mention iVisa is dominated
+            # by wrong-term junk (SEAT Ibiza cars for "ivisa precio", generic India-visa
+            # competitors for "ivisa indien", ESTA-scam warnings for "ivisa 詐欺"). The
+            # real-data distribution has a clean gap — legit keywords sit at 50–100%
+            # iVisa-mention, junk at 0–30% — so 40% separates them with margin.
+            if rel < 0.40:
                 kept = [r for r in rows if _mentions(r)]
                 dropped += len(rows) - len(kept)
-                rows[:] = kept
+                # If cleaning leaves too few real iVisa rows (<3), we don't have enough
+                # reliable data to score this keyword — clear it entirely so it's
+                # excluded from the country average (via _country_serp_score), rather
+                # than letting 1–2 cherry-picked rows produce a volatile extreme score.
+                rows[:] = kept if len(kept) >= 3 else []
     return dropped
 
 
