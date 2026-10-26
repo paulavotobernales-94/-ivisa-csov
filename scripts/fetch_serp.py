@@ -193,11 +193,16 @@ def _is_app_store_domain(domain_lower: str) -> bool:
 # content (group posts, personal posts, Q&A pages). On these, "iVisa-owned → positive"
 # must apply ONLY to iVisa's real account URL — otherwise a complaint posted in a group
 # ("iVisa … is a Scam", "Beware of iVisa fees") gets auto-classified positive.
-_USER_CONTENT_SOCIAL_DOMAINS = ("facebook.com", "linkedin.com", "twitter.com", "x.com")
-# The specific owned-account URL fragments (lowercased, path-level).
+_USER_CONTENT_SOCIAL_DOMAINS = (
+    "facebook.com", "linkedin.com", "twitter.com", "x.com", "instagram.com",
+)
+# The specific owned-account URL fragments (lowercased, path-level). A bare profile
+# URL or a row with no URL still counts as owned brand-presence; individual post URLs
+# (instagram.com/p/…, facebook.com/groups/…) do NOT match and are content-classified.
 _OWNED_SOCIAL_ACCOUNT_MARKERS = (
     "facebook.com/ivisatravel", "linkedin.com/company/ivisa",
     "twitter.com/ivisa", "x.com/ivisa",
+    "instagram.com/ivisa_travel", "instagram.com/ivisa", "instagram.com/india_e_visa",
 )
 
 
