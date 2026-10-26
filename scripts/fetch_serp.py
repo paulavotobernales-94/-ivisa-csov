@@ -250,11 +250,15 @@ _OWNED_YT_MARKERS = ("youtube.com/@ivisa_travel", "youtube.com/@ivisa", "youtube
 
 
 def _youtube_sentiment(text: str) -> str:
+    # Business rule (Paula, Oct 2026): for YouTube, a video featuring iVisa that is NOT
+    # complaining is favorable exposure → positive. So the ONLY thing that flips a video
+    # negative is a genuine complaint / declarative accusation (_YT_HARD_NEG); everything
+    # else — reviews, how-tos, and clickbait "is it a scam?" QUESTIONS — is positive.
+    # (The old owned-default bug positived complaints too; this keeps the positive lean
+    # but still catches real complaints. _YT_STRONG_POS kept for readability/reference.)
     if any(h in text for h in _YT_HARD_NEG):
         return "negative"
-    if any(p in text for p in _YT_STRONG_POS):
-        return "positive"
-    return "neutral"
+    return "positive"
 
 
 # Debunking article signals — when these appear in the snippet alongside
