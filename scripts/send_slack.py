@@ -56,8 +56,24 @@ def send_slack_notification(report_data: dict) -> bool:
     llm   = components.get("llm", {}).get("score", 0)
     em    = components.get("earned_media", {}).get("score", 0)
 
+    # Slack is a SUMMARY (full detail lives on the dashboard). The Claude-generated
+    # action items can be long (~1,000 chars each); a Slack section's text is capped at
+    # 3,000 chars, and exceeding it makes Slack reject the ENTIRE message with a 400 —
+    # which is why a long-recommendations week published the report but sent no Slack.
+    # So: trim each item, then hard-cap the joined text well under the limit.
+    def _short_item(a: str, limit: int = 240) -> str:
+        a = " ".join(str(a).split())  # collapse whitespace/newlines
+        return a if len(a) <= limit else a[:limit].rstrip(" ,.;—-") + "…"
+
     actions = report_data.get("action_items", [])
-    action_text = "\n".join(f"• {a}" for a in actions[:3]) if actions else "• No critical actions needed."
+    action_text = (
+        "\n".join(f"• {_short_item(a)}" for a in actions[:3])
+        if actions else "• No critical actions needed."
+    )
+    _ACTIONS_HEADER = "*Top Action Items*\n"
+    _MAX_SECTION = 2900  # safety margin under Slack's 3000-char section limit
+    if len(_ACTIONS_HEADER) + len(action_text) > _MAX_SECTION:
+        action_text = action_text[: _MAX_SECTION - len(_ACTIONS_HEADER)].rstrip() + "…"
 
     message = {
         "blocks": [
