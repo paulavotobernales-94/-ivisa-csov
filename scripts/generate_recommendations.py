@@ -272,6 +272,17 @@ a concrete lever.
 outlet, AI-Overview concern or source, country, or headline it responds to. If the data does \
 not support a point, do not make it.
 - Do NOT invent facts, statistics, partnerships, or sources. Only reason from what is above.
+- REALISM GUARDRAIL (critical): recommend ONLY real, executable tactics. Do NOT invent \
+tools, platforms, programs, portals or mechanisms — there is NO "Publish Hub", NO way to \
+"submit content to Google's AI training pipeline", and NO AI-Overview submission form. You \
+CANNOT ask Google, OpenAI, Anthropic or any AI provider to change, tune, or "refine the \
+training data" behind their answers about iVisa — never recommend contacting an AI company \
+to alter its outputs, because that is not a thing that exists. The ONLY way to influence AI \
+Overviews and LLM answers is INDIRECTLY, by improving the public sources they read (iVisa's \
+own pages and help docs, third-party reviews, Reddit/forum threads, editorial and PR \
+coverage). Every action must be something iVisa's brand, PR, SEO, content or social team can \
+actually do this week with real, existing channels — if you are unsure a mechanism exists, \
+do not recommend it.
 - Prioritise by impact on trust and on brand-driven bookings. Lead with the biggest risk OR \
 the biggest opportunity.
 - Be concrete: name the exact asset to create or page to fix, the specific narrative to \

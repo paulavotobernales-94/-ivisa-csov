@@ -501,6 +501,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <!-- ACTION ITEMS -->
   <div class="chart-card" style="margin-bottom:32px;">
     <div class="section-title" id="actionItemsTitle">Action Items — SERP</div>
+    <p style="font-size:.76rem;color:var(--muted);margin:-6px 0 12px;">
+      🤖 AI-generated suggestions based on this week's data — sanity-check feasibility before acting on any of them.
+    </p>
     <ul class="actions-list" id="actionsList"></ul>
   </div>
 
